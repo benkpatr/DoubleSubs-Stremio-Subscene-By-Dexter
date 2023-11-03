@@ -7,7 +7,6 @@ const languages = require('./languages.json');
 const count = 10;
 const NodeCache = require("node-cache");
 const sub2vtt = require('sub2vtt');
-const { forEach } = require('sub2vtt/ISO639');
 
 
 const Cache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
@@ -187,9 +186,9 @@ async function getsubtitles(moviePath, id, lang, episode, year) {
         if (value) {
             let path = config.BaseURL + value.path;
             if (episode) {
-              url = config.local+"/sub.vtt?"+"episode="+episodeText+"&"+sub2vtt.gerenateUrl(path);
+              url = config.local+"/sub.vtt?"+"episode="+episodeText+"&"+sub2vtt.gerenateUrl(path, {});
             } else {
-              url = config.local+"/sub.vtt?"+sub2vtt.gerenateUrl(path);
+              url = config.local+"/sub.vtt?"+sub2vtt.gerenateUrl(path, {});
             }
             
             subs.push({

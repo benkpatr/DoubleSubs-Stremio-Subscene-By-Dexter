@@ -126,13 +126,13 @@ app.get('/sub.vtt', async (req, res,next) => {
 		else throw 'error: no url';
 		if (req?.query?.episode) episode = req.query.episode
 
-		proxy =  {responseType: "buffer", "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)  Safari/537.36'}
+		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
 		url = await downloadUrl(url);
 
-		console.log({url,proxy,episode})
+		console.log({url, proxy, episode})
 		
-		let sub = new sub2vtt(url ,proxy,episode);
+		let sub = new sub2vtt(url , { proxy, episode });
 		
 		let file = await sub.getSubtitle();
 		
