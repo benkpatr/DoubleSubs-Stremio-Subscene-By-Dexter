@@ -15,7 +15,6 @@
     "got-scraping": "^3.2.9",
     "node-cache": "^5.1.2",
     "node-html-parser": "^6.1.1",
-    "prom-client": "^15.0.0",
     "slugify": "^1.6.5",
     "sub2vtt": "^1.0.9",
     "swagger-stats": "^0.99.5"

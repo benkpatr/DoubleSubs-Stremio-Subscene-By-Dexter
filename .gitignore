@@ -8,6 +8,6 @@
 /package-lock.json
 /landingTemplate.js
 .env
-vue
+/vue
 build.bat
 bun.lockb
