@@ -24,7 +24,7 @@ app.use(swStats.getMiddleware({
 
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
-    req.setTimeout(60 * 1000); // timeout time
+    req.setTimeout(90 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
     req.socket.removeAllListeners('timeout'); 
     req.socket.once('timeout', () => {

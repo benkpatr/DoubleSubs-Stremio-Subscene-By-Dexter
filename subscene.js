@@ -1,4 +1,5 @@
 const tmdb = require('./tmdb');
+// const cinemeta = require('./cinemeta');
 const kitsu = require('./kitsu');
 const subscene = require('./subsceneAPI');
 const config = require('./config');
@@ -18,7 +19,7 @@ const searchCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 6
 
 async function subtitles(type, id, lang) {
     if (id.match(/tt[0-9]/)){
-		return await (TMDB(type, id, lang)) 
+		  return await (TMDB(type, id, lang)) 
 	}	if (id.match(/kitsu:[0-9]/)){
         return await (Kitsu(type, id, lang)) 
 		console.log(type, id, lang)

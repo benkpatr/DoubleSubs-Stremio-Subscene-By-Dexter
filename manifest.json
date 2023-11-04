@@ -21,6 +21,9 @@
     "types": [
             "subtitles"
     ],
+    "idPrefixes": [
+        "tt","kitsu"
+    ],
     "behaviorHints": {
         "configurable": true,
         "configurationRequired": true

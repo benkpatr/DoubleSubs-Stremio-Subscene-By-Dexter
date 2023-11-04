@@ -2,6 +2,7 @@ var env = process.env.NODE_ENV ? 'beamup':'local';
 
 var config = {
     BaseURL: "https://subscene.com",
+    CineV3: "https://v3-cinemeta.strem.io/meta",
     APIURL: 'https://api.themoviedb.org/3',
     kitsuURL: 'https://kitsu.io/api/edge',
     CacheControl :{

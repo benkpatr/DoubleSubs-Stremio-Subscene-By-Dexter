@@ -83,8 +83,8 @@ async function subtitle(url = String) {
 
 async function subtitle(url = String) {
   try {
-    console.log(url)
     if (!url.length) throw "Path Not Specified"
+    console.log(baseUrl + url)
     var res = await got.get(baseUrl+url,{retry:{limit:5}})
     if (!res||!res.body)throw "No Response Found"
     if (res.body.includes("To many request")) throw "Too Many Request";
