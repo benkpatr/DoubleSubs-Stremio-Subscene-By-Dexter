@@ -147,4 +147,13 @@ app.get('/sub.vtt', async (req, res,next) => {
 		//next(e);
 	}
 })
+
+app.get('/404', (req, res) => {
+	res.setHeader('Cache-Control', CacheControl.off);
+	res.end("404 Not Found!");
+})
+
+app.get('*', (req, res) => {
+	res.redirect(301, '/404');
+})
 module.exports = app
