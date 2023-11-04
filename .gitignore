@@ -9,3 +9,5 @@
 /landingTemplate.js
 .env
 bun.lockb
+build.bat
+deploy.sh
