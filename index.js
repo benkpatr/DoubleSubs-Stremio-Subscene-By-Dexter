@@ -155,6 +155,6 @@ app.get('/404', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-	res.redirect(301, '/404');
+	return res.redirect(301, '/404');
 })
 module.exports = app
