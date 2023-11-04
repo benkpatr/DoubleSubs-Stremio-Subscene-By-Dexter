@@ -149,8 +149,8 @@ app.get('/sub.vtt', async (req, res,next) => {
 })
 
 app.get('/404', (req, res) => {
-	res.status = 404;
 	res.setHeader('Cache-Control', CacheControl.off);
+	res.status(404);
 	res.end("404 Not Found!");
 })
 
