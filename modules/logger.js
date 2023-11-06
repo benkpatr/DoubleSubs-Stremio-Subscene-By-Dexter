@@ -16,12 +16,15 @@ const logger = {
         if(fs.statSync(file).size/1024/1024 >= 2) this.empty();
         fs.appendFileSync(file, message + '\n');
     },
+    emptyError(){
+        fs.writeFileSync(logsPath + '/error.logs', '');
+    },
     error(message, ...optionParams){
         if(!isString(message)) message = JSON.stringify(message, null, 2);
         if(optionParams) optionParams.forEach(param => { message += " " + (isString(param) ? param : JSON.stringify(param, null, 2)) })
         cons.log(message);
         const file = logsPath + '/error.logs';
-        if(fs.statSync(file).size/1024/1024 >= 5) this.empty();
+        if(fs.statSync(file).size/1024/1024 >= 5) this.emptyError();
         fs.appendFileSync(file, message + '\n');
     },
     read(){
