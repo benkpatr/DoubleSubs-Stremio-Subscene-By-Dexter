@@ -24,6 +24,7 @@ app.use(swStats.getMiddleware({
 
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
+	console.log('----------------------------------')
     req.setTimeout(90 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
     req.socket.removeAllListeners('timeout'); 
@@ -74,7 +75,6 @@ app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => 
 	
 	try{
 	res.setHeader('Content-Type', 'application/json');
-
 	console.log(req.params);
 	var { configuration, type, id } = req.params;
 

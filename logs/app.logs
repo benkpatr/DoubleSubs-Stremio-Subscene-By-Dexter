@@ -1,21 +1,43 @@
 Addon active on port 63555
 HTTP addon accessible at: http://127.0.0.1:63555/configure
-reqpath : /logs
-reqpath : /sub.vtt
-reqpath : /logs
-Caching Filetrue
+reqpath :  /logs
+reqpath :  /vietnamese/subtitles/movie/tt15671028/videoHash=40ec4f112e283e19&videoSize=1508751667&filename=No.Hard.Feelings.2023.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv.json
+----------------------------------
 {
-  "url": "https://subscene.com/subtitles/vietnamese-text/bUGyBvpf7iebBxtHJOuEvHxGqhHeD7k6UhWWBxi8bgCrmTAEXk9z8B3Pqvop19lXTjn1deY974LyknoUMm_rFiO4k4gLzlEjSJN5Bz4aiNYCPPBZnSi9MyJwyRnbWd0A0",
+  "configuration": "vietnamese",
+  "type": "movie",
+  "id": "tt15671028",
+  "extra": "videoHash=40ec4f112e283e19&videoSize=1508751667&filename=No.Hard.Feelings.2023.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv"
+}
+movie tt15671028 vietnamese
+No Hard Feelings
+meta {
+  "title": "No Hard Feelings",
+  "slug": "no-hard-feelings",
+  "year": "2023"
+}
+/subtitles/no-hard-feelings
+/subtitles/no-hard-feelings tt15671028 vietnamese 2023 null
+/subtitles/no-hard-feelings
+https://subscene.com/subtitles/no-hard-feelings
+no year scraping : 385
+subtitles matched lang :  12
+filtered subs  12
+cached true
+reqpath :  /sub.vtt
+Caching File true
+{
+  "url": "https://subscene.com/subtitles/vietnamese-text/6EH2y0mH894I3gCZGbytDYVlwsc-klDnjOREz9DhXbmo0k8UF8xkJa-td8SSHdXBKV5mbhGUAJ4mooUDp8GtUijgo-hGcRby2Rve68dXao6qKGzVju1B_0FTXYakOfDU0",
   "proxy": {
     "responseType": "buffer",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
   }
 }
-this.typenull
-this.datanull
-the requested file is an archiveapplication/x-zip-compressed
-zip file count:1
-matched file : [WTRANZ] Saw X (2023) - WEB.srt
+this.type null
+this.data null
+the requested file is an archive application/x-zip-compressed
+zip file count: 1
+matched file :  No Hard Feelings VN.srt
 {
   "success": true,
   "invalidEntries": [],
@@ -25,6 +47,3 @@ matched file : [WTRANZ] Saw X (2023) - WEB.srt
   "overlappingTimecodes": [],
   "formattedText": []
 }
-reqpath : /logs
-reqpath : /favicon.ico
-reqpath : /logs

@@ -10,15 +10,19 @@ const logger = {
     },
     log(message, ...optionParams){
         if(!isString(message)) message = JSON.stringify(message, null, 2);
-        if(optionParams.length) optionParams.forEach(param => { message += param })
+        if(optionParams) optionParams.forEach(param => { message += " " + (isString(param) ? param : JSON.stringify(param, null, 2)) })
         cons.log(message);
         const file = logsPath + '/app.logs';
         if(fs.statSync(file).size/1024/1024 >= 2) this.empty();
         fs.appendFileSync(file, message + '\n');
     },
-    error(message){
+    error(message, ...optionParams){
+        if(!isString(message)) message = JSON.stringify(message, null, 2);
+        if(optionParams) optionParams.forEach(param => { message += " " + (isString(param) ? param : JSON.stringify(param, null, 2)) })
         cons.log(message);
-        fs.appendFileSync(logsPath + '/error.logs', message + '\n');
+        const file = logsPath + '/error.logs';
+        if(fs.statSync(file).size/1024/1024 >= 5) this.empty();
+        fs.appendFileSync(file, message + '\n');
     },
     read(){
         const data = fs.readFileSync(logsPath + '/app.logs');
