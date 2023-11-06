@@ -27,7 +27,7 @@ async function search(query = String) {
     results = filterItOut(results)
     return results || null
   }catch(e) {
-    console.log(e);
+    console.error(e);
     throw e
   }
 }
@@ -118,6 +118,7 @@ async function subtitle(url = String) {
       //console.log("results",results["english"])
       return results || null
     } catch (e) {
+      console.error(e);
       throw e
     }
   }

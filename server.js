@@ -3,6 +3,10 @@ require('dotenv').config()
 const app = require('./index.js')
 const config = require('./config.js');
 
+const logger = require('./modules/logger');
+console = logger;
+console.empty();
+
 // create local server
 const server = app.listen((config.port), function () {
     console.log(`Addon active on port ${config.port}`);

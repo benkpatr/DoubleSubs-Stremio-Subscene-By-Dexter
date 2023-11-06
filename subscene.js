@@ -9,7 +9,6 @@ const count = 10;
 const NodeCache = require("node-cache");
 const sub2vtt = require('sub2vtt');
 
-
 const Cache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
 const MetaCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });
 const KitsuCache = new NodeCache({ stdTTL: (0.5 * 60 * 60), checkperiod: (1 * 60 * 60) });

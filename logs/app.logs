@@ -1,0 +1,30 @@
+Addon active on port 63555
+HTTP addon accessible at: http://127.0.0.1:63555/configure
+reqpath : /logs
+reqpath : /sub.vtt
+reqpath : /logs
+Caching Filetrue
+{
+  "url": "https://subscene.com/subtitles/vietnamese-text/bUGyBvpf7iebBxtHJOuEvHxGqhHeD7k6UhWWBxi8bgCrmTAEXk9z8B3Pqvop19lXTjn1deY974LyknoUMm_rFiO4k4gLzlEjSJN5Bz4aiNYCPPBZnSi9MyJwyRnbWd0A0",
+  "proxy": {
+    "responseType": "buffer",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  }
+}
+this.typenull
+this.datanull
+the requested file is an archiveapplication/x-zip-compressed
+zip file count:1
+matched file : [WTRANZ] Saw X (2023) - WEB.srt
+{
+  "success": true,
+  "invalidEntries": [],
+  "invalidTimecodes": [],
+  "invalidIndices": [],
+  "reversedTimecodes": [],
+  "overlappingTimecodes": [],
+  "formattedText": []
+}
+reqpath : /logs
+reqpath : /favicon.ico
+reqpath : /logs
