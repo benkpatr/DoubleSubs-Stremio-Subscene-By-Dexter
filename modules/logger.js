@@ -23,6 +23,10 @@ const logger = {
     read(){
         const data = fs.readFileSync(logsPath + '/app.logs');
         return data;
+    },
+    readError(){
+        const data = fs.readFileSync(logsPath + '/error.logs');
+        return data;
     }
 }
 

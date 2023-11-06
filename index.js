@@ -153,6 +153,11 @@ app.get('/logs', (req, res) => {
 	res.end(console.read());
 })
 
+app.get('/logs/error', (req, res) => {
+	res.setHeader('Cache-Control', CacheControl.off);
+	res.end(console.readError());
+})
+
 app.get('/404', (req, res) => {
 	res.setHeader('Cache-Control', CacheControl.off);
 	res.status(404);
