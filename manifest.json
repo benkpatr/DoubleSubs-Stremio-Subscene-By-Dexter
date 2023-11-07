@@ -1,8 +1,8 @@
 {
     "id": "community.subscene",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "name": "[REUP]Subscene by dexter21767",
-    "description": "[TEST][REUP]Addon for getting subtitles from Subscene, by Dexter21767. \n☕Buy Dexter a Coffee \n🔗https://www.buymeacoffee.com/dexter21767 \n🍭Buy me a Lollipop \n🔗https://www.buymeacoffee.com/vance",
+    "description": "[TEST]Addon for getting subtitles from Subscene, by Dexter21767. \n☕Buy Dexter a Coffee \n🔗https://www.buymeacoffee.com/dexter21767 \n🍭Buy me a Lollipop \n🔗https://www.buymeacoffee.com/vance",
     "logo": "https://i.imgur.com/vJ2wajD.png",
     "background": "https://github.com/Stremio/stremio-art/raw/main/originals/shino.png",
     "contactEmail": "ahmidiyasser@gmail.com",

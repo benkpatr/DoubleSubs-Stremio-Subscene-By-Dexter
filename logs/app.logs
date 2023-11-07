@@ -1,2 +1,56 @@
 Addon active on port 63555
 HTTP addon accessible at: http://127.0.0.1:63555/configure
+reqpath :  /vietnamese/subtitles/movie/tt13375076/videoHash=b13e7314e339df78&videoSize=996971019&filename=The.Popes.Exorcist.2023.720p.WEBRip.x264.AAC-%5BYTS.MX%5D.mp4.json
+----------------------------------
+{
+  "configuration": "vietnamese",
+  "type": "movie",
+  "id": "tt13375076",
+  "extra": "videoHash=b13e7314e339df78&videoSize=996971019&filename=The.Popes.Exorcist.2023.720p.WEBRip.x264.AAC-[YTS.MX].mp4"
+}
+movie tt13375076 vietnamese
+The Pope's Exorcist
+meta {
+  "title": "The Pope's Exorcist",
+  "slug": "the-popes-exorcist",
+  "year": "2023"
+}
+/subtitles/the-popes-exorcist
+/subtitles/the-popes-exorcist tt13375076 vietnamese 2023 null
+/subtitles/the-popes-exorcist
+https://subscene.com/subtitles/the-popes-exorcist
+no year scraping : 363
+subtitles matched lang :  2
+filtered subs  2
+cached true
+reqpath :  /sub.vtt
+----------------------------------
+reqpath :  /sub.vtt
+----------------------------------
+reqpath :  /vietnamese/subtitles/movie/tt10638522/videoHash=4eea6e5a50ec2435&videoSize=1506568461&filename=Talk.to.Me.2022.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv.json
+----------------------------------
+{
+  "configuration": "vietnamese",
+  "type": "movie",
+  "id": "tt10638522",
+  "extra": "videoHash=4eea6e5a50ec2435&videoSize=1506568461&filename=Talk.to.Me.2022.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv"
+}
+movie tt10638522 vietnamese
+Talk to Me
+meta {
+  "title": "Talk to Me",
+  "slug": "talk-to-me",
+  "year": "2023"
+}
+/subtitles/talk-to-me
+/subtitles/talk-to-me tt10638522 vietnamese 2023 null
+/subtitles/talk-to-me
+https://subscene.com/subtitles/talk-to-me
+no year scraping : 23
+https://subscene.com/subtitles/talk-to-me-2023
+with year scraping : 256
+subtitles matched lang :  9
+filtered subs  9
+cached true
+reqpath :  /sub.vtt
+----------------------------------

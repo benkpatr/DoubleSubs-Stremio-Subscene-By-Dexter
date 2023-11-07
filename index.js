@@ -6,6 +6,7 @@ const { subtitles, downloadUrl } = require('./subscene');
 const manifest = require("./manifest.json");
 const {CacheControl} = require('./config');
 const languages = require('./languages.json');
+const external_domains = require('./domain-list');
 
 const swStats = require('swagger-stats')
 
@@ -71,8 +72,20 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.end();
 });
 
+
+let start_server = 0;
+app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+	if(start_server > external_domains.length) start_server = 0;
+	if(start_server) {
+		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+		console.log("Redirect 301: " + redirect_url);
+		return res.redirect(301, redirect_url);
+	}
+	start_server++;
+	next();
+})
+
 app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
-	
 	try{
 	res.setHeader('Content-Type', 'application/json');
 	console.log(req.params);
@@ -114,6 +127,17 @@ app.get('/:subtitles/:name/:language/:id/:episode?\.:extension?', limiter, (req,
 	}
 });
 */
+
+app.get('/sub.vtt', (req, res, next) => {
+	if(start_server > external_domains.length) start_server = 0;
+	if(start_server) {
+		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+		console.log("Redirect 301: " + redirect_url);
+		return res.redirect(301, redirect_url);
+	}
+	start_server++;
+	next();
+})
 
 const sub2vtt = require('sub2vtt');
 app.get('/sub.vtt', async (req, res,next) => {

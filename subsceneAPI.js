@@ -119,6 +119,7 @@ async function subtitle(url = String) {
       return results || null
     } catch (e) {
       console.error(e);
+      
       throw e
     }
   }

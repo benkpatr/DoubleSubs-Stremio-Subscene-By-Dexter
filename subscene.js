@@ -77,7 +77,7 @@ async function TMDB(type, id, lang) {
       let moviePath = `/subtitles/${meta.slug}`;
       console.log(moviePath);
 
-      return getsubtitles(moviePath, id, lang, null, meta.year)
+      return getsubtitles(moviePath, id , lang, null, meta.year)
     }
     else if (type == "series") {
       let season = parseInt(id.split(':')[1]);
