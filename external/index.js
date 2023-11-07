@@ -2,11 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const path = require('path');
-const { subtitles, downloadUrl } = require('./subscene');
-const manifest = require("./manifest.json");
-const {CacheControl} = require('./config');
-const languages = require('./languages.json');
-const external_domains = require('./domain-list');
+const { subtitles, downloadUrl } = require('../subscene');
+const manifest = require("../manifest.json");
+const {CacheControl} = require('../config');
+const languages = require('../languages.json');
 
 const swStats = require('swagger-stats')
 
@@ -39,51 +38,7 @@ app.use((req, res, next) => {
 
 app.set('trust proxy', true)
 
-app.use('/configure', express.static(path.join(__dirname, 'vue', 'dist')));
-app.use('/assets', express.static(path.join(__dirname, 'vue', 'dist', 'assets')));
-
 app.use(cors())
-
-
-app.get('/', (_, res) => {
-	res.redirect('/configure')
-	res.end();
-});
-
-app.get('/:configuration?/configure', (req, res) => {
-	res.setHeader('Cache-Control', CacheControl.oneDay);
-	res.setHeader('content-type', 'text/html');
-	res.sendFile(path.join(__dirname, 'vue', 'dist', 'index.html'));
-});
-
-app.get('/manifest.json', (_, res) => {
-	res.setHeader('Cache-Control', CacheControl.oneDay);
-	res.setHeader('Content-Type', 'application/json');
-	manifest.behaviorHints.configurationRequired = true;
-	res.send(manifest);
-	res.end();
-});
-
-app.get('/:configuration?/manifest.json', (_, res) => {
-	res.setHeader('Cache-Control', CacheControl.oneDay);
-	res.setHeader('Content-Type', 'application/json');
-	manifest.behaviorHints.configurationRequired = false;
-	res.send(manifest);
-	res.end();
-});
-
-
-let start_server = 0;
-app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
-	if(start_server > external_domains.length) start_server = 0;
-	if(start_server) {
-		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-		console.log("Redirect 301: " + redirect_url);
-		return res.redirect(301, redirect_url);
-	}
-	start_server++;
-	next();
-})
 
 app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
 	try{
@@ -107,37 +62,6 @@ app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => 
 	}catch(e){
 		console.error(e);
 	}
-})
-
-/*
-app.get('/:subtitles/:name/:language/:id/:episode?\.:extension?', limiter, (req, res) => {
-	console.log(req.params);
-	let { subtitles, name, language, id, episode, extension } = req.params;
-	try {
-		let path = `/${subtitles}/${name}/${language}/${id}`
-		res.setHeader('Cache-Control', 'max-age=86400, public');
-		res.setHeader('responseEncoding', 'null');
-		res.setHeader('Content-Type', 'arraybuffer/json');
-		console.log(path);
-		proxyStream(path, episode).then(response => {
-			res.send(response);
-		}).catch(err => { console.log(err) })
-	} catch (err) {
-		console.log(err)
-		return res.send("Couldn't get the subtitle.")
-	}
-});
-*/
-
-app.get('/sub.vtt', (req, res, next) => {
-	if(start_server > external_domains.length) start_server = 0;
-	if(start_server) {
-		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-		console.log("Redirect 301: " + redirect_url);
-		return res.redirect(301, redirect_url);
-	}
-	start_server++;
-	next();
 })
 
 const sub2vtt = require('sub2vtt');
@@ -165,8 +89,7 @@ app.get('/sub.vtt', async (req, res,next) => {
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
 		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');
-		res.send(file.subtitle);
-		res.end;
+		res.end(file.subtitle);
 	} catch (e) {
 		console.error(e);
 		//next(e);

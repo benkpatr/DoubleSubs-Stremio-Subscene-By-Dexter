@@ -24,7 +24,7 @@ async function getMeta(type, id) {
     if (type == "movie") {
         let url = `${BaseURL}/movie/${id}?language=en-US&api_key=${process.env.API_KEY}`
         let res = await request(url);
-        console.log(res.data.title)
+        //console.log(res.data.title)
         let title = res.data.title; //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
         let year = res.data.release_date.split("-")[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });

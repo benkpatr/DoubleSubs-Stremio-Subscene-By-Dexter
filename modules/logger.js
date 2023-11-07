@@ -20,8 +20,8 @@ const logger = {
         fs.writeFileSync(logsPath + '/error.logs', '');
     },
     error(message, ...optionParams){
-        if(!isString(message)) message = JSON.stringify(message, null, 2);
-        if(optionParams) optionParams.forEach(param => { message += " " + (isString(param) ? param : JSON.stringify(param, null, 2)) })
+        if(message && !isString(message)) message = JSON.stringify(message, null, 2);
+        if(optionParams?.length) optionParams.forEach(param => { message += " " + (isString(param) ? param : JSON.stringify(param, null, 2)) })
         cons.log(message);
         const file = logsPath + '/error.logs';
         if(fs.statSync(file).size/1024/1024 >= 5) this.emptyError();

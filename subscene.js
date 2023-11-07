@@ -62,7 +62,7 @@ async function Kitsu(type, id, lang) {
 }
 
 async function TMDB(type, id, lang) {
-    console.log(type, id, lang);
+    //console.log(type, id, lang);
     let metaid = id.split(':')[0];
     let meta = MetaCache.get(metaid);
     if (!meta) {
@@ -75,7 +75,7 @@ async function TMDB(type, id, lang) {
     console.log("meta",meta)
     if (type == "movie") {
       let moviePath = `/subtitles/${meta.slug}`;
-      console.log(moviePath);
+      //console.log(moviePath);
 
       return getsubtitles(moviePath, id , lang, null, meta.year)
     }
@@ -126,23 +126,35 @@ async function getsubtitles(moviePath, id, lang, episode, year) {
     return cached
   } else {
     let subs = [];
-    console.log(moviePath)
-
     var subtitles = subsceneCache.get(moviePath);
     if (!subtitles) {
-      let subs1 = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
-      console.log("no year scraping :", subs1.length)
-      if (subs1[0].year !== year && !episode) { // if a movie and year isnt matched with the one in imdb
-        await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
-        let subs2 = await subscene.getSubtitles(moviePath + "-" + year).catch(error => { console.error(error) }) // moviepath with year
-        console.log("with year scraping :", subs2.length)
-        subs1 = subs1.concat(subs2);
-      }
-      subtitles = subscene.sortByLang(subs1)
-      if (subtitles) {
+      let subs = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
+      console.log("no year scraping :", subs.length);
+      if(subs?.length) {
+        subtitles = subscene.sortByLang(subs);
         subsceneCache.set(moviePath, subtitles);
+
+        if(subs[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
+          if (subs[0].year !== year && !episode) { // if a movie and year isnt matched with the one in imdb
+            subtitles = subsceneCache.get(`${moviePath}-${year}`);
+            if(!subtitles) {
+              await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
+              const subs2 = await subscene.getSubtitles(moviePath + "-" + year).catch(error => { console.error(error) }) // moviepath with year
+              console.log("with year scraping :", subs2.length);
+              if(subs2?.length) {
+                subtitles = subscene.sortByLang(subs2);
+                subsceneCache.set(`${moviePath}-${year}`, subtitles);
+              }
+            }
+          }
+        }
+      }
+      if(!subtitles) {
+        console.log("No suitable movies were found!");
+        return [];
       }
     }
+
     //console.log('subtitles', Object.keys(subtitles).length)
     //console.log('subtitles', moviePath)
     if (subtitles[lang]) {
@@ -155,16 +167,16 @@ async function getsubtitles(moviePath, id, lang, episode, year) {
         episodeText = 'E' + episodeText
         console.log('episode', episodeText)
         subtitles.forEach(element => {
-          if (element.title.match(/S\d\d\w\d/gi)) {
+          if (element.title.match(/S\d?\d.*E\d?\d/gi)) {
             
             var reg = new RegExp(episodeText.toLowerCase(), 'gi');
             if (reg.test(element.title.toLowerCase())) {
-              console.log(element.title);
+                console.log(element.title);
                 sub.push(element);
             }
           } else {
-            console.log(element.title);
-            sub.push(element)
+            // console.log(element.title);
+            // sub.push(element)
           }
         })
         
@@ -175,6 +187,11 @@ async function getsubtitles(moviePath, id, lang, episode, year) {
         subtitles = sub;
       }
       console.log("filtered subs ", subtitles.length)
+
+      //------------------
+      // filter by extraname
+      //-----------------
+
       for (let i = 0; i < (subtitles.length); i++) {
         let value = subtitles[i];
         let simpleTitle = subtitles[i].title;

@@ -7,6 +7,8 @@ var config = {
     kitsuURL: 'https://kitsu.io/api/edge',
     CacheControl :{
         oneDay: 'max-age=86400, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
+        halfDay: 'max-age=43200, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
+        fourHour: 'max-age=14400, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
         oneHour: 'max-age=3600, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
         off: 'no-cache, no-store, must-revalidate'
     }

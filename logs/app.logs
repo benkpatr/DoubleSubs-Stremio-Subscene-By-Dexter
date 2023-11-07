@@ -1,47 +1,356 @@
+NODE_ENV = external
 Addon active on port 63555
-HTTP addon accessible at: http://127.0.0.1:63555/configure
-reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
+HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
+reqpath :  /
+----------------------------------
+reqpath :  /404
+----------------------------------
+reqpath :  /favicon.ico
+----------------------------------
+reqpath :  /arabic/subtitles/series/tt12343534%3A2%3A6/videoHash=7638c3e5138c7b7d&videoSize=1462359158&filename=%5BSubsPlease%5D%20Jujutsu%20Kaisen%20-%2030%20(1080p)%20%5B3DAACE2D%5D.mkv.json
 ----------------------------------
 {
   "configuration": "arabic",
   "type": "series",
-  "id": "tt0306414:5:3",
-  "extra": "videoHash=cb86178974df3dad&videoSize=2199825969&filename=The Wire (2002) - S05E03 - Not For Attribution (1080p BluRay x265 Silence).mkv"
+  "id": "tt12343534:2:6",
+  "extra": "videoHash=7638c3e5138c7b7d&videoSize=1462359158&filename=[SubsPlease] Jujutsu Kaisen - 30 (1080p) [3DAACE2D].mkv"
 }
-series tt0306414:5:3 arabic
+series tt12343534:2:6 arabic
 meta {
-  "title": "The Wire",
-  "slug": "the-wire"
+  "title": "Jujutsu Kaisen",
+  "slug": "jujutsu-kaisen"
 }
-/subtitles/the-wire-fifth-season tt0306414_season_5 arabic undefined 3
-/subtitles/the-wire-fifth-season
-https://subscene.com/subtitles/the-wire-fifth-season
-no year scraping : 101
-subtitles matched lang :  18
-episode E03
-The.Wire.S05.WS.BDRip.X264-REWARD 
-The.Wire.S05.WEBRip H264-TARS  
-The.Wire.S05.WEB-DL.DD5.1.H.264.NTb 
-The.Wire.S05.720p.BluRay.x264-REWARD-GECKOS 
-The.Wire.S05.720p.BluRay.X264-MIXED 
-The.Wire.S05.1080p.BluRay.x265-RARBG 
-The.Wire.S05.1080p.BluRay.x264-ROVERS[rartv] 
-The.Wire.S05.1080p.BluRay.x264-ROVERS 
-The.Wire.S05 DVD  
-The.Wire.S05 
-The Wire S05 REMASTERED HDTV x264-BATV 
-The Wire S05 HDTV XviD-AFG 
-The Wire S05 BluRay 
-The Wire S05 720p HDTV x264-BATV 
-The Wire S05 480p HDTV x264-mSD 
- The.Wire.S05.PDTV.XviD 
-The Wire - Fifth Season   
-The Wire - Fifth Season   
+/subtitles/jujutsu-kaisen-second-season tt12343534_season_2 arabic undefined 6
+/subtitles/jujutsu-kaisen-second-season
+https://subscene.com/subtitles/jujutsu-kaisen-second-season
+no year scraping : 1231
+subtitles matched lang :  250
+episode E06
+ترجمة الحلقات 1 الى 12 [Crunchyroll] 
+ترجمة الحلقات 1 ~ 12 [StormFS] 
+ترجمة الحلقات 1 ~ 12 [Crunchyroll] 
+ترجمة الحلقات 1 ~ 12 [Asahi] 
+Jujutsu Kaisen S2E15 
+Jujutsu Kaisen S2E14 
+Jujutsu Kaisen S2E13 
+Jujutsu Kaisen 2nd Season [12 ~ 01][Crunchyroll] 
+Jujutsu Kaisen 2nd Season [1 ~ 12][StormFS] 
+Jujutsu Kaisen 2nd Season [1 ~ 12][Crunchyroll] 
+Jujutsu Kaisen 2nd Season [1 ~ 12][Asahi] 
+Jujutsu Kaisen 2nd Season - 15v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 15 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 15 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 15 [Asahi] 
+Jujutsu Kaisen 2nd Season - 14v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 14 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 14 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 14 [Asahi] 
+Jujutsu Kaisen 2nd Season - 13v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 13 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 13 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 13 [Asahi] 
+Jujutsu Kaisen 2nd Season - 12v4 [StormFS] 
+Jujutsu Kaisen 2nd Season - 12 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 12 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 12 [Asahi] 
+Jujutsu Kaisen 2nd Season - 11v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 11 [Crunchyroll]  
+Jujutsu Kaisen 2nd Season - 11 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 11 [Asahi] 
+Jujutsu Kaisen 2nd Season - 10v3 [StormFS]  
+Jujutsu Kaisen 2nd Season - 10 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 10 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 10 [Asahi]  
+Jujutsu Kaisen 2nd Season - 09v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 09 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 09 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 09 [Asahi] 
+Jujutsu Kaisen 2nd Season - 08v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 08 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 08 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 08 [Asahi] 
+Jujutsu Kaisen 2nd Season - 07v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 07 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 07 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 07 [Asahi] 
+Jujutsu Kaisen 2nd Season - 06v2 [StormFS] 
+Jujutsu Kaisen 2nd Season - 06 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 06 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 06 [Asahi] 
+Jujutsu Kaisen 2nd Season - 05v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 05.5 [SP 2][Asahi] 
+Jujutsu Kaisen 2nd Season - 05.1 [SP 1][Asahi] 
+Jujutsu Kaisen 2nd Season - 05 to 01 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 05 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 05 [Asahi] 
+Jujutsu Kaisen 2nd Season - 04v2 [StormFS] 
+Jujutsu Kaisen 2nd Season - 04 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 04 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 04 [Asahi] 
+Jujutsu Kaisen 2nd Season - 03v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 03 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 03 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 03 [Asahi] 
+Jujutsu Kaisen 2nd Season - 02v2 [StormFS] 
+Jujutsu Kaisen 2nd Season - 02 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 02 [Asahi] 
+Jujutsu Kaisen 2nd Season - 01v3 [StormFS] 
+Jujutsu Kaisen 2nd Season - 01 ~ 05 [StormFS] 
+Jujutsu Kaisen 2nd Season - 01 [Crunchyroll] 
+Jujutsu Kaisen 2nd Season - 01 [Asahi] 
+Jujutsu Kaisen [36 ~ 25][Crunchyroll] 
+Jujutsu Kaisen [25 ~ 36][StormFS] 
+Jujutsu Kaisen [25 ~ 36][Crunchyroll] 
+Jujutsu Kaisen [25 ~ 36][Asahi] 
+Jujutsu Kaisen - 39v3 [S2 - 15v3][StormFS] 
+Jujutsu Kaisen - 39 [S2 - 15][Crunchyroll] 
+Jujutsu Kaisen - 39 [S2 - 15][Asahi] 
+Jujutsu Kaisen - 39 [Crunchyroll] 
+Jujutsu Kaisen - 38v3 [S2 - 14v3][StormFS] 
+Jujutsu Kaisen - 38 [S2 - 14][Crunchyroll] 
+Jujutsu Kaisen - 38 [S2 - 14][Asahi] 
+Jujutsu Kaisen - 38 [Crunchyroll] 
+Jujutsu Kaisen - 37v3 [S2 - 13v3][StormFS] 
+Jujutsu Kaisen - 37 [S2 - 13][Crunchyroll] 
+Jujutsu Kaisen - 37 [S2 - 13][Asahi] 
+Jujutsu Kaisen - 37 [Crunchyroll] 
+Jujutsu Kaisen - 36v4 [S2 - 12v4][StormFS] 
+Jujutsu Kaisen - 36 [S2 - 12][Crunchyroll] 
+Jujutsu Kaisen - 36 [S2 - 12][Asahi] 
+Jujutsu Kaisen - 36 [Crunchyroll] 
+Jujutsu Kaisen - 35v3 [S2 - 11v3][StormFS] 
+Jujutsu Kaisen - 35 [S2 - 11][Crunchyroll] 
+Jujutsu Kaisen - 35 [S2 - 11][Asahi] 
+Jujutsu Kaisen - 35 [Crunchyroll]  
+Jujutsu Kaisen - 34v3 [S2 - 10v3][StormFS] 
+Jujutsu Kaisen - 34 [S2 - 10][Crunchyroll] 
+Jujutsu Kaisen - 34 [S2 - 10][Asahi] 
+Jujutsu Kaisen - 34 [Crunchyroll] 
+Jujutsu Kaisen - 33v3 [S2 - 09v3][StormFS] 
+Jujutsu Kaisen - 33 [S2 - 09][Crunchyroll] 
+Jujutsu Kaisen - 33 [S2 - 09][Asahi] 
+Jujutsu Kaisen - 33 [Crunchyroll] 
+Jujutsu Kaisen - 32v3 [S2 - 08v3][StormFS] 
+Jujutsu Kaisen - 32 [S2 - 08][Crunchyroll] 
+Jujutsu Kaisen - 32 [S2 - 08][Asahi] 
+Jujutsu Kaisen - 32 [Crunchyroll] 
+Jujutsu Kaisen - 31v3 [S2 - 07v3][StormFS] 
+Jujutsu Kaisen - 31 [S2 - 07][Crunchyroll] 
+Jujutsu Kaisen - 31 [S2 - 07][Asahi] 
+Jujutsu Kaisen - 31 [Crunchyroll] 
+Jujutsu Kaisen - 30v2 [S2 - 06v2][StormFS] 
+Jujutsu Kaisen - 30 [S2 - 06][Crunchyroll] 
+Jujutsu Kaisen - 30 [S2 - 06][Asahi] 
+Jujutsu Kaisen - 30 [Crunchyroll] 
+Jujutsu Kaisen - 29.5 [S2 - 05.5][SP 2][Asahi] 
+Jujutsu Kaisen - 29.1 [S2 - 05.1][SP 1][Asahi] 
+Jujutsu Kaisen - 29 to 25 [Crunchyroll] 
+Jujutsu Kaisen - 29 [S2 - 05][Crunchyroll] 
+Jujutsu Kaisen - 29 [S2 - 05][Asahi] 
+Jujutsu Kaisen - 28 [S2 - 04][Crunchyroll] 
+Jujutsu Kaisen - 28 [S2 - 04][Asahi] 
+Jujutsu Kaisen - 28 [Crunchyroll] 
+Jujutsu Kaisen - 27 [S2 - 03][Crunchyroll] 
+Jujutsu Kaisen - 27 [S2 - 03][Asahi] 
+Jujutsu Kaisen - 26 [S2 - 02][Crunchyroll] 
+Jujutsu Kaisen - 26 [S2 - 02][Asahi] 
+Jujutsu Kaisen - 25 ~ 29 [S2 - 01 ~ 05][StormFS] 
+Jujutsu Kaisen - 25 [S2 - 01][Crunchyroll] 
+Jujutsu Kaisen - 25 [S2 - 01][Asahi] 
+[StormFS] Jujutsu Kaisen 2nd Season [1 ~ 12] 
+[StormFS] Jujutsu Kaisen 2nd Season - 15v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 14v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 13v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 12v4 
+[StormFS] Jujutsu Kaisen 2nd Season - 11v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 10v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 09v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 08v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 07v3 
+[StormFS] Jujutsu Kaisen 2nd Season - 06v2 
+[StormFS] Jujutsu Kaisen 2nd Season - 01 ~ 05 
+[StormFS] Jujutsu Kaisen [25 ~ 36] 
+[StormFS] Jujutsu Kaisen - 39v3 [S2 - 15v3] 
+[StormFS] Jujutsu Kaisen - 38v3 [S2 - 14v3] 
+[StormFS] Jujutsu Kaisen - 37v3 [S2 - 13v3] 
+[StormFS] Jujutsu Kaisen - 36v4 [S2 - 12v4 
+[StormFS] Jujutsu Kaisen - 35v3 [S2 - 11v3] 
+[StormFS] Jujutsu Kaisen - 34v3 [S2 - 10v3] 
+[StormFS] Jujutsu Kaisen - 33v3 [S2 - 09v3] 
+[StormFS] Jujutsu Kaisen - 32v3 [S2 - 08v3] 
+[StormFS] Jujutsu Kaisen - 31v3 [S2 - 07v3] 
+[StormFS] Jujutsu Kaisen - 30v2 [S2 - 06v2] 
+[StormFS] Jujutsu Kaisen - 25 ~ 29 [S2 - 01 ~ 05] 
+[ghani] Jujutsu Kaisen 2nd Season arabic - 01 
+[Crunchyroll] Jujutsu Kaisen 2nd Season [12 ~ 01] 
+[Crunchyroll] Jujutsu Kaisen 2nd Season [1 ~ 12] 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 15 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 15 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 14 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 14 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 13 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 13 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 12 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 12 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 11 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 11 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 10 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 10 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 09 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 09 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 08 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 08 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 07 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 07 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 06 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 06 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 05 to 01 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 05 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 04 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 04 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 03 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 03 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 02 
+[Crunchyroll] Jujutsu Kaisen 2nd Season - 01 
+[Crunchyroll] Jujutsu Kaisen [36 ~ 25] 
+[Crunchyroll] Jujutsu Kaisen [25 ~ 36] 
+[Crunchyroll] Jujutsu Kaisen - 39 [S2 - 15] 
+[Crunchyroll] Jujutsu Kaisen - 39 
+[Crunchyroll] Jujutsu Kaisen - 38 [S2 - 14] 
+[Crunchyroll] Jujutsu Kaisen - 38 
+[Crunchyroll] Jujutsu Kaisen - 37 [S2 - 13] 
+[Crunchyroll] Jujutsu Kaisen - 37 
+[Crunchyroll] Jujutsu Kaisen - 36 [S2 - 12] 
+[Crunchyroll] Jujutsu Kaisen - 36 
+[Crunchyroll] Jujutsu Kaisen - 35 [S2 - 11] 
+[Crunchyroll] Jujutsu Kaisen - 34 [S2 - 10] 
+[Crunchyroll] Jujutsu Kaisen - 33 [S2 - 09] 
+[Crunchyroll] Jujutsu Kaisen - 33 
+[Crunchyroll] Jujutsu Kaisen - 32 [S2 - 08] 
+[Crunchyroll] Jujutsu Kaisen - 32 
+[Crunchyroll] Jujutsu Kaisen - 31 [S2 - 07] 
+[Crunchyroll] Jujutsu Kaisen - 31 
+[Crunchyroll] Jujutsu Kaisen - 30 [S2 - 06] 
+[Crunchyroll] Jujutsu Kaisen - 30 
+[Crunchyroll] Jujutsu Kaisen - 29 to 25 
+[Crunchyroll] Jujutsu Kaisen - 29 [S2 - 05] 
+[Crunchyroll] Jujutsu Kaisen - 28 [S2 - 04] 
+[Crunchyroll] Jujutsu Kaisen - 27 [S2 - 03] 
+[Crunchyroll] Jujutsu Kaisen - 26 [S2 - 02] 
+[Crunchyroll] Jujutsu Kaisen - 25 [S2 - 01] 
+[Crunchyroll]  Jujutsu Kaisen - 35 
+[Asahi] Jujutsu Kaisen 2nd Season [1 ~ 12] 
+[Asahi] Jujutsu Kaisen 2nd Season - 15 
+[Asahi] Jujutsu Kaisen 2nd Season - 14 
+[Asahi] Jujutsu Kaisen 2nd Season - 13 
+[Asahi] Jujutsu Kaisen 2nd Season - 12 
+[Asahi] Jujutsu Kaisen 2nd Season - 11 
+[Asahi] Jujutsu Kaisen 2nd Season - 10 
+[Asahi] Jujutsu Kaisen 2nd Season - 09 
+[Asahi] Jujutsu Kaisen 2nd Season - 08 
+[Asahi] Jujutsu Kaisen 2nd Season - 07 
+[Asahi] Jujutsu Kaisen 2nd Season - 06 
+[Asahi] Jujutsu Kaisen 2nd Season - 05.5 [SP 2] 
+[Asahi] Jujutsu Kaisen 2nd Season - 05.1 [SP 1] 
+[Asahi] Jujutsu Kaisen 2nd Season - 05 
+[Asahi] Jujutsu Kaisen 2nd Season - 04 
+[Asahi] Jujutsu Kaisen 2nd Season - 03 
+[Asahi] Jujutsu Kaisen 2nd Season - 02 
+[Asahi] Jujutsu Kaisen 2nd Season - 01 
+[Asahi] Jujutsu Kaisen [25 ~ 36] 
+[Asahi] Jujutsu Kaisen - 39 [S2 - 15] 
+[Asahi] Jujutsu Kaisen - 38 [S2 - 14] 
+[Asahi] Jujutsu Kaisen - 37 [S2 - 13] 
+[Asahi] Jujutsu Kaisen - 36 [S2 - 12] 
+[Asahi] Jujutsu Kaisen - 35 [S2 - 11] 
+[Asahi] Jujutsu Kaisen - 34 [S2 - 10] 
+[Asahi] Jujutsu Kaisen - 33 [S2 - 09] 
+[Asahi] Jujutsu Kaisen - 32 [S2 - 08] 
+[Asahi] Jujutsu Kaisen - 31 [S2 - 07] 
+[Asahi] Jujutsu Kaisen - 30 [S2 - 06] 
+[Asahi] Jujutsu Kaisen - 29.5 [S2 - 05.5][SP 2] 
+[Asahi] Jujutsu Kaisen - 29.1 [S2 - 05.1][SP 1] 
+[Asahi] Jujutsu Kaisen - 29 [S2 - 05] 
+[Asahi] Jujutsu Kaisen - 28 [S2 - 04] 
+[Asahi] Jujutsu Kaisen - 27 [S2 - 03] 
+[Asahi] Jujutsu Kaisen - 26 [S2 - 02] 
+[Asahi] Jujutsu Kaisen - 25 [S2 - 01] 
+ [Crunchyroll] Jujutsu Kaisen - 34 
+filtered subs  250
+cached true
+reqpath :  /indonesian/subtitles/series/tt13616990%3A1%3A9/videoHash=78b3bb266d97b189&videoSize=415822015&filename=%5BJudas%5D%20Chainsaw%20Man%20-%20S01E09.mkv.json
+----------------------------------
+{
+  "configuration": "indonesian",
+  "type": "series",
+  "id": "tt13616990:1:9",
+  "extra": "videoHash=78b3bb266d97b189&videoSize=415822015&filename=[Judas] Chainsaw Man - S01E09.mkv"
+}
+series tt13616990:1:9 indonesian
+meta {
+  "title": "Chainsaw Man",
+  "slug": "chainsaw-man"
+}
+/subtitles/chainsaw-man tt13616990_season_1 indonesian undefined 9
+/subtitles/chainsaw-man
+https://subscene.com/subtitles/chainsaw-man
+no year scraping : 1402
+subtitles matched lang :  48
+episode E09
+Chainsaw.Man.S01E09.FROM.KYOTO.AMZN.WEB-DL 
+Chainsaw.Man.S01E09.AMZN.id 
+Chainsaw Man Season 1 Complete BluRay 1-12 episode 
+Chainsaw Man -S1 - E12 [1080p HEVC] 
+Chainsaw Man -S1 - E11 [1080p HEVC] 
+Chainsaw Man -S1 - E10 [1080p HEVC] 
+Chainsaw Man -S1 - E09 [1080p HEVC] 
+Chainsaw Man -S1 - E08 [1080p HEVC] 
+Chainsaw Man -S1 - E07 [1080p HEVC] 
+Chainsaw Man -S1 - E06 [1080p HEVC] 
+Chainsaw Man -S1 - E05 [1080p HEVC] 
+Chainsaw Man -S1 - E04 [1080p HEVC] 
+Chainsaw Man -S1 - E03 [1080p HEVC] 
+Chainsaw Man -S1 - E02 [1080p HEVC] 
+Chainsaw Man -S1 - E01 [1080p HEVC] 
+Chainsaw Man S01 COMPLETE AMZN.WEB-DL.WEBRIP 
+Chainsaw Man Episode 4 Sub Indo 
+Chainsaw Man Complete 
 filtered subs  18
 cached true
-reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
+reqpath :  /sub.vtt
 ----------------------------------
-Redirect 301: https://subscene.onrender.com/arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
-reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
+Unexpected Error
+{
+  "proxy": {
+    "responseType": "buffer",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  },
+  "episode": "E09"
+}
+this.type null
+this.data null
+reqpath :  /sub.vtt
 ----------------------------------
-Redirect 301: https://subscene-ip8j.onrender.com/arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
+Caching File true
+{
+  "url": "https://subscene.com/subtitles/indonesian-text/TsrmtCE0cTISepaaCquOoQoS_-HyvfZNO8Y4ozKdYznK2zYH297dflSZ3RHE8WOxRiQDyqNLUb3gDbj3Eh3CuocFvH4AHdXPGzaBVP3a6W4NxYN30tNaCInDoPFwjIFS0",
+  "proxy": {
+    "responseType": "buffer",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  },
+  "episode": "E09"
+}
+this.type null
+this.data null
+the requested file is an archive application/x-zip-compressed
+zip file count: 1
+matched file :  Chainsaw Man S01E09 - From Kyoto (id).srt
+{
+  "success": true,
+  "invalidEntries": [],
+  "invalidTimecodes": [],
+  "invalidIndices": [],
+  "reversedTimecodes": [],
+  "overlappingTimecodes": [],
+  "formattedText": []
+}
