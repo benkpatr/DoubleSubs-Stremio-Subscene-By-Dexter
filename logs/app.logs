@@ -1,56 +1,47 @@
 Addon active on port 63555
 HTTP addon accessible at: http://127.0.0.1:63555/configure
-reqpath :  /vietnamese/subtitles/movie/tt13375076/videoHash=b13e7314e339df78&videoSize=996971019&filename=The.Popes.Exorcist.2023.720p.WEBRip.x264.AAC-%5BYTS.MX%5D.mp4.json
+reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
 ----------------------------------
 {
-  "configuration": "vietnamese",
-  "type": "movie",
-  "id": "tt13375076",
-  "extra": "videoHash=b13e7314e339df78&videoSize=996971019&filename=The.Popes.Exorcist.2023.720p.WEBRip.x264.AAC-[YTS.MX].mp4"
+  "configuration": "arabic",
+  "type": "series",
+  "id": "tt0306414:5:3",
+  "extra": "videoHash=cb86178974df3dad&videoSize=2199825969&filename=The Wire (2002) - S05E03 - Not For Attribution (1080p BluRay x265 Silence).mkv"
 }
-movie tt13375076 vietnamese
-The Pope's Exorcist
+series tt0306414:5:3 arabic
 meta {
-  "title": "The Pope's Exorcist",
-  "slug": "the-popes-exorcist",
-  "year": "2023"
+  "title": "The Wire",
+  "slug": "the-wire"
 }
-/subtitles/the-popes-exorcist
-/subtitles/the-popes-exorcist tt13375076 vietnamese 2023 null
-/subtitles/the-popes-exorcist
-https://subscene.com/subtitles/the-popes-exorcist
-no year scraping : 363
-subtitles matched lang :  2
-filtered subs  2
+/subtitles/the-wire-fifth-season tt0306414_season_5 arabic undefined 3
+/subtitles/the-wire-fifth-season
+https://subscene.com/subtitles/the-wire-fifth-season
+no year scraping : 101
+subtitles matched lang :  18
+episode E03
+The.Wire.S05.WS.BDRip.X264-REWARD 
+The.Wire.S05.WEBRip H264-TARS  
+The.Wire.S05.WEB-DL.DD5.1.H.264.NTb 
+The.Wire.S05.720p.BluRay.x264-REWARD-GECKOS 
+The.Wire.S05.720p.BluRay.X264-MIXED 
+The.Wire.S05.1080p.BluRay.x265-RARBG 
+The.Wire.S05.1080p.BluRay.x264-ROVERS[rartv] 
+The.Wire.S05.1080p.BluRay.x264-ROVERS 
+The.Wire.S05 DVD  
+The.Wire.S05 
+The Wire S05 REMASTERED HDTV x264-BATV 
+The Wire S05 HDTV XviD-AFG 
+The Wire S05 BluRay 
+The Wire S05 720p HDTV x264-BATV 
+The Wire S05 480p HDTV x264-mSD 
+ The.Wire.S05.PDTV.XviD 
+The Wire - Fifth Season   
+The Wire - Fifth Season   
+filtered subs  18
 cached true
-reqpath :  /sub.vtt
+reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
 ----------------------------------
-reqpath :  /sub.vtt
+Redirect 301: https://subscene.onrender.com/arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
+reqpath :  /arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
 ----------------------------------
-reqpath :  /vietnamese/subtitles/movie/tt10638522/videoHash=4eea6e5a50ec2435&videoSize=1506568461&filename=Talk.to.Me.2022.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv.json
-----------------------------------
-{
-  "configuration": "vietnamese",
-  "type": "movie",
-  "id": "tt10638522",
-  "extra": "videoHash=4eea6e5a50ec2435&videoSize=1506568461&filename=Talk.to.Me.2022.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG.mkv"
-}
-movie tt10638522 vietnamese
-Talk to Me
-meta {
-  "title": "Talk to Me",
-  "slug": "talk-to-me",
-  "year": "2023"
-}
-/subtitles/talk-to-me
-/subtitles/talk-to-me tt10638522 vietnamese 2023 null
-/subtitles/talk-to-me
-https://subscene.com/subtitles/talk-to-me
-no year scraping : 23
-https://subscene.com/subtitles/talk-to-me-2023
-with year scraping : 256
-subtitles matched lang :  9
-filtered subs  9
-cached true
-reqpath :  /sub.vtt
-----------------------------------
+Redirect 301: https://subscene-ip8j.onrender.com/arabic/subtitles/series/tt0306414%3A5%3A3/videoHash=cb86178974df3dad&videoSize=2199825969&filename=The%20Wire%20(2002)%20-%20S05E03%20-%20Not%20For%20Attribution%20(1080p%20BluRay%20x265%20Silence).mkv.json
