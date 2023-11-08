@@ -3,7 +3,7 @@ require('dotenv').config()
 const config = require('./config.js');
 if(process.env.NODE_ENV == 'external') var app = require('./external/index.js')
 else {
-    var app = require('./index.js')
+    var { app } = require('./index.js')
     const logger = require('./modules/logger');
     console = logger;
     console.empty();

@@ -10,6 +10,8 @@ const external_domains = require('./domain-list');
 
 const swStats = require('swagger-stats')
 
+const sharedRouter = express.Router();
+
 app.use(swStats.getMiddleware({
 	name: manifest.name,
 	version: manifest.version,
@@ -26,7 +28,7 @@ app.use(swStats.getMiddleware({
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
 	console.log('----------------------------------')
-    req.setTimeout(90 * 1000); // timeout time
+    req.setTimeout(60 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
     req.socket.removeAllListeners('timeout'); 
     req.socket.once('timeout', () => {
@@ -85,7 +87,7 @@ app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) =>
 	next();
 })
 
-app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
+sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
 	try{
 		res.setHeader('Content-Type', 'application/json');
 		console.log(req.params);
@@ -93,7 +95,14 @@ app.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => 
 
 		if (configuration && languages[configuration]) {
 			let lang = configuration;
-			const subs = await subtitles(type, id, lang)
+			let req_extras = req.params.extra?.split('&');
+			let extras = {};
+			if(req_extras){
+				req_extras.forEach(extra => {
+					extras[extra.split('=')[0]] = extra.split('=')[1];
+				})
+			}
+			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				return res.end(JSON.stringify({ subtitles: subs }));
@@ -141,7 +150,7 @@ app.get('/sub.vtt', (req, res, next) => {
 })
 
 const sub2vtt = require('sub2vtt');
-app.get('/sub.vtt', async (req, res,next) => {
+sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 
 		let url,proxy,episode;
@@ -183,13 +192,19 @@ app.get('/logs/error', (req, res) => {
 	res.end(console.readError());
 })
 
-app.get('/404', (req, res) => {
+sharedRouter.get('/404', (req, res) => {
 	res.setHeader('Cache-Control', CacheControl.off);
 	res.status(404);
 	res.end("404 Not Found!");
 })
 
-app.get('*', (req, res) => {
+sharedRouter.get('*', (req, res) => {
 	return res.redirect(301, '/404');
 })
-module.exports = app
+
+app.use(sharedRouter);
+
+module.exports = {
+	app,
+	sharedRouter
+}
