@@ -1,5 +1,4 @@
 const cons = require('console');
-const { json } = require('express');
 const fs = require('fs');
 const { isString } = require('util');
 
@@ -40,8 +39,8 @@ const logger = {
             cons.log(message.toString() + ':\n' + message.stack);
             fs.appendFileSync(file, message + ':\n' + message.stack + '\n\n\n');
         } else {
-            cons.log(message.toString());
-            fs.appendFileSync(file, message.toString() + '\n');
+            cons.log(message?.toString());
+            fs.appendFileSync(file, message?.toString() + '\n');
         }
 
     },
