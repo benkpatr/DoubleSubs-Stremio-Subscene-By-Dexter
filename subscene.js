@@ -81,13 +81,15 @@ async function TMDB(type, id, lang, extras) {
     }
     else if (type == "series") {
       let season = parseInt(id.split(':')[1]);
-      season = ordinalInWord(season);
+      season_text = ordinalInWord(season);
       const episode = id.split(':')[2];
       const searchID = `${metaid}_${id.split(':')[1]}`;
       let search = searchCache.get(searchID);
       if (!search) {
-        search = await subscene.search(`${meta.title} ${season} season`);
+        search = await subscene.search(`${meta.title} ${season_text} season`);
         if (search) {
+          if(season > 1 && !search[0].path?.includes(season_text.toLowerCase()))
+            search[0].path += '-season-' + season;
           searchCache.set(searchID, search);
         }
       }
@@ -128,18 +130,8 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
     let subs = [];
     var subtitles = subsceneCache.get(moviePath);
     if (!subtitles) {
-      let season = id.split('_season_')[1];
-      let subs1 = [];
-      if(!season) {
-        subs1 = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
-        console.log("movie no year scraping :", subs1.length);
-      }
-      else{
-        if(season > 1) {
-          subs1 = await subscene.getSubtitles(moviePath + '-season-' + season).catch(error => { console.error(error) }) // moviepath without year
-          console.log("series with season scraped: ", subs1.length);
-        }
-      }
+      let subs1 = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
+      console.log("no year scraping :", subs1.length);
       if(subs1?.length) {
         subtitles = subscene.sortByLang(subs1);
         subsceneCache.set(moviePath, subtitles);
@@ -150,7 +142,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
             if(!subtitles) {
               await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
               const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { console.error(error) }) // moviepath with year
-              console.log("movie with year scraping :", subs2.length);
+              console.log("with year scraping :", subs2.length);
               if(subs2?.length) {
                 subtitles = subscene.sortByLang(subs2);
                 subsceneCache.set(`${moviePath}-${year}`, subtitles);
