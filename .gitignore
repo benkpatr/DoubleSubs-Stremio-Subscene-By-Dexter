@@ -11,5 +11,4 @@
 bun.lockb
 build.bat
 deploy.sh
-Dockerfile
 .dockerignore
