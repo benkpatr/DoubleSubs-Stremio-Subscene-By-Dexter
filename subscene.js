@@ -145,6 +145,9 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
   let cached = Cache.get(cachID);
   if (cached) {
     console.log('cached main', cachID, cached);
+    if(extras?.filename && cached.length > 1 && !episode) {
+      cached = sortMovieByFilename(cached, extras.filename)
+    }
     return cached
   } else {
     let subs = [];
@@ -225,50 +228,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
       //------------------
       // sort movie by extra filename
       if(extras?.filename && subtitles.length > 1 && !episode) {
-        const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
-        const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/];
-        const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
-
-        let quality = qualitys.findIndex(quality => extras['filename'].toLowerCase().match(quality));
-        let source = sources.findIndex(source => extras['filename'].toLowerCase().match(source));
-        let vcodex = vcodexs.findIndex(vcodec => extras['filename'].toLowerCase().match(vcodec));
-
-        console.log(qualitys[quality], sources[source], vcodexs[vcodex]);
-
-        subtitles = sortByKey(subtitles, qualitys[quality], sources[source], vcodexs[vcodex]);
-
-        function sortByKey(subs, ...strs) {
-
-          if(!strs[0]) { //check if the input filter has first value is empty
-            if(strs.length != 1) {
-              return sortByKey(subs, strs.slice(1));
-            }
-            else {
-              return subs;
-            }
-          }
-
-          let inList = [];
-          let notList = [];
-
-          subs.forEach(sub => {
-            if(sub.title.toLowerCase().match(strs[0])) {
-              inList.push(sub);
-            }
-            else {
-              notList.push(sub);
-            }
-          });
-
-          if(strs.length != 1) {
-            for(i = 1; i < strs.length; i++)  {
-              inList = sortByKey(inList, strs[i]);
-              notList = sortByKey(notList, strs[i]);
-            }
-          }
-          
-          return inList.concat(notList);
-        }
+        subtitles = sortMovieByFilename(subtitles, extras.filename)
       }
       //-----------------
 
@@ -304,6 +264,55 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
     return
 }
 }
+}
+
+function sortMovieByFilename(subtitles, filename) {
+    const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
+    const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/];
+    const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
+
+    let quality = qualitys.findIndex(quality => filename.toLowerCase().match(quality));
+    let source = sources.findIndex(source => filename.toLowerCase().match(source));
+    let vcodex = vcodexs.findIndex(vcodec => filename.toLowerCase().match(vcodec));
+
+    console.log(qualitys[quality], sources[source], vcodexs[vcodex]);
+
+    subtitles = sortByKey(subtitles, qualitys[quality], sources[source], vcodexs[vcodex]);
+
+    return subtitles;
+
+    function sortByKey(subs, ...strs) {
+
+      if(!strs[0]) { //check if the input filter has first value is empty
+        if(strs.length != 1) {
+          return sortByKey(subs, strs.slice(1));
+        }
+        else {
+          return subs;
+        }
+      }
+
+      let inList = [];
+      let notList = [];
+
+      subs.forEach(sub => {
+        if(sub.title.toLowerCase().match(strs[0])) {
+          inList.push(sub);
+        }
+        else {
+          notList.push(sub);
+        }
+      });
+
+      if(strs.length != 1) {
+        for(i = 1; i < strs.length; i++)  {
+          inList = sortByKey(inList, strs[i]);
+          notList = sortByKey(notList, strs[i]);
+        }
+      }
+      
+      return inList.concat(notList);
+    }
 }
 
 async function downloadUrl(path, episode) {
