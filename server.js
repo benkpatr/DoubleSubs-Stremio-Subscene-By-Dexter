@@ -4,10 +4,12 @@ const config = require('./config.js');
 if(process.env.NODE_ENV == 'external') var app = require('./external/index.js')
 else {
     var { app } = require('./index.js')
-    const logger = require('./modules/logger');
-    console = logger;
-    console.empty();
-    console.emptyError();
+    if(process.env.NODE_ENV == "beamup") {
+        const logger = require('./modules/logger');
+        console = logger;
+        console.empty();
+        console.emptyError();
+    }
 }
 
 // create local server

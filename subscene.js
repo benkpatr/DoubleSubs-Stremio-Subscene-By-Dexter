@@ -243,9 +243,9 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
         if (value) {
             let path = config.BaseURL + value.path;
             if (episode) {
-              url = config.local+"/sub.vtt?"+"episode="+episodeText+"&"+sub2vtt.gerenateUrl(path, {});
+              url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&episode=${episodeText}`+"&"+sub2vtt.gerenateUrl(path, {});
             } else {
-              url = config.local+"/sub.vtt?"+sub2vtt.gerenateUrl(path, {});
+              url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&` + sub2vtt.gerenateUrl(path, {});
             }
             
             subs.push({

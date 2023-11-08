@@ -1,27 +1,73 @@
-NODE_ENV = production
+NODE_ENV = undefined
 Addon active on port 63555
-HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
-reqpath :  /vietnamese/subtitles/series/tt13706018:2:1.json
+HTTP addon accessible at: http://127.0.0.1:63555/configure
+reqpath :  /sub.vtt
+----------------------------------
+Caching File true
+{
+  "url": "https://subscene.com/subtitles/vietnamese-text/jgkHvOqkc9RoV4pdYryzUFFDcmgHKJZ-gqU5kJHsVFuoqfB8BEVvXA-ILKttw51heJpsBnpsENYytmZpfVyvEO5Q79_CyDbUOd4RA9SOc8BnCcGsJdLUwdA9qmzuiB3c0",
+  "proxy": {
+    "responseType": "buffer",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  }
+}
+this.type undefined
+this.data undefined
+the requested file is an archive application/x-zip-compressed
+zip file count: 1
+matched file :  No.One.Will.Save.You.2023.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264-OneBPOnePrayer.vie.srt
+{
+  "success": true,
+  "invalidEntries": [],
+  "invalidTimecodes": [],
+  "invalidIndices": [],
+  "reversedTimecodes": [],
+  "overlappingTimecodes": [],
+  "formattedText": []
+}
+reqpath :  /vietnamese/subtitles/movie/tt11245972/videoHash=6625bd20d7bf52aa&videoSize=1447680283&filename=Scream.2022.HDRip.XviD-EVO.avi.json
 ----------------------------------
 {
   "configuration": "vietnamese",
-  "type": "series",
-  "id": "tt13706018:2:1"
+  "type": "movie",
+  "id": "tt11245972",
+  "extra": "videoHash=6625bd20d7bf52aa&videoSize=1447680283&filename=Scream.2022.HDRip.XviD-EVO.avi"
 }
 meta {
-  "title": "SPY x FAMILY",
-  "slug": "spy-x-family"
+  "title": "Scream",
+  "slug": "scream",
+  "year": "2022"
 }
-/subtitles/spy-x-family-season-2 tt13706018_season_2 vietnamese undefined 1
-https://subscene.com/subtitles/spy-x-family-season-2
-no year scraping : 226
-subtitles matched lang :  13
-episode E01
-SPYxFAMILY.S02E01.Follow.Mama.and.Papa.WEBRip.Amazon.vi-vn[sdh] 
-Spy x Family Season 2 - 01 
-Spy x Family S02 - EP01  
-filtered subs  3
+/subtitles/scream tt11245972 vietnamese 2022 undefined
+https://subscene.com/subtitles/scream
+no year scraping : 2
+https://subscene.com/subtitles/scream-2022
+with year scraping : 456
+subtitles matched lang :  20
+filtered subs  20
+undefined undefined undefined
 cached true
-reqpath :  /arabic/subtitles/series/tt1520211%3A1%3A1/videoHash=7efa4946378fbdb2&videoSize=852755689&filename=The%20Walking%20Dead%20S01E01%20Days%20Gone%20Bye%20(1080p%20x265%20Joy).mkv.json
+reqpath :  /sub.vtt
 ----------------------------------
-Redirect 301: https://subscene.onrender.com/arabic/subtitles/series/tt1520211%3A1%3A1/videoHash=7efa4946378fbdb2&videoSize=852755689&filename=The%20Walking%20Dead%20S01E01%20Days%20Gone%20Bye%20(1080p%20x265%20Joy).mkv.json
+Caching File true
+{
+  "url": "https://subscene.com/subtitles/vietnamese-text/tw_XPYhe57ATOEmVCiZJqdfiIoCHiq1TkIt7dp8jHXmptWBsUHVnAquXntEFLvpXvKdjJWF5QShDfrT0JJwbujdhoSEhdDylYrrGFhq_JaF7GaLnH_Z7tEkjOFP_LlTP0",
+  "proxy": {
+    "responseType": "buffer",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  }
+}
+this.type undefined
+this.data undefined
+the requested file is an archive application/x-zip-compressed
+zip file count: 1
+matched file :  [Wtranz] Scream (2022) - WEB.srt
+{
+  "success": true,
+  "invalidEntries": [],
+  "invalidTimecodes": [],
+  "invalidIndices": [],
+  "reversedTimecodes": [],
+  "overlappingTimecodes": [],
+  "formattedText": []
+}

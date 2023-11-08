@@ -75,17 +75,17 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 });
 
 
-let start_server = 0;
-app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
-	if(start_server > external_domains.length) start_server = 0;
-	if(start_server) {
-		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-		console.log("Redirect 301: " + redirect_url);
-		return res.redirect(301, redirect_url);
-	}
-	start_server++;
-	next();
-})
+// let start_server = 0;
+// app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+// 	if(start_server > external_domains.length) start_server = 0;
+// 	if(start_server) {
+// 		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+// 		console.log("Redirect 301: " + redirect_url);
+// 		return res.redirect(301, redirect_url);
+// 	}
+// 	start_server++;
+// 	next();
+// })
 
 sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
 	try{
@@ -138,28 +138,28 @@ app.get('/:subtitles/:name/:language/:id/:episode?\.:extension?', limiter, (req,
 });
 */
 
-app.get('/sub.vtt', (req, res, next) => {
-	if(start_server > external_domains.length) start_server = 0;
-	if(start_server) {
-		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-		console.log("Redirect 301: " + redirect_url);
-		return res.redirect(301, redirect_url);
-	}
-	start_server++;
-	next();
-})
+// app.get('/sub.vtt', (req, res, next) => {
+// 	if(start_server > external_domains.length) start_server = 0;
+// 	if(start_server) {
+// 		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+// 		console.log("Redirect 301: " + redirect_url);
+// 		return res.redirect(301, redirect_url);
+// 	}
+// 	start_server++;
+// 	next();
+// })
 
 const sub2vtt = require('sub2vtt');
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 
-		let url,proxy,episode;
+		let url,proxy,episode,title;
 		
 		if (req?.query?.proxy) proxy = JSON.parse(Buffer.from(req.query.proxy, 'base64').toString());
 		if (req?.query?.from) url = req.query.from
 		else throw 'error: no url';
 		if (req?.query?.episode) episode = req.query.episode
-
+		if(req?.query?.title) title = req.query.title
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
 		url = await downloadUrl(url);
@@ -171,6 +171,25 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		let file = await sub.getSubtitle();
 		
 		if (!file?.subtitle?.length) throw file.status
+
+		let sub_head_long = 20;
+		if(episode) sub_head_long = 10;
+		const subtitle_header_info = [
+			'WEBVTT\n',
+			'0',
+			`00:00:05.000 --> 00:00:${5+sub_head_long}.000`,
+			'[REUP]Subscene by Dexter21767',
+			`${title ? title : ''}\n\n`
+		];
+		const lines = file.subtitle.split('\n');
+		for(i = 0; i < lines.length; i++) {
+			if(!lines[i]) continue;
+			let startTimeSecond = lines[i].match(/\d\d:\d\d:\d\d/);
+			if(startTimeSecond && startTimeSecond[0].split(':')[1]*60 + startTimeSecond[0].split(':')[2] >= (5+sub_head_long)) {
+				file.subtitle = subtitle_header_info.join('\n') + lines.slice(i-1).join('\n');
+				break;
+			}
+		}
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
 		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');

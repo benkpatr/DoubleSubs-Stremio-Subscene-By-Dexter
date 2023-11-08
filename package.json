@@ -17,6 +17,7 @@
     "node-html-parser": "^6.1.1",
     "slugify": "^1.6.5",
     "sub2vtt": "^1.0.9",
+    "subtitle-converter": "^3.0.12",
     "swagger-stats": "^0.99.5"
   },
   "devDependencies": {
