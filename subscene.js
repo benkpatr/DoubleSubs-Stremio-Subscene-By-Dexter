@@ -90,6 +90,8 @@ async function TMDB(type, id, lang, extras) {
         if (search) {
           if(season > 1 && !search[0].path?.includes(season_text.toLowerCase()))
             search[0].path += '-season-' + season;
+          else if(season == 1 && !search[0].path?.includes(meta.slug))
+            search[0].path = `/subtitles/${meta.slug}`;
           searchCache.set(searchID, search);
         }
       }
@@ -163,14 +165,16 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
       subtitles = subtitles[lang];
       console.log('subtitles matched lang : ',subtitles.length)
       let sub = [];
-      let episodeText;
+      let episodeText, episodeText1;
       if (episode) {
         episodeText = (episode.length == 1) ? ('0' + episode) : episode;
         episodeText = 'E' + episodeText
-        console.log('episode', episodeText)
 
         episodeText1 = (episode.length == 1) ? ('S\\d?\\d.*EP?0' + episode) : ('S\\d?\\d.*E' + episode);
-        episodeText1 += '|- (EP)?0?' + episode + '$';
+        episodeText1 += (episode.length == 1) ? ('|- (EP)?0' + episode + '( |$)') : ('|- (EP)?' + episode + '( |$)');
+        episodeText1 += '|Tập.?0?' + episode;
+
+        console.log('episode ', episodeText, 'Regex: ', episodeText1);
         const reg = new RegExp(episodeText1, 'gi');
         
         subtitles.forEach(element => {
