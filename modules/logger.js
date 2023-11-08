@@ -34,10 +34,16 @@ const logger = {
                 JSON.stringify(param, null, 2) :
                 param?.toString())) 
             })
-        cons.log(message?.toString());
         const file = logsPath + '/error.logs';
         if(fs.statSync(file).size/1024/1024 >= 2) this.emptyError();
-        fs.appendFileSync(file, message + '\n\n\n');
+        if(message?.stack) {
+            cons.log(message.toString() + ':\n' + message.stack);
+            fs.appendFileSync(file, message + ':\n' + message.stack + '\n\n\n');
+        } else {
+            cons.log(message.toString());
+            fs.appendFileSync(file, message.toString() + '\n');
+        }
+
     },
     read(){
         const data = fs.readFileSync(logsPath + '/app.logs');

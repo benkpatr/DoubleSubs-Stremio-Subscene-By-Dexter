@@ -83,20 +83,38 @@ async function TMDB(type, id, lang, extras) {
       let season = parseInt(id.split(':')[1]);
       season_text = ordinalInWord(season);
       const episode = id.split(':')[2];
-      const searchID = `${metaid}_${id.split(':')[1]}`;
+      const searchID = `${metaid}_${season}_${episode}`;
       let search = searchCache.get(searchID);
       if (!search) {
         search = await subscene.search(`${meta.title} ${season_text} season`);
-        if (search) {
-          if(season > 1 && !search[0].path?.includes(season_text.toLowerCase()))
-            search[0].path += '-season-' + season;
-          else if(season == 1 && !search[0].path?.includes(meta.slug))
-            search[0].path = `/subtitles/${meta.slug}`;
-          searchCache.set(searchID, search);
-        }
       }
-      let moviePath = search[0].path;
-      return getsubtitles(moviePath, id.split(":")[0] + '_season_' + id.split(":")[1], lang, episode)
+
+      if (search) {
+        searchCache.set(searchID, search);
+        //https://subscene.com/subtitles/spy-wars-s01
+        //https://subscene.com/subtitles/spy-first-season
+        //https://subscene.com/subtitles/spy-kyoushitsu-2nd-season-spy-classroom-season-2
+        //https://subscene.com/subtitles/kami-tachi-ni-hirowareta-otoko-2nd-season
+        let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
+        let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
+        const reg = new RegExp(`${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'gi');
+        console.log(reg);
+        const findSeries = search.find(x => reg.test(x.path));
+        if(findSeries){
+          console.log(findSeries.path);
+          return getsubtitles(findSeries.path, metaid + '_season_' + season + '_episode_' + episode, lang, episode)
+        }
+        else{
+          let moviePath = `/subtitles/${meta.slug}`;
+          return getsubtitles(moviePath, metaid + '_season_' + season + '_episode_' + episode, lang, episode)
+        }
+      } else {
+        console.log("not found search series!");
+        return [];
+      }
+
+      
+      
       /*
       var moviePath = '/subtitles/' + meta.slug + '-' + season + '-season';
       let subtitles = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) })
@@ -172,7 +190,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
 
         episodeText1 = (episode.length == 1) ? ('S\\d?\\d.*EP?0' + episode) : ('S\\d?\\d.*E' + episode);
         episodeText1 += (episode.length == 1) ? ('|- (EP)?0' + episode + '( |$)') : ('|- (EP)?' + episode + '( |$)');
-        episodeText1 += '|Tập.?0?' + episode;
+        episodeText1 += (episode.length == 1) ? '|Tập.?0' + episode : '|Tập.?' + episode;
 
         console.log('episode ', episodeText, 'Regex: ', episodeText1);
         const reg = new RegExp(episodeText1, 'gi');
@@ -206,7 +224,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
 
       //------------------
       // sort movie by extra filename
-      if(extras?.filename && !episode) {
+      if(extras?.filename && subtitles.length > 1 && !episode) {
         const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
         const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/];
         const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
