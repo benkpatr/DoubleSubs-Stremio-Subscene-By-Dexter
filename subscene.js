@@ -151,7 +151,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
     var subtitles = subsceneCache.get(moviePath);
     if (!subtitles) {
       let subs1 = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
-      console.log("no year scraping :", subs1.length);
+      console.log("no year scraping :", subs1 ? subs1.length : 0);
       if(subs1?.length) {
         subtitles = subscene.sortByLang(subs1);
         subsceneCache.set(moviePath, subtitles);
@@ -162,7 +162,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
             if(!subtitles) {
               await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
               const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { console.error(error) }) // moviepath with year
-              console.log("with year scraping :", subs2.length);
+              console.log("with year scraping :", subs2 ? subs2.length : 0);
               if(subs2?.length) {
                 subtitles = subscene.sortByLang(subs2);
                 subsceneCache.set(`${moviePath}-${year}`, subtitles);
