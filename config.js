@@ -1,4 +1,4 @@
-var env = process.env.NODE_ENV ? 'beamup':'local';
+var env = process.env.NODE_ENV ? process.env.NODE_ENV :'local';
 
 var config = {
     BaseURL: "https://subscene.com",
@@ -24,6 +24,11 @@ switch (env) {
 		config.port = 63555
         config.local = "http://127.0.0.1:" + config.port;
         break;
+    default: {
+        config.port = process.env.PORT || 63555
+        config.local = process.env.PRE_URL || "";
+        break;
+    }
 }
 
 module.exports = config;

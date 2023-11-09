@@ -153,6 +153,7 @@ app.get('/sub.vtt', (req, res, next) => {
 })
 
 const sub2vtt = require('sub2vtt');
+const { config } = require("dotenv");
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 
@@ -207,15 +208,17 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	}
 })
 
-app.get('/logs', (req, res) => {
-	res.setHeader('Cache-Control', CacheControl.off);
-	res.end(console.read());
-})
+if(config.env == 'beamup') {
+	app.get('/logs', (req, res) => {
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.end(console.read());
+	})
 
-app.get('/logs/error', (req, res) => {
-	res.setHeader('Cache-Control', CacheControl.off);
-	res.end(console.readError());
-})
+	app.get('/logs/error', (req, res) => {
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.end(console.readError());
+	})
+}
 
 sharedRouter.get('/404', (req, res) => {
 	res.setHeader('Cache-Control', CacheControl.off);
