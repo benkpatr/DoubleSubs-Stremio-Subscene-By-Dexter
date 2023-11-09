@@ -129,7 +129,17 @@
                             <h1 class="font-semibold text-lg mr-auto">{{ manifest.name }}</h1>
                             <h2 class="font-semibold text-lg mr-auto" style="text-align: right;">Version: {{
                             manifest.version }}</h2>
-                            <p class="mt-5">{{ manifest.description }}</p>
+                            <p class="mt-5">
+                                <span v-for="(line, index) in manifest.description.split('\n')">
+                                    <a v-if="line.match('http')" :href="line.match(/http.*/)[0]" style="color: #225c7d;">
+                                        {{ line }}
+                                    </a>
+                                    <span v-else>
+                                        {{ line }}
+                                    </span>
+                                    <br v-if="index !== manifest.description.split('\n').length - 1">
+                                </span>
+                            </p>
                         </div>
 
                         <div class="flex items-center justify-center space-x-2 mt-5">
