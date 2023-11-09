@@ -268,7 +268,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
 
 function sortMovieByFilename(subtitles, filename) {
     const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
-    const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/];
+    const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/, /brrip/ ];
     const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
 
     let quality = qualitys.findIndex(quality => filename.toLowerCase().match(quality));
