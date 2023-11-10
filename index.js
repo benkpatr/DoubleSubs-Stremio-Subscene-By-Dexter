@@ -136,16 +136,19 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 	}
 })
 
-app.get('/sub.vtt', (req, res, next) => {
-	if(start_server > external_domains.length) start_server = 0;
-	if(start_server) {
-		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-		console.log("Redirect 301: " + redirect_url);
-		return res.redirect(301, redirect_url);
-	}
-	start_server++;
-	next();
-})
+//############
+//No limit download && dont need redirect bc req always return selfhost
+
+// app.get('/sub.vtt', (req, res, next) => {
+// 	if(start_server > external_domains.length) start_server = 0;
+// 	if(start_server) {
+// 		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+// 		console.log("Redirect 301: " + redirect_url);
+// 		return res.redirect(301, redirect_url);
+// 	}
+// 	start_server++;
+// 	next();
+// })
 
 const sub2vtt = require('sub2vtt');
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
