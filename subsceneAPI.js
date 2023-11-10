@@ -8,12 +8,12 @@ const { parse } = require("node-html-parser");
 global.isSearching = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 3500
+  spaceTime: 4000
 };
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 500
+  spaceTime: 1000
 };
 
 function delay(ms) {
