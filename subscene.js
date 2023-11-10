@@ -5,7 +5,7 @@ const subscene = require('./subsceneAPI');
 const config = require('./config');
 const languages = require('./languages.json');
 const NodeCache = require("node-cache");
-const sub2vtt = require('sub2vtt');
+const sub2vtt = require('./modules/sub2vtt');
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) });
 const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) });

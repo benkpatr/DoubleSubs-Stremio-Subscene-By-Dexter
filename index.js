@@ -8,6 +8,7 @@ const {CacheControl} = require('./config');
 const languages = require('./languages.json');
 const external_domains = require('./domain-list');
 const config = require('./config.js');
+const sub2vtt = require('./modules/sub2vtt');
 
 const DiskCache = require('node-persist');
 
@@ -150,7 +151,6 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 // 	next();
 // })
 
-const sub2vtt = require('sub2vtt');
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 

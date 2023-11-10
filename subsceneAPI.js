@@ -21,7 +21,7 @@ const gotConfig = {
 global.isSearching = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 5500
+  spaceTime: 6500
 };
 global.isGetting = {
   value: false,

@@ -1,6 +1,5 @@
 const axios = require('axios').default;
 const BaseURL = require('./config').kitsuURL;
-require('dotenv').config();
 
 async function request(url, header) {
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-require('dotenv').config()
 const config = require('./config.js');
 
 if(config.env == 'external') var app = require('./external/index.js')
