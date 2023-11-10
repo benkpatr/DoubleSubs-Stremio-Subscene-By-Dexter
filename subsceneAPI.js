@@ -13,12 +13,12 @@ global.isSearching = {
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 2000
+  spaceTime: 3500
 };
 
 if(config.env == 'external') {
   global.isSearching.spaceTime = 3500;
-  global.isGetting.spaceTime = 1200;
+  global.isGetting.spaceTime = 2000;
 }
 
 function delay(ms) {
@@ -56,7 +56,7 @@ async function search(query) {
     while(loopReq) {
       res = await got.post(baseUrl + "/subtitles/searchbytitle", {json: {query}});
       if(res?.body) break;
-      await delay(500);
+      await delay(1000);
       loopReq--
     }
 
@@ -116,7 +116,7 @@ async function subtitle(url = String) {
     while(loopReq) {
       res = await got.get(baseUrl+url)
       if(res?.body) break;
-      await delay(500);
+      await delay(1000);
       loopReq--
     }
 
