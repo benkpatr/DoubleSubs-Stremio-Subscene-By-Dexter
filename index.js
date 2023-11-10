@@ -145,7 +145,6 @@ app.get('/sub.vtt', (req, res, next) => {
 })
 
 const sub2vtt = require('sub2vtt');
-const { config } = require("dotenv");
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 
