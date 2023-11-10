@@ -67,7 +67,7 @@ async function search(query) {
     let loopReq = 3;
     var res;
     while(loopReq) {
-      res = await got.get(baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /, '+'), gotConfig);
+      res = await got.get(baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+'), gotConfig);
       if(res?.body) break;
       await delay(500);
       loopReq--
