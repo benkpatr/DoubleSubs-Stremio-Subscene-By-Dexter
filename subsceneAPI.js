@@ -1,18 +1,66 @@
-const got = require("got-scraping").gotScraping,
-cheerio = require("cheerio"),
-config = require('./config'),
-baseUrl = config.BaseURL,
-unzip = require("adm-zip"),
-{ parse } = require("node-html-parser");
+const got = require("got-scraping").gotScraping
+cheerio = require("cheerio")
+config = require('./config')
+baseUrl = config.BaseURL
+unzip = require("adm-zip")
+const { parse } = require("node-html-parser");
 
-async function search(query = String) {
+global.isSearching = {
+  value: false,
+  lastUpdate: new Date().getTime(),
+  spaceTime: 3500
+};
+global.isGetting = {
+  value: false,
+  lastUpdate: new Date().getTime(),
+  spaceTime: 500
+};
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function untilSearching(){
+  while(global.isSearching.value) {
+    await delay(50);
+  }
+}
+
+async function untilGetting(){
+  while(global.isGetting.value) {
+    await delay(50);
+  }
+}
+
+
+async function search(query) {
   try {
-    if (!query.length)throw "Query Is Null"
-    var res = await got.post(baseUrl+"/subtitles/searchbytitle", {
-      json: {
-        query
-      },retry:{limit:5, methods:["GET","POST"]}})
-    if (!res||!res.body)throw "No Response Found"
+    if (!query?.length) throw "Query Is Null"
+
+    //##############################
+    if(global.isSearching.value) await untilSearching();
+    global.isSearching.value = true;
+
+    let currenTime = new Date().getTime();
+    if(( currenTime - global.isSearching.lastUpdate) <= global.isSearching.spaceTime) {
+      await delay(global.isSearching.spaceTime - (currenTime - global.isSearching.lastUpdate));
+    }
+
+    let loopReq = 3;
+    var res;
+    while(loopReq) {
+      res = await got.post(baseUrl + "/subtitles/searchbytitle", {json: {query}});
+      if(res?.body) break;
+      await delay(500);
+      loopReq--
+    }
+
+    //##############################
+    global.isSearching.value = false;
+    global.isSearching.lastUpdate = new Date().getTime();
+
+    if (!res?.body) throw "No Response Found"
+    if (res?.body?.includes("To many request")) throw ("Search: Too Many Request");
     let $ = cheerio.load(res.body)
     let results = []
     $(".search-result ul a").map((i, el)=> {
@@ -26,9 +74,11 @@ async function search(query = String) {
     })
     results = filterItOut(results)
     return results || null
-  }catch(e) {
+  } catch(e) {
+    //##############################
+    global.isSearching.value = false;
+    global.isSearching.lastUpdate = new Date().getTime();
     console.error(e);
-    throw e
   }
 }
 
@@ -41,53 +91,36 @@ function filterItOut(res) {
   }
   return results
 }
-/*
-async function subtitle(url = String) {
-  try {
-    if (!url.length) throw "Path Not Specified"
-    var res = await got.get(baseUrl+url,{retry:{limit:5}})
-    if (!res||!res.body)throw "No Response Found"
-    var $ = cheerio.load(res.body)
-    let results = []
-    $("table tr .a1 a").map((i, e)=> {
-      if (e.attribs && e.attribs.href) {
-        var url = e.attribs.href,
-        title,
-        lang
-        e.children.map((e2, j)=> {
-          try {
-            if (e2.type === "tag" && e2.name === "span") {
-
-              if (!lang)lang = e2.children[0].data.replace(/\t|\n|\r/g, "")
-              else title = e2.children[0].data.replace(/\t|\n|\r/g, "")
-            }
-          }catch(err) {
-            lang = "notSp",
-            title = "no Title Found"
-          }
-        })
-        results.push({
-          path: url,
-          title: title || "no title found",
-          lang: lang || "notSp"
-        })
-      }
-    })
-    results = sortByLang(results)
-    return results || null
-  } catch (e) {
-    throw e
-  }
-}
-*/
 
 async function subtitle(url = String) {
   try {
     if (!url.length) throw "Path Not Specified"
     console.log(baseUrl + url)
-    var res = await got.get(baseUrl+url,{retry:{limit:5}})
-    if (!res||!res.body)throw "No Response Found"
-    if (res.body.includes("To many request")) throw "Too Many Request";
+    
+    //##############################
+    if(global.isGetting.value) await untilGetting();
+    global.isGetting.value = true;
+
+    let currenTime = new Date().getTime();
+    if(( currenTime - global.isGetting.lastUpdate) <= global.isGetting.spaceTime) {
+      await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
+    }
+
+    let loopReq = 3;
+    var res;
+    while(loopReq) {
+      res = await got.get(baseUrl+url)
+      if(res?.body) break;
+      await delay(500);
+      loopReq--
+    }
+
+    //##############################
+    global.isGetting.value = false;
+    global.isGetting.lastUpdate = new Date().getTime(); 
+
+    if (!res||!res.body) throw "No Response Found"
+    if (res.body.includes("To many request")) throw "Get: Too Many Request"
     let results = []
     let body = parse(res.body)
     let imdb_id = res.body.split("href=\"https://www.imdb.com/title/")[1]?.split("\">Imdb</a>")[0];
@@ -115,49 +148,45 @@ async function subtitle(url = String) {
       }
     } 
     //results = sortByLang(results) // sort happen after this function
-      //console.log("results",results["english"])
-      return results || null
-    } catch (e) {
-      console.error(e);
-      
-      throw e
-    }
+    //console.log("results",results["english"])
+    return results || null
+  } catch(e) {
+    //##############################
+    global.isGetting.value = false;
+    global.isGetting.lastUpdate = new Date().getTime(); 
+    console.error(e);
   }
+}
   
   
-  function sortByLang(subs = Array) {
-    try {
-      let sorted = {}
-      subs.map((e,
-        i)=> {
-        if (sorted[e.lang.toLowerCase()]) {
-          sorted[e.lang.toLowerCase()].push(e)
-        } else {
-          sorted[e.lang.toLowerCase()] = [e]
-        }
-      })
-      return sorted
-    }catch(err) {
-      return null
-    }
+function sortByLang(subs = Array) {
+  try {
+    let sorted = {}
+    subs.map((e,
+      i)=> {
+      if (sorted[e.lang.toLowerCase()]) {
+        sorted[e.lang.toLowerCase()].push(e)
+      } else {
+        sorted[e.lang.toLowerCase()] = [e]
+      }
+    })
+    return sorted
+  }catch(err) {
+    return null
   }
+}
   
-  async function downloadUrl(url = String) {
-    try {
-      let res = await got.get(url,{retry:{limit:5}})
-      if (!res||!res.body)throw "No Data Found"
-      let $ = cheerio.load(res.body),
-      downUrl
-      $("#downloadButton").map((i, e)=> {
-        downUrl = e.attribs.href
-      })
-      if (!downUrl)throw "Unexpected Error"
-      return baseUrl + downUrl;
-  
-    } catch (e) {
-      throw e
-    }
-  }
+async function downloadUrl(url = String) {
+  let res = await got.get(url,{retry:{limit:5}})
+  if (!res||!res.body)throw "No Data Found"
+  let $ = cheerio.load(res.body),
+  downUrl
+  $("#downloadButton").map((i, e)=> {
+    downUrl = e.attribs.href
+  })
+  if (!downUrl)throw "Unexpected Error"
+  return baseUrl + downUrl;
+}
 
 module.exports.search = search
 module.exports.getSubtitles = subtitle

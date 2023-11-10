@@ -1,6 +1,7 @@
-var env = process.env.NODE_ENV ? process.env.NODE_ENV :'local';
+var env = process.env.NODE_ENV ? process.env.NODE_ENV : 'local';
 
 var config = {
+    env: env,
     BaseURL: "https://subscene.com",
     CineV3: "https://v3-cinemeta.strem.io/meta",
     APIURL: 'https://api.themoviedb.org/3',
@@ -24,11 +25,10 @@ switch (env) {
 		config.port = 63555
         config.local = "http://127.0.0.1:" + config.port;
         break;
-    default: {
+    default:
         config.port = process.env.PORT || 63555
-        config.local = process.env.PRE_URL || "";
+        config.local = process.env.PRE_URL || "http://127.0.0.1:" + config.port;
         break;
-    }
 }
 
 module.exports = config;

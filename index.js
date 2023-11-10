@@ -8,6 +8,18 @@ const {CacheControl} = require('./config');
 const languages = require('./languages.json');
 const external_domains = require('./domain-list');
 
+const DiskCache = require('node-persist');
+
+DiskCache.init({
+  dir: './cache/files',
+  ttl: 7 * 24 * 60 * 60 * 1000, // 7 days,
+  expiredInterval: 2 * 60 * 60 * 1000,
+  forgiveParseErrors: false
+})
+
+// filesCache.set = filesCache.setItem;
+// filesCache.get = filesCache.getItem;
+
 const swStats = require('swagger-stats')
 
 const sharedRouter = express.Router();
@@ -114,32 +126,11 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 		res.setHeader('Cache-Control', CacheControl.oneHour);
 		res.end(JSON.stringify({ subtitles: [] }));
 	}catch(e){
-		console.error(e);
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.sendStatus(500);
-		res.end('500');
+		console.error(e);
 	}
 })
-
-/*
-app.get('/:subtitles/:name/:language/:id/:episode?\.:extension?', limiter, (req, res) => {
-	console.log(req.params);
-	let { subtitles, name, language, id, episode, extension } = req.params;
-	try {
-		let path = `/${subtitles}/${name}/${language}/${id}`
-		res.setHeader('Cache-Control', 'max-age=86400, public');
-		res.setHeader('responseEncoding', 'null');
-		res.setHeader('Content-Type', 'arraybuffer/json');
-		console.log(path);
-		proxyStream(path, episode).then(response => {
-			res.send(response);
-		}).catch(err => { console.log(err) })
-	} catch (err) {
-		console.log(err)
-		return res.send("Couldn't get the subtitle.")
-	}
-});
-*/
 
 app.get('/sub.vtt', (req, res, next) => {
 	if(start_server > external_domains.length) start_server = 0;
@@ -166,33 +157,41 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		if(req?.query?.title) title = req.query.title
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
-		url = await downloadUrl(url);
+		let file = {};
+		file.subtitle = await DiskCache.getItem(title);
+		if(file.subtitle) {
+			console.log(`file ${title} is loaded from storage cache!`);
+		} else {
+			url = await downloadUrl(url);
 
-		console.log({url, proxy, episode})
-		
-		let sub = new sub2vtt(url , { proxy, episode });
-		
-		let file = await sub.getSubtitle();
-		
-		if (!file?.subtitle?.length) throw file.status
+			console.log({url, proxy, episode})
+			
+			let sub = new sub2vtt(url , { proxy, episode });
+			
+			file = await sub.getSubtitle();
+			
+			if (!file?.subtitle?.length) throw file?.status
 
-		let sub_head_long = 20;
-		if(episode) sub_head_long = 10;
-		const subtitle_header_info = [
-			'WEBVTT\n',
-			'0',
-			`00:00:05.000 --> 00:00:${5+sub_head_long}.000`,
-			'[REUP]Subscene by Dexter21767',
-			`${title ? title : ''}\n\n`
-		];
-		const lines = file.subtitle.split('\n');
-		for(i = 0; i < lines.length; i++) {
-			if(!lines[i]) continue;
-			let startTimeSecond = lines[i].match(/\d\d:\d\d:\d\d/);
-			if(startTimeSecond && startTimeSecond[0].split(':')[1]*60 + startTimeSecond[0].split(':')[2] >= (5+sub_head_long)) {
-				file.subtitle = subtitle_header_info.join('\n') + lines.slice(i-1).join('\n');
-				break;
+			let sub_head_long = 20;
+			if(episode) sub_head_long = 10;
+			const subtitle_header_info = [
+				'WEBVTT\n',
+				'0',
+				`00:00:05.000 --> 00:00:${5+sub_head_long}.000`,
+				'[REUP]Subscene by Dexter21767',
+				`${title ? title : ''}\n\n`
+			];
+			const lines = file.subtitle.split('\n');
+			for(i = 0; i < lines.length; i++) {
+				if(!lines[i]) continue;
+				let startTimeSecond = lines[i].match(/\d\d:\d\d:\d\d/);
+				if(startTimeSecond && startTimeSecond[0].split(':')[1]*60 + startTimeSecond[0].split(':')[2] >= (5+sub_head_long)) {
+					file.subtitle = subtitle_header_info.join('\n') + lines.slice(i-1).join('\n');
+					break;
+				}
 			}
+
+			DiskCache.setItem(title, file.subtitle);
 		}
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
@@ -203,7 +202,6 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		console.error(e);
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.sendStatus(500);
-		res.end('500');
 		//next(e);
 	}
 })
