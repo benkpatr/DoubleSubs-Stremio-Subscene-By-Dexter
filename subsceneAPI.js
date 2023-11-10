@@ -5,20 +5,33 @@ baseUrl = config.BaseURL
 unzip = require("adm-zip")
 const { parse } = require("node-html-parser");
 
+const gotConfig = {
+  headerGeneratorOptions: {
+    browsers: [
+      {
+        name: 'firefox',
+        minVersion: 102
+      }
+    ],
+    devices: [ 'desktop' ],
+    operatingSystems: [ 'linux' ],
+  }
+}
+
 global.isSearching = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 5000
+  spaceTime: 5500
 };
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 3500
+  spaceTime: 750
 };
 
 if(config.env == 'external') {
-  global.isSearching.spaceTime = 3500;
-  global.isGetting.spaceTime = 2000;
+  global.isSearching.spaceTime = 5000;
+  global.isGetting.spaceTime = 500;
 }
 
 function delay(ms) {
@@ -54,9 +67,9 @@ async function search(query) {
     let loopReq = 3;
     var res;
     while(loopReq) {
-      res = await got.post(baseUrl + "/subtitles/searchbytitle", {json: {query}});
+      res = await got.get(baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /, '+'), gotConfig);
       if(res?.body) break;
-      await delay(1000);
+      await delay(500);
       loopReq--
     }
 
@@ -114,9 +127,9 @@ async function subtitle(url = String) {
     let loopReq = 3;
     var res;
     while(loopReq) {
-      res = await got.get(baseUrl+url)
+      res = await got.get(baseUrl+url, gotConfig)
       if(res?.body) break;
-      await delay(1000);
+      await delay(500);
       loopReq--
     }
 
@@ -124,7 +137,7 @@ async function subtitle(url = String) {
     global.isGetting.value = false;
     global.isGetting.lastUpdate = new Date().getTime(); 
 
-    if (!res||!res.body) throw "No Response Found"
+    if (!res?.body) throw "No Response Found"
     if (res.body.includes("To many request")) throw "Get: Too Many Request"
     let results = []
     let body = parse(res.body)

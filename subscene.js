@@ -124,7 +124,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
     const cachID = `${id}_${lang}`;
     let cached = Cache.get(cachID);
     if (cached) {
-      console.log('cached main', cachID, cached);
+      console.log('cached main', cachID);
       if(extras?.filename && cached.length > 1 && !episode) {
         cached = sortMovieByFilename(cached, extras.filename)
       }
