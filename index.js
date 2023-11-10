@@ -119,13 +119,16 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				return res.end(JSON.stringify({ subtitles: subs }));
-			} else console.log("no subs");
-
+			} else if(subs && !subs.length) {
+				console.log("no subs");
+				res.setHeader('Cache-Control', CacheControl.oneHour);
+				return res.end(JSON.stringify({ subtitles: [] }));
+			}
 		} else console.log("no config");
 
 		//default response
-		res.setHeader('Cache-Control', CacheControl.oneHour);
-		res.end(JSON.stringify({ subtitles: [] }));
+		res.setHeader('Cache-Control', CacheControl.off);
+		return res.end(JSON.stringify({ subtitles: [] }));
 	}catch(e){
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.sendStatus(500);

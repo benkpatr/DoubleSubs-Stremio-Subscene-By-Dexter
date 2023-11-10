@@ -8,13 +8,18 @@ const { parse } = require("node-html-parser");
 global.isSearching = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 4000
+  spaceTime: 5000
 };
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 1000
+  spaceTime: 2000
 };
+
+if(config.env == 'external') {
+  global.isSearching.spaceTime = 3500;
+  global.isGetting.spaceTime = 1200;
+}
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
