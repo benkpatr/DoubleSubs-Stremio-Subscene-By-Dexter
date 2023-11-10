@@ -2,7 +2,7 @@
 const parse = require('./parse.js')
 
 const fs = require('fs')
-const jschardet = require('jschardet')
+const detect = require('charset-detector')
 const iconv = require('iconv-lite')
 
 
@@ -16,7 +16,7 @@ function readFile( file ){
     fs.readFile( file, (err, data) => {
       if(err) reject(err)
       else{
-        const { encoding } = jschardet.detect(data)
+        const encoding = detect(data)[0].charsetName
         const encodedData = ( encoding != 'utf-8' )
           ? iconv.decode(data, encoding)
           : data
