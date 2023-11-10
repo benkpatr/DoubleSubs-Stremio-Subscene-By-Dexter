@@ -7,6 +7,7 @@ const manifest = require("./manifest.json");
 const {CacheControl} = require('./config');
 const languages = require('./languages.json');
 const external_domains = require('./domain-list');
+const config = require('./config.js');
 
 const DiskCache = require('node-persist');
 
@@ -40,7 +41,7 @@ app.use(swStats.getMiddleware({
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
 	console.log('----------------------------------')
-    req.setTimeout(60 * 1000); // timeout time
+    req.setTimeout(180 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
     req.socket.removeAllListeners('timeout'); 
     req.socket.once('timeout', () => {

@@ -7,6 +7,7 @@
 /test.js
 /package-lock.json
 /landingTemplate.js
+/cache/files/*
 .env
 bun.lockb
 build.bat
