@@ -4,10 +4,10 @@ const { isString } = require('util');
 
 const logsPath = process.cwd() + '/logs';
 const logger = {
-    empty(){
+    async empty(){
         fs.writeFileSync(logsPath + '/app.logs', '');
     },
-    log(message, ...optionParams){
+    async log(message, ...optionParams){
         if(message && !isString(message) && Object.keys(message)?.length) message = JSON.stringify(message, null, 2);
         if(optionParams) optionParams.forEach(param => { 
             message += " " + (isString(param) ?
@@ -18,13 +18,13 @@ const logger = {
             })
         cons.log(message?.toString());
         const file = logsPath + '/app.logs';
-        if(fs.statSync(file).size/1024 >= 256) this.empty(); // max 256 kb
+        if(fs.statSync(file).size/1024 >= 256) await this.empty(); // max 256 kb
         fs.appendFileSync(file, message?.toString() + '\n');
     },
-    emptyError(){
+    async emptyError(){
         fs.writeFileSync(logsPath + '/error.logs', '');
     },
-    error(message, ...optionParams){
+    async error(message, ...optionParams){
         if(message && !isString(message) && Object.keys(message)?.length) message = JSON.stringify(message, null, 2);
         if(optionParams) optionParams.forEach(param => { 
             message += " " + (isString(param) ?
@@ -34,7 +34,7 @@ const logger = {
                 param?.toString())) 
             })
         const file = logsPath + '/error.logs';
-        if(fs.statSync(file).size/1024 >= 256) this.emptyError();
+        if(fs.statSync(file).size/1024 >= 256) await this.emptyError();
         if(message?.stack) {
             cons.log(message.stack);
             this.log(message.stack);
