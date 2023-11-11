@@ -1,3 +1,27 @@
 NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
+
+reqpath :  /vietnamese/subtitles/series/tt1190634%3A1%3A2/videoHash=2d9909e828046796&videoSize=985836525&filename=The.Boys.S01E02.1080p.BluRay.x265-RARBG.mp4.json
+----------------------------------
+{
+  "configuration": "vietnamese",
+  "type": "series",
+  "id": "tt1190634:1:2",
+  "extra": "videoHash=2d9909e828046796&videoSize=985836525&filename=The.Boys.S01E02.1080p.BluRay.x265-RARBG.mp4"
+}
+meta {
+  "title": "The Boys",
+  "slug": "the-boys"
+}
+searching: https://subscene.com/subtitles/searchbytitle?query=The+Boys+First+Season
+/^the-boys-(first|1st)-season|the-boys-season-1|the-boys-s01/gi
+/subtitles/the-boys tt1190634_season_1_episode_2 vietnamese undefined 2
+https://subscene.com/subtitles/the-boys
+no year scraping : 488
+subtitles matched lang :  23
+episode  E02 Regex:  S\d?\d.*EP?02|- (EP)?02( |$)|Tập.?02
+The.Boys.S01E02.1080p.BluRay.x264-SHORTBREHD 
+The.Boys.2019.S01E02.Cherry.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTG 
+filtered subs  2
+cached true

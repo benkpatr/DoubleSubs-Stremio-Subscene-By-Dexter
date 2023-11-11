@@ -102,7 +102,7 @@ async function TMDB(type, id, lang, extras) {
           //https://subscene.com/subtitles/kami-tachi-ni-hirowareta-otoko-2nd-season
           let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
           let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
-          const reg = new RegExp(`${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'gi');
+          const reg = new RegExp(`^${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'gi');
           console.log(reg);
           const findSeries = search.find(x => reg.test(x.path));
           if(findSeries?.path){
