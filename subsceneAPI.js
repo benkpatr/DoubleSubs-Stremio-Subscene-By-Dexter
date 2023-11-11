@@ -21,12 +21,12 @@ const gotConfig = {
 global.isSearching = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 6500
+  spaceTime: 7500
 };
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 1000
+  spaceTime: 2500
 };
 
 if(config.env == 'external') {
