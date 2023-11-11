@@ -9,6 +9,7 @@ const languages = require('./languages.json');
 const external_domains = require('./domain-list');
 const config = require('./config.js');
 const sub2vtt = require('./modules/sub2vtt');
+const currentIP = require('./modules/current-ip');
 
 const DiskCache = require('node-persist');
 
@@ -226,6 +227,11 @@ if(config.env == 'beamup') {
 	})
 }
 
+sharedRouter.get('/current-ip', async (req, res) => {
+	const ip_adr = await currentIP();
+	if(ip_adr) res.end(ip_adr);
+	else res.sendStatus(500);
+})
 
 sharedRouter.get('/404', (req, res) => {
 	res.setHeader('Cache-Control', CacheControl.off);
