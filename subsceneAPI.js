@@ -26,12 +26,12 @@ global.isSearching = {
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 2500
+  spaceTime: 1500
 };
 
 if(config.env == 'external') {
   global.isSearching.spaceTime = 5000;
-  global.isGetting.spaceTime = 500;
+  global.isGetting.spaceTime = 1000;
 }
 
 function delay(ms) {

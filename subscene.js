@@ -17,7 +17,7 @@ const searchCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 
 
 async function subtitles(type, id, lang, extras) {
   if (id.match(/tt[0-9]/)){
-    return await (TMDB(type, id, lang, extras)) 
+    return await (TMDB(type, id, lang, extras)).catch(error => { throw error });
   }	else if (id.match(/kitsu:[0-9]/)){
     return await (Kitsu(type, id, lang)) 
   }
@@ -90,11 +90,11 @@ async function TMDB(type, id, lang, extras) {
         const episode = id.split(':')[2];
         const searchID = `${metaid}_${season}_${episode}`;
         let search = searchCache.get(searchID);
-        if (!search) {
-          search = await subscene.search(`${meta.title} ${season_text} Season`);
+        if (!search?.length) {
+          search = await subscene.search(`${meta.title} ${season_text} Season`).catch(error => { throw error });
         }
 
-        if (search) {
+        if (search?.length) {
           searchCache.set(searchID, search);
           //https://subscene.com/subtitles/spy-wars-s01
           //https://subscene.com/subtitles/spy-first-season
@@ -107,11 +107,11 @@ async function TMDB(type, id, lang, extras) {
           const findSeries = search.find(x => reg.test(x.path));
           if(findSeries?.path){
             console.log(findSeries.path);
-            return await getsubtitles(findSeries.path, metaid + '_season_' + season + '_episode_' + episode, lang, episode)
+            return await getsubtitles(findSeries.path, metaid + '_season_' + season + '_episode_' + episode, lang, episode).catch(error => { throw error });
           }
           else{
             let moviePath = `/subtitles/${meta.slug}`;
-            return await getsubtitles(moviePath, metaid + '_season_' + season + '_episode_' + episode, lang, episode)
+            return await getsubtitles(moviePath, metaid + '_season_' + season + '_episode_' + episode, lang, episode).catch(error => { throw error });
           }
         } else {
           console.log("not found search series!");
@@ -142,7 +142,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
       let subs = [];
       var subtitles = subsceneCache.get(moviePath);
       if (!subtitles) {
-        let subs1 = await subscene.getSubtitles(moviePath).catch(error => { console.error(error) }) // moviepath without year
+        let subs1 = await subscene.getSubtitles(moviePath).catch(error => { throw error }) // moviepath without year
         console.log("no year scraping :", subs1 ? subs1.length : 0);
         if(subs1?.length) {
           subtitles = subscene.sortByLang(subs1);
@@ -152,8 +152,8 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
             if (subs1[0].year !== year && !episode) { // if a movie and year isnt matched with the one in imdb
               subtitles = subsceneCache.get(`${moviePath}-${year}`);
               if(!subtitles) {
-                await new Promise((r) => setTimeout(r, 2500)); // prevent too many request, still finding the other way
-                const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { console.error(error) }) // moviepath with year
+                await new Promise((r) => setTimeout(r, 3000)); // prevent too many request, still finding the other way
+                const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { throw error }) // moviepath with year
                 console.log("with year scraping :", subs2 ? subs2.length : 0);
                 if(subs2?.length) {
                   subtitles = subscene.sortByLang(subs2);

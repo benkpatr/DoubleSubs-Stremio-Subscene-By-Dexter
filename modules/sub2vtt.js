@@ -252,7 +252,7 @@ class sub2vtt {
         try {
             const extractor = await unrar.createExtractorFromData({ data: file });
             const list = extractor.getFileList();
-            const listArcHeader = list.arcHeader; // archive header
+            //const listArcHeader = list.arcHeader; // archive header
             const fileHeaders = [...list.fileHeaders]; // load the file headers
             let filesNames = []
             for (var i = 0; i < fileHeaders.length; i++) {
@@ -261,15 +261,15 @@ class sub2vtt {
                 if (this.episode) {
                     if (!this.checkEpisode(filename)) continue;
                 }
-                console.log("matched file : ", filename);
+                console.log("matched file: ", filename);
                 filesNames.push(filename)
                 break; // because only takes the first match
             }
             const extracted = extractor.extract({ files: filesNames });
             // extracted.arcHeader  : archive header
             const files = [...extracted.files]; //load the files
-            files[0].fileHeader; // file header
-            files[0].extraction; // Uint8Array content, createExtractorFromData only
+            // files[0].fileHeader; // file header
+            // files[0].extraction; // Uint8Array content, createExtractorFromData only
 
             return {
                 name: files[0].fileHeader.name,
