@@ -152,7 +152,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras) {
             if (subs1[0].year !== year && !episode) { // if a movie and year isnt matched with the one in imdb
               subtitles = subsceneCache.get(`${moviePath}-${year}`);
               if(!subtitles) {
-                await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
+                await new Promise((r) => setTimeout(r, 2500)); // prevent too many request, still finding the other way
                 const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { console.error(error) }) // moviepath with year
                 console.log("with year scraping :", subs2 ? subs2.length : 0);
                 if(subs2?.length) {
