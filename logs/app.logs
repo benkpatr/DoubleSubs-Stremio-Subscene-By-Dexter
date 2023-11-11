@@ -2,26 +2,27 @@ NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
 
-reqpath :  /vietnamese/subtitles/series/tt1190634%3A1%3A2/videoHash=2d9909e828046796&videoSize=985836525&filename=The.Boys.S01E02.1080p.BluRay.x265-RARBG.mp4.json
+reqpath :  /arabic/subtitles/series/tt29006388%3A1%3A3/videoHash=2a780aecf876cfe3&videoSize=759716517&filename=A.Good.Day.to.Be.a.Dog.E03.NF.e-subs.av1.1080p-SiN.mkv.json
 ----------------------------------
 {
-  "configuration": "vietnamese",
+  "configuration": "arabic",
   "type": "series",
-  "id": "tt1190634:1:2",
-  "extra": "videoHash=2d9909e828046796&videoSize=985836525&filename=The.Boys.S01E02.1080p.BluRay.x265-RARBG.mp4"
+  "id": "tt29006388:1:3",
+  "extra": "videoHash=2a780aecf876cfe3&videoSize=759716517&filename=A.Good.Day.to.Be.a.Dog.E03.NF.e-subs.av1.1080p-SiN.mkv"
 }
+https://api.themoviedb.org/3/find/tt29006388?language=en-US&api_key=77adc68bac2d8b9539bf42aaadcffff4&external_source=imdb_id
 meta {
-  "title": "The Boys",
-  "slug": "the-boys"
+  "title": "A Good Day to Be a Dog",
+  "slug": "a-good-day-to-be-a-dog"
 }
-searching: https://subscene.com/subtitles/searchbytitle?query=The+Boys+First+Season
-/^the-boys-(first|1st)-season|the-boys-season-1|the-boys-s01/gi
-/subtitles/the-boys tt1190634_season_1_episode_2 vietnamese undefined 2
-https://subscene.com/subtitles/the-boys
-no year scraping : 488
-subtitles matched lang :  23
-episode  E02 Regex:  S\d?\d.*EP?02|- (EP)?02( |$)|Tập.?02
-The.Boys.S01E02.1080p.BluRay.x264-SHORTBREHD 
-The.Boys.2019.S01E02.Cherry.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTG 
-filtered subs  2
+searching: https://subscene.com/subtitles/searchbytitle?query=A+Good+Day+to+Be+a+Dog+First+Season
+/^a-good-day-to-be-a-dog-(first|1st)-season|a-good-day-to-be-a-dog-season-1|a-good-day-to-be-a-dog-s01/gi /^a-good-day-to-be-a-dog/gi /a-good-day-to-be-a-dog/gi
+/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae
+/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae tt29006388_season_1_episode_3 arabic undefined 3
+https://subscene.com/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae
+no year scraping : 120
+subtitles matched lang :  5
+episode  E03 Regex:  S\d?\d.*EP?03|- (EP)?03( |$)|Tập.?03
+A.Good.Day.To.Be.A.Dog.S01E03.VIU.1080P.JustDance 
+filtered subs  1
 cached true

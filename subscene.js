@@ -103,8 +103,11 @@ async function TMDB(type, id, lang, extras) {
           let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
           let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
           const reg = new RegExp(`^${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'gi');
-          console.log(reg);
-          const findSeries = search.find(x => reg.test(x.path));
+          const reg1 = new RegExp(`^${meta.slug}`, 'gi');
+          const reg2 = new RegExp(meta.slug, 'gi');
+          
+          console.log(reg, reg1, reg2);
+          const findSeries = search.find(x => reg.test(x.path)) || search.find(x => reg1.test(x.path)) || search.find(x => reg2.test(x.path));
           if(findSeries?.path){
             console.log(findSeries.path);
             return await getsubtitles(findSeries.path, metaid + '_season_' + season + '_episode_' + episode, lang, episode).catch(error => { throw error });
