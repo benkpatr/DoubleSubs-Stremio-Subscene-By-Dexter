@@ -95,9 +95,6 @@ async function search(query) {
     results = filterItOut(results)
     return results || null
   } catch(e) {
-    //##############################
-    global.isSearching.value = false;
-    global.isSearching.lastUpdate = new Date().getTime();
     console.error(e);
   }
 }
@@ -171,9 +168,6 @@ async function subtitle(url = String) {
     //console.log("results",results["english"])
     return results || null
   } catch(e) {
-    //##############################
-    global.isGetting.value = false;
-    global.isGetting.lastUpdate = new Date().getTime(); 
     console.error(e);
   }
 }
