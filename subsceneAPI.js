@@ -31,7 +31,7 @@ global.isGetting = {
 
 if(config.env == 'external') {
   global.isSearching.spaceTime = 5000;
-  global.isGetting.spaceTime = 1000;
+  global.isGetting.spaceTime = 2000;
 }
 
 function delay(ms) {

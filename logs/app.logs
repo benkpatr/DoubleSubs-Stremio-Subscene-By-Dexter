@@ -2,26 +2,6 @@ NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
 
-reqpath :  /brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json
+reqpath :  /vietnamese/subtitles/movie/tt13539646/videoHash=69422f25b4a82c55&videoSize=3432046257&filename=The.Wandering.Earth.II.2023.BLURAY.1080p.BluRay.x264.AAC5.1-%5BYTS.MX%5D.mp4.json
 ----------------------------------
-{
-  "configuration": "brazillian-portuguese",
-  "type": "series",
-  "id": "tt9140554:1:1",
-  "extra": "videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki (2021) - S01E01 - Glorious Purpose (1080p DSNP WEB-DL x265 Silence).mkv"
-}
-https://api.themoviedb.org/3/find/tt9140554?language=en-US&api_key=77adc68bac2d8b9539bf42aaadcffff4&external_source=imdb_id
-meta {
-  "title": "Loki",
-  "slug": "loki"
-}
-searching: https://subscene.com/subtitles/searchbytitle?query=Loki+First+Season
-/^loki-(first|1st)-season|loki-season-1|loki-s01/gi /^loki/gi /loki/gi
-/subtitles/loki-first-season
-/subtitles/loki-first-season tt9140554_season_1_episode_1 brazillian-portuguese undefined 1
-https://subscene.com/subtitles/loki-first-season
-no year scraping : 1768
-
-reqpath :  /brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json
-----------------------------------
-Redirect 301: https://subscene.onrender.com/brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json
+Redirect 301: https://subscene.onrender.com/vietnamese/subtitles/movie/tt13539646/videoHash=69422f25b4a82c55&videoSize=3432046257&filename=The.Wandering.Earth.II.2023.BLURAY.1080p.BluRay.x264.AAC5.1-%5BYTS.MX%5D.mp4.json
