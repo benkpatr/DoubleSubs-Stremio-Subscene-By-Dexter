@@ -26,7 +26,7 @@ global.isSearching = {
 global.isGetting = {
   value: false,
   lastUpdate: new Date().getTime(),
-  spaceTime: 1500
+  spaceTime: 3000
 };
 
 if(config.env == 'external') {
