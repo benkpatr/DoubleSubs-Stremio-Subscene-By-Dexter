@@ -18,7 +18,7 @@ const logger = {
             })
         cons.log(message?.toString());
         const file = logsPath + '/app.logs';
-        if(fs.statSync(file).size/1024 >= 512) this.empty(); // max 512 kb
+        if(fs.statSync(file).size/1024 >= 256) this.empty(); // max 256 kb
         fs.appendFileSync(file, message?.toString() + '\n');
     },
     emptyError(){
@@ -34,10 +34,10 @@ const logger = {
                 param?.toString())) 
             })
         const file = logsPath + '/error.logs';
-        if(fs.statSync(file).size/1024 >= 512) this.emptyError(); // max 512 kb
+        if(fs.statSync(file).size/1024 >= 256) this.emptyError();
         if(message?.stack) {
-            cons.log(message.toString() + ':\n' + message.stack);
-            fs.appendFileSync(file, message.stack + '\n\n\n');
+            cons.log(message.stack);
+            fs.appendFileSync(file, message.stack + '\n\n');
         } else {
             cons.log(message?.toString());
             fs.appendFileSync(file, message?.toString() + '\n');

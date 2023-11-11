@@ -40,7 +40,7 @@ app.use(swStats.getMiddleware({
 }))
 
 app.use((req, res, next) => {
-	console.log("reqpath : ", req.path)
+	console.log("\nreqpath : ", req.originalUrl)
 	console.log('----------------------------------')
     req.setTimeout(180 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
@@ -223,6 +223,7 @@ if(config.env == 'beamup') {
 		res.end(console.readError());
 	})
 }
+
 
 sharedRouter.get('/404', (req, res) => {
 	res.setHeader('Cache-Control', CacheControl.off);

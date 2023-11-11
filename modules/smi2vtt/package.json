@@ -34,7 +34,7 @@
   "dependencies": {
     "htmlparser2": "^3.9.2",
     "iconv-lite": "^0.4.15",
-    "jschardet": "^1.4.1"
+    "charset-detector": "^0.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",

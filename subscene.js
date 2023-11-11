@@ -23,6 +23,7 @@ async function subtitles(type, id, lang, extras) {
   }
 }
 async function Kitsu(type, id, lang) {
+  try {
     console.log(type, id, lang);
     let metaid = id.split(':')[1];
     let meta = KitsuCache.get(metaid);
@@ -33,30 +34,38 @@ async function Kitsu(type, id, lang) {
         }
     }
     if(meta){
-        //console.log(meta)
-        const episode = id.split(':')[2];
-        const searchID = `kitisu_${metaid}_${id.split(':')[1]}`;
-        let search = searchCache.get(searchID);
-        let slug = `${meta.title["en_jp"]} (${meta.title["en"]}) (${meta.year})`;
-        var moviePath = '';
-        console.log('slug',slug)
-        console.log('title',meta.title["en_jp"])
-        if (!search) {
-            search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])}`);
-            if (search) {
-                searchCache.set(searchID, search);
-            }
-        }
+      //console.log(meta)
+      const episode = id.split(':')[2];
+      const searchID = `kitisu_${metaid}_${id.split(':')[1]}`;
+      let search = searchCache.get(searchID);
+      let slug = `${meta.title["en_jp"]} (${meta.title["en"]}) (${meta.year})`;
+      var moviePath = '';
+      console.log('slug',slug)
+      console.log('title',meta.title["en_jp"])
+      if (!search) {
+          search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])}`);
+          if (search) {
+              searchCache.set(searchID, search);
+          }
+      }
+      if(search) {
         for(let i = 0; i<search.length;i++){
-            if(search[i].title.includes(meta.title["en_jp"])){
-                moviePath = search[i].path
-                break
-            }
+          if(search[i].title.includes(meta.title["en_jp"])){
+              moviePath = search[i].path
+              break
+          }
         }
         //let moviePath = search[0].path;
         console.log(moviePath)
         return getsubtitles(moviePath, meta.slug.replace('-','_'), lang, episode)
-    }
+      } else {
+        console.log("not found search kitsu!");
+        return [];
+      }
+    } else return [];
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 async function TMDB(type, id, lang, extras) {

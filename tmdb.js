@@ -14,7 +14,7 @@ async function getMeta(type, id) {
         let res = await request(url);
         if(!res) return;
         let title = res.title; //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
-        let year = res.release_date.split("-")[0]
+        let year = res.release_date?.split("-")[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
         return { title: title, slug: slug, year: year }
     } else if (type == "series") {

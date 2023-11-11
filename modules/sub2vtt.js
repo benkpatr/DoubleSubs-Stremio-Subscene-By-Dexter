@@ -70,7 +70,7 @@ class sub2vtt {
                 file = await this.GetSub()
             } else {
                 if (file) {
-                    if(filename.match(/smi$/)) {
+                    if(filename.match(/\.smi$/)) {
                         file = this.GetSubSmi(file);
                     }
                     else {
@@ -215,7 +215,7 @@ class sub2vtt {
     }
 
     checkExtension(toFilter) { // return index of matched episodes
-        return toFilter.match(/.dfxp|.scc|.srt|.ttml|.ssa|.vtt|.ass|.srt|.smi/gi)
+        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$/gi)
     }
     checkEpisode(toFilter) {
         var reEpisode = new RegExp(this.episode, "gi");
@@ -272,7 +272,7 @@ class sub2vtt {
             files[0].extraction; // Uint8Array content, createExtractorFromData only
 
             return {
-                name: headers,
+                name: files[0].fileHeader.name,
                 data: files[0].extraction
             }
         } catch (err) {
