@@ -92,15 +92,14 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           const searchID = id;
           let search = searchCache.get(searchID);
           if(!search?.length) {
-            search = await subscene.search(`${meta.title} ${meta.year || ''}`);
+            search = await subscene.search(`${meta.title} ${`(${meta.year})` || ''}`).catch(error => { throw error });
             if(search?.length) 
               searchCache.set(searchID, search);
           }
           if(search?.length) {
-            const reg = new RegExp(`^${meta.slug}(.*?)(${meta.year || ''})?`.trim(), 'gi');
+            const reg = new RegExp(`^${meta.slug.replace(/-/g, '--?')}(.*?)(${meta.year || ''})?`.trim(), 'gi');
             console.log(reg);
             const findMovie = search.find(x => reg.test(x.path.split('/subtitles/')[1]));
-            console.log(findMovie)
             if(findMovie?.path) {
               console.log(findMovie.path);
               return await getsubtitles(findMovie.path, id, lang, null, meta.year, extras).catch(error => { throw error });
