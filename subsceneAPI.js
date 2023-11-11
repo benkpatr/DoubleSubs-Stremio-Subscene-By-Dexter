@@ -176,8 +176,7 @@ async function subtitle(url = String) {
 function sortByLang(subs = Array) {
   try {
     let sorted = {}
-    subs.map((e,
-      i)=> {
+    subs.map((e, i)=> {
       if (sorted[e.lang.toLowerCase()]) {
         sorted[e.lang.toLowerCase()].push(e)
       } else {
@@ -186,6 +185,7 @@ function sortByLang(subs = Array) {
     })
     return sorted
   }catch(err) {
+    console.error(err)
     return null
   }
 }
