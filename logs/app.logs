@@ -2,27 +2,26 @@ NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
 
-reqpath :  /arabic/subtitles/series/tt29006388%3A1%3A3/videoHash=2a780aecf876cfe3&videoSize=759716517&filename=A.Good.Day.to.Be.a.Dog.E03.NF.e-subs.av1.1080p-SiN.mkv.json
+reqpath :  /brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json
 ----------------------------------
 {
-  "configuration": "arabic",
+  "configuration": "brazillian-portuguese",
   "type": "series",
-  "id": "tt29006388:1:3",
-  "extra": "videoHash=2a780aecf876cfe3&videoSize=759716517&filename=A.Good.Day.to.Be.a.Dog.E03.NF.e-subs.av1.1080p-SiN.mkv"
+  "id": "tt9140554:1:1",
+  "extra": "videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki (2021) - S01E01 - Glorious Purpose (1080p DSNP WEB-DL x265 Silence).mkv"
 }
-https://api.themoviedb.org/3/find/tt29006388?language=en-US&api_key=77adc68bac2d8b9539bf42aaadcffff4&external_source=imdb_id
+https://api.themoviedb.org/3/find/tt9140554?language=en-US&api_key=77adc68bac2d8b9539bf42aaadcffff4&external_source=imdb_id
 meta {
-  "title": "A Good Day to Be a Dog",
-  "slug": "a-good-day-to-be-a-dog"
+  "title": "Loki",
+  "slug": "loki"
 }
-searching: https://subscene.com/subtitles/searchbytitle?query=A+Good+Day+to+Be+a+Dog+First+Season
-/^a-good-day-to-be-a-dog-(first|1st)-season|a-good-day-to-be-a-dog-season-1|a-good-day-to-be-a-dog-s01/gi /^a-good-day-to-be-a-dog/gi /a-good-day-to-be-a-dog/gi
-/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae
-/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae tt29006388_season_1_episode_3 arabic undefined 3
-https://subscene.com/subtitles/a-good-day-to-be-a-dog-lovely-again-today-oneuldo-sarangseureobgae
-no year scraping : 120
-subtitles matched lang :  5
-episode  E03 Regex:  S\d?\d.*EP?03|- (EP)?03( |$)|Tập.?03
-A.Good.Day.To.Be.A.Dog.S01E03.VIU.1080P.JustDance 
-filtered subs  1
-cached true
+searching: https://subscene.com/subtitles/searchbytitle?query=Loki+First+Season
+/^loki-(first|1st)-season|loki-season-1|loki-s01/gi /^loki/gi /loki/gi
+/subtitles/loki-first-season
+/subtitles/loki-first-season tt9140554_season_1_episode_1 brazillian-portuguese undefined 1
+https://subscene.com/subtitles/loki-first-season
+no year scraping : 1768
+
+reqpath :  /brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json
+----------------------------------
+Redirect 301: https://subscene.onrender.com/brazillian-portuguese/subtitles/series/tt9140554%3A1%3A1/videoHash=b8a94659518db8b9&videoSize=1677591561&filename=Loki%20(2021)%20-%20S01E01%20-%20Glorious%20Purpose%20(1080p%20DSNP%20WEB-DL%20x265%20Silence).mkv.json

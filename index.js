@@ -92,7 +92,7 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 if(external_domains?.length) {
 	let start_server = 0;
 	app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
-		if(start_server > external_domains.length) start_server = 0;
+		if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
 		if(start_server) {
 			const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
 			console.log("Redirect 301: " + redirect_url);
