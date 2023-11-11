@@ -18,7 +18,7 @@ let filterDomains = async function(){
             }).catch(err => { console.error("failed get current ip: " + domain)});
 
             if(ip_adr) {
-                if(!ip_list.find(x => x != ip_adr)) {
+                if(!ip_list.find(ip => ip == ip_adr)) {
                     valid_domains.push(domain);
                     ip_list.push(ip_adr);
                 }

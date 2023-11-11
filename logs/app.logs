@@ -1,7 +1,9 @@
 NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
-
-reqpath :  /vietnamese/subtitles/movie/tt13539646/videoHash=69422f25b4a82c55&videoSize=3432046257&filename=The.Wandering.Earth.II.2023.BLURAY.1080p.BluRay.x264.AAC5.1-%5BYTS.MX%5D.mp4.json
-----------------------------------
-Redirect 301: https://subscene.onrender.com/vietnamese/subtitles/movie/tt13539646/videoHash=69422f25b4a82c55&videoSize=3432046257&filename=The.Wandering.Earth.II.2023.BLURAY.1080p.BluRay.x264.AAC5.1-%5BYTS.MX%5D.mp4.json
+valid domain [
+  "https://subscene.onrender.com",
+  "https://subscene-ip8j.onrender.com",
+  "https://subscene-h090.onrender.com",
+  "https://subscene-ljxx.onrender.com"
+]

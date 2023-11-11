@@ -36,11 +36,9 @@ const logger = {
         const file = logsPath + '/error.logs';
         if(fs.statSync(file).size/1024 >= 256) this.emptyError();
         if(message?.stack) {
-            cons.log(message.stack);
             this.log(message.stack);
             fs.appendFileSync(file, message.stack + '\n\n');
         } else {
-            cons.log(message?.toString());
             this.log(message?.toString());
             fs.appendFileSync(file, message?.toString() + '\n');
         }
