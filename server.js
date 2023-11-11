@@ -7,13 +7,8 @@ else {
     if(config.env == "beamup") {
         const logger = require('./modules/logger');
         console = logger;
-        initLog();
-
-        async function initLog() {
-            await console.empty();
-            await console.emptyError();
-        }
-
+        console.empty();
+        console.emptyError();
     }
 }
 

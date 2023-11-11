@@ -8,7 +8,6 @@
 /package-lock.json
 /landingTemplate.js
 /cache/files/*
-/logs/*
 .env
 bun.lockb
 build.bat
