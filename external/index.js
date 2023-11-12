@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { sharedRouter } = require('../index.js')
+const config = require('../config.js');
 
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
@@ -21,6 +22,9 @@ app.set('trust proxy', true)
 
 app.use(cors())
 
+app.get('/', (req, res) => {
+    res.redirect(301, config.beamupURL);
+})
 app.use('/', sharedRouter);
 
 module.exports = app

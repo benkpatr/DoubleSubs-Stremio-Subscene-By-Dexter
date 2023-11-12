@@ -12,13 +12,14 @@ var config = {
         fourHour: 'max-age=14400, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
         oneHour: 'max-age=3600, must-revalidate, stale-while-revalidate=1800, stale-if-error=1800, public',
         off: 'no-cache, no-store, must-revalidate'
-    }
+    },
+    beamupURL: "https://43433fff4541-subscene-by-dexter.baby-beamup.club"
 }
 
 switch (env) {
     case 'beamup':
 		config.port = process.env.PORT || 63555
-        config.local = process.env.PRE_URL || "http://43433fff4541-subscene-by-dexter.baby-beamup.club";
+        config.local = process.env.PRE_URL || config.beamupURL;
         break;
 
     case 'local':

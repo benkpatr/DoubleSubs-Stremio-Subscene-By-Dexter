@@ -97,7 +97,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
               searchCache.set(searchID, search);
           }
           if(search?.length) {
-            const reg = new RegExp(`^${meta.slug.replace(/-/g, '--?')}(.*?)(${meta.year || ''})?`.trim(), 'gi');
+            const reg = new RegExp(`^${meta.slug.replace(/-/g, '--?')}(.*?)(${meta.year || ''})?`.trim(), 'i');
             console.log(reg);
             const findMovie = search.find(x => reg.test(x.path.split('/subtitles/')[1]));
             if(findMovie?.path) {
@@ -132,9 +132,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           //https://subscene.com/subtitles/kami-tachi-ni-hirowareta-otoko-2nd-season
           let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
           let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
-          const reg = new RegExp(`^${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'gi');
-          const reg1 = new RegExp(`^${meta.slug}`, 'gi');
-          const reg2 = new RegExp(meta.slug, 'gi');
+          const reg = new RegExp(`^${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'i');
+          const reg1 = new RegExp(`^${meta.slug}`, 'i');
+          const reg2 = new RegExp(meta.slug, 'i');
           
           console.log(reg, reg1, reg2);
           const findSeries = search.find(x => reg.test(x.path.split('/subtitles/')[1])) || search.find(x => reg1.test(x.path.split('/subtitles/')[1])) || search.find(x => reg2.test(x.path));
@@ -229,7 +229,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
           episodeText1 += (episode.length == 1) ? '|Tập.?0' + episode : '|Tập.?' + episode;
 
           console.log('episode ', episodeText, 'Regex: ', episodeText1);
-          const reg = new RegExp(episodeText1, 'gi');
+          const reg = new RegExp(episodeText1, 'i');
           
           subtitles.forEach(element => {
             if(reg.test(element.title.toLowerCase().trim())) {
@@ -261,7 +261,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
               let path = config.BaseURL + value.path;
               let url;
               if (episode) {
-                url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&episode=${episodeText}`+"&"+sub2vtt.gerenateUrl(path, {});
+                url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&episode=${encodeURIComponent(episodeText1)}`+"&"+sub2vtt.gerenateUrl(path, {});
               } else {
                 url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&` + sub2vtt.gerenateUrl(path, {});
               }

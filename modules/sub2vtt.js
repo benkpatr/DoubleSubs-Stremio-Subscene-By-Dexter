@@ -5,7 +5,7 @@ const axios = require('axios');
 const smi2vtt = require('./smi2vtt');
 var detect = require('charset-detector');
 const iconv = require('iconv-lite');
-
+const ass2vtt = require('./ass2vtt')
 
 const iso639 = require('./ISO639');
 
@@ -69,15 +69,19 @@ class sub2vtt {
             if (this.supported.subs.includes(this.type)) {
                 file = await this.GetSub()
             } else {
-                if (file) {
-                    if(filename.match(/\.smi$/)) {
-                        file = this.GetSubSmi(file);
-                    }
-                    else {
+                if(filename.match(/\.smi$/)) {
+                    file = this.GetSubSmi(file);
+                }
+                else if(filename.match(/\.ass$/)) {
+                    try {
+                        file = this.GetSubAss(file);
+                    } catch (e) {
                         file = await this.GetSub(file)
                     }
                 }
-                else file = await this.GetSub()
+                else {
+                    file = await this.GetSub(file)
+                }
             }
             return file
         } catch (e) {
@@ -144,6 +148,21 @@ class sub2vtt {
         }
         else 
             return data.toString();
+    }
+
+    GetSubAss(data) {
+        try {
+            data = this.encodeUTF8(data);
+            const subtitle = ass2vtt(data);
+            if(subtitle) {
+                return {subtitle: subtitle.toString(), status: 'ass2vtt success'}
+            } else {
+                return { subtitle: null, status: 'ass2vtt empty content'}
+            }
+        }
+        catch(e) {
+            console.error(e)
+        }
     }
 
     GetSubSmi(data) {
@@ -215,7 +234,7 @@ class sub2vtt {
     }
 
     checkExtension(toFilter) { // return index of matched episodes
-        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$/gi)
+        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$/i)
     }
     checkEpisode(toFilter) {
         var reEpisode = new RegExp(this.episode, "gi");
