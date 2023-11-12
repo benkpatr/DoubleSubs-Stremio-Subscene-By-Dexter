@@ -6,7 +6,7 @@ const cinemeta = require('./modules/cinemeta')
 async function request(url, header) {
     return await got.get(url, {
         retry: { limit: 3}
-    }).json().catch(err => { throw `failed to get meta from ${url}`});
+    }).json().catch(err => { console.error(`failed to get meta from ${url}`)});
 }
 
 async function getMeta(type, id) {
