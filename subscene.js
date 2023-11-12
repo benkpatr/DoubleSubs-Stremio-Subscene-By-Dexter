@@ -99,7 +99,17 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           if(search?.length) {
             const reg = new RegExp(`^${meta.slug.replace(/-/g, '--?')}(.*?)(${meta.year || ''})?`.trim(), 'i');
             console.log(reg);
-            const findMovie = search.find(x => reg.test(x.path.split('/subtitles/')[1]));
+            let findMovie = search.find(x => reg.test(x.path.split('/subtitles/')[1]));
+
+            //filter by Name
+            if(!findMovie) {
+              const reg2 = new  RegExp(
+                `${meta.title}(.*?)${meta.year}`
+              , 'i');
+              console.log(reg2);
+              findMovie = search.find(x => reg2.test(x.title))
+            }
+
             if(findMovie?.path) {
               console.log(findMovie.path);
               return await getsubtitles(findMovie.path, id, lang, null, meta.year, extras).catch(error => { throw error });
@@ -130,14 +140,50 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           //https://subscene.com/subtitles/spy-first-season
           //https://subscene.com/subtitles/spy-kyoushitsu-2nd-season-spy-classroom-season-2
           //https://subscene.com/subtitles/kami-tachi-ni-hirowareta-otoko-2nd-season
+          //https://subscene.com/subtitles/shameless-us-seventh-season-2017
           let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
           let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
-          const reg = new RegExp(`^${meta.slug}-(${season_text.toLowerCase()}|${season}${oi})-season|${meta.slug}-season-${season}|${meta.slug}-s${fillSeason}`, 'i');
-          const reg1 = new RegExp(`^${meta.slug}`, 'i');
-          const reg2 = new RegExp(meta.slug, 'i');
+
+          //#filter lvl1
+          const reg = new RegExp(
+            `^${meta.slug}-(.*?)(${season_text.toLowerCase()}|${season}${oi})-season|` +
+            `${meta.slug}-(.*?)season-${season}|`+
+            `${meta.slug}-(.*?)s${fillSeason}`
+          , 'i');
+          console.log(reg);
+          let findSeries = search.find(x => reg.test(x.path.split('/subtitles/')[1]));
+
+          //filter by Name
+          if(!findSeries) {
+            const reg1 = new  RegExp(
+              `${meta.title}(.*?)${season_text}\\sSeason|` +
+              `${meta.title}(.*?)Season(.*?)${season}`
+            , 'i');
+            console.log(reg1);
+            findSeries = search.find(x => reg1.test(x.title))
+          }
+
+          //#filter lvl2
+          if(!findSeries) {
+            const reg2 = new RegExp(`^${meta.slug}`, 'i');
+            const reg3 = new RegExp(meta.slug, 'i');
+            console.log(reg2, reg3);
+            findSeries = search.find(x => reg2.test(x.path.split('/subtitles/')[1])) || search.find(x => reg3.test(x.path));
+          }
           
-          console.log(reg, reg1, reg2);
-          const findSeries = search.find(x => reg.test(x.path.split('/subtitles/')[1])) || search.find(x => reg1.test(x.path.split('/subtitles/')[1])) || search.find(x => reg2.test(x.path));
+          //filter lvl3
+          const slug_child = meta.slug.split('-');
+          if(!findSeries && slug_child.length >= 2) {
+            const slug1 = slug_child.slice(1).join('-');
+            const reg4 = new RegExp(
+              `^${slug1}-(.*?)(${season_text.toLowerCase()}|${season}${oi})-season|` +
+              `${slug1}-(.*?)season-${season}|`+
+              `${slug1}-(.*?)s${fillSeason}`
+              , 'i');
+              console.log(reg4);
+              findSeries = search.find(x => reg4.test(x.path.split('/subtitles/')[1]))
+          }
+
           if(findSeries?.path){
             console.log(findSeries.path);
             return await getsubtitles(findSeries.path, metaid + '_season_' + season + '_episode_' + episode, lang, episode).catch(error => { throw error });
