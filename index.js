@@ -187,8 +187,8 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 			
 			if (!file?.subtitle?.length) throw file?.status
 
-			let sub_head_long = 20;
-			if(episode) sub_head_long = 10;
+			let sub_head_long = 10;
+			if(episode) sub_head_long = 5;
 			const subtitle_header_info = [
 				'WEBVTT\n',
 				'0',

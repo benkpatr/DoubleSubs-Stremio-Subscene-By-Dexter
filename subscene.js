@@ -156,8 +156,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           //filter by Name
           if(!findSeries) {
             const reg1 = new  RegExp(
-              `${meta.title}(.*?)${season_text}\\sSeason|` +
-              `${meta.title}(.*?)Season(.*?)${season}`
+              `${meta.title}(.*?)(${season_text}|${season}${oi})(.*?)Season|` +
+              `${meta.title}(.*?)Season(.*?)${season}|` +
+              `${meta.title}(.*?)s${fillSeason}`
             , 'i');
             console.log(reg1);
             findSeries = search.find(x => reg1.test(x.title))
