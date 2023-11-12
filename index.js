@@ -9,6 +9,7 @@ const languages = require('./languages.json');
 const config = require('./config.js');
 const sub2vtt = require('./modules/sub2vtt');
 const currentIP = require('./modules/current-ip');
+const external_domains = require('./domain-list');
 
 const DiskCache = require('node-persist');
 
@@ -89,7 +90,6 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 });
 
 if(config.env != 'external') {
-	const external_domains = require('./domain-list');
 	if(external_domains?.length) {
 		let start_server = config.env == 'beamup' ? 1 : 0;
 		app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
