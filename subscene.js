@@ -214,7 +214,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
     let cached = Cache.get(cachID);
     if (cached) {
       console.log('cached main', cachID);
-      if(extras?.filename && cached.length > 1 && !episode) {
+      if(extras?.filename && cached.length > 1) {
         cached = sortMovieByFilename(cached, extras.filename)
       }
       return cached
@@ -290,7 +290,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
 
         //------------------
         // sort movie by extra filename
-        if(extras?.filename && subtitles.length > 1 && !episode) {
+        if(extras?.filename && subtitles.length > 1) {
           subtitles = sortMovieByFilename(subtitles, extras.filename)
         }
         //-----------------
