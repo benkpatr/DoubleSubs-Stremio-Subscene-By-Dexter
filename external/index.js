@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { sharedRouter } = require('../index.js')
+const { sharedRouter } = require('../server.js')
 
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.path)
