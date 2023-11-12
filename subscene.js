@@ -18,7 +18,7 @@ const searchCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 
 async function subtitles(type, id, lang, extras) {
   if (id.match(/tt[0-9]/)){
     let tmdb = await (TMDB(type, id, lang, extras)).catch(error => { throw error });
-    if(tmdb == null) tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
+    if(tmdb == null && type != 'series') tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
     return tmdb ||  [];
 
   }	else if (id.match(/kitsu:[0-9]/)){
@@ -198,7 +198,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
         async function movieWithYear(moviePath, year) {
           let subtitles = subsceneCache.get(`${moviePath}-${year}`);
           if(!subtitles?.length) {
-            await new Promise((r) => setTimeout(r, 3000)); // prevent too many request, still finding the other way
+            await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
             const subs2 = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { throw error }) // moviepath with year
             console.log("with year scraping :", subs2 ? subs2.length : 0);
             if(subs2?.length) {
@@ -259,6 +259,7 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
           simpleTitle = simpleTitle.replace(/\W/gi,"") // kasih gambaran di stremio
           if (value) {
               let path = config.BaseURL + value.path;
+              let url;
               if (episode) {
                 url = config.local+"/sub.vtt?"+`title=${encodeURIComponent(subtitles[i].title)}&episode=${episodeText}`+"&"+sub2vtt.gerenateUrl(path, {});
               } else {

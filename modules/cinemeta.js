@@ -5,7 +5,7 @@ const { CineV3 } = require('../config');
 async function request(url, header) {
     return await got.get(url, {
         retry: { limit: 3}
-    }).json()
+    }).json().catch(err => { throw `failed to get meta from ${url}`});
 }
 
 async function getMeta(type, id) {
@@ -19,7 +19,7 @@ async function getMeta(type, id) {
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
         return { title: title, slug: slug, year: year }
     } else if (type == "series") {
-        let url = `${CineV3}/series/${id}.json`
+        let url = `${CineV3}/series/${id.split(':')[0]}.json`
         let res = await request(url);
         let title = res.meta.name;//res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         let year = res.meta.year?.split("-")[0];

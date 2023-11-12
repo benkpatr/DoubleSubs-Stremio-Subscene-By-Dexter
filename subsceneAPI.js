@@ -1,8 +1,8 @@
 const got = require("got-scraping").gotScraping
-cheerio = require("cheerio")
-config = require('./config')
-baseUrl = config.BaseURL
-unzip = require("adm-zip")
+const cheerio = require("cheerio")
+const config = require('./config')
+const baseUrl = config.BaseURL
+const unzip = require("adm-zip")
 const { parse } = require("node-html-parser");
 
 const gotConfig = {

@@ -6,7 +6,7 @@ const cinemeta = require('./modules/cinemeta')
 async function request(url, header) {
     return await got.get(url, {
         retry: { limit: 3}
-    }).json()
+    }).json().catch(err => { throw `failed to get meta from ${url}`});
 }
 
 async function getMeta(type, id) {
@@ -20,7 +20,7 @@ async function getMeta(type, id) {
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
         return { title: title, slug: slug, year: year }
     } else if (type == "series") {
-        let url = `${BaseURL}/find/${id}?language=en-US&api_key=${process.env.API_KEY}&external_source=imdb_id`
+        let url = `${BaseURL}/find/${id.split(':')[0]}?language=en-US&api_key=${process.env.API_KEY}&external_source=imdb_id`
         console.log(url)
         let res = await request(url);
         if(!res) return;

@@ -1,3 +1,13 @@
 NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: http://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
+valid domains [
+  "https://subscene.onrender.com",
+  "https://subscene-ip8j.onrender.com",
+  "https://subscene-h090.onrender.com",
+  "https://subscene-ljxx.onrender.com"
+]
+
+reqpath :  /brazillian-portuguese/subtitles/series/tt9813792%3A1%3A2/videoHash=1699e71befd0318f&videoSize=1102879901&filename=From.S01E02.1080p.WEB-DL.WEB-DL.DUAL.mkv.json
+----------------------------------
+Redirect 301: https://subscene.onrender.com/brazillian-portuguese/subtitles/series/tt9813792%3A1%3A2/videoHash=1699e71befd0318f&videoSize=1102879901&filename=From.S01E02.1080p.WEB-DL.WEB-DL.DUAL.mkv.json

@@ -16,3 +16,4 @@ Dockerfile
 .dockerignore
 vercel.json
 .vercel
+.vercelignore
