@@ -5,7 +5,6 @@ const { subtitles, downloadUrl } = require('../subscene');
 export default async function handler(req, res) {
   try{
 		res.setHeader('Content-Type', 'application/json');
-		console.log(req.params);
 		req.params = {
 		configuration: req.url.split('/')[1],
 		type: req.url.split('/')[3],

@@ -272,10 +272,9 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
           episodeText = 'E' + episodeText
 
           //S1E01,S01E01, -1, -01, - 1, - 01
-          episodeText1 = 'S\\d?\\d(.*?)E(P|pisode)?\\s?\\d?' + episode;
-          episodeText1 += '|-\\s?(E(P|pisode)?)?\\s?\\d?' + episode + '( |$)';
-          episodeText1 += '|Tập(.*?)\\d?' + episode;
-
+          episodeText1 = 'S(eason(\\s|\\.)?)?\\d?\\d(.*?)E(P|pisode)?(\\s|\\.)?0?' + episode + '([-\\s\\.]|$)';
+          episodeText1 += '|-\\s?(E(P|pisode)?)?\\s?0?' + episode + '([-\\s\\.]|$)';
+          episodeText1 += '|Tập(.*?)0?' + episode;
           const reg = new RegExp(episodeText1, 'i');
           console.log(reg);
           
