@@ -271,12 +271,13 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
           episodeText = (episode.length == 1) ? ('0' + episode) : episode;
           episodeText = 'E' + episodeText
 
-          episodeText1 = (episode.length == 1) ? ('S\\d?\\d.*EP?0' + episode) : ('S\\d?\\d.*E' + episode);
-          episodeText1 += (episode.length == 1) ? ('|- (EP)?0' + episode + '( |$)') : ('|- (EP)?' + episode + '( |$)');
-          episodeText1 += (episode.length == 1) ? '|Tập.?0' + episode : '|Tập.?' + episode;
+          //S1E01,S01E01, -1, -01, - 1, - 01
+          episodeText1 = 'S\\d?\\d(.*?)E(P|pisode)?\\s?\\d?' + episode;
+          episodeText1 += '|-\\s?(E(P|pisode)?)?\\s?\\d?' + episode + '( |$)';
+          episodeText1 += '|Tập(.*?)\\d?' + episode;
 
-          console.log('episode ', episodeText, 'Regex: ', episodeText1);
           const reg = new RegExp(episodeText1, 'i');
+          console.log(reg);
           
           subtitles.forEach(element => {
             if(reg.test(element.title.toLowerCase().trim())) {

@@ -279,8 +279,12 @@ class sub2vtt {
                 })
                 break; // because only takes the first match
             }
-            if (files?.length) return files[0]
-            else return
+            if (files?.length) return files[0];
+            else if(zipEntries.length) return {
+                name: zipEntries[0].entryName,
+                data: zipEntries[0].getData()
+            }
+            else throw `not match any file!`
         } catch (err) {
             console.error(err);
         }
