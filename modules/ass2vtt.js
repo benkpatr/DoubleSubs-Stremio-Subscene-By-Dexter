@@ -18,7 +18,6 @@ function ass2vtt(assText){
         const re_text_tag = /\{.*?\}/g;
         const re_hardspace = /\\h/g;
 
-
         text = text.replace(re_newLine, '\n');
         text = text.replace(re_text_tag, '');
         text = text.replace(re_hardspace, '&nbsp;');

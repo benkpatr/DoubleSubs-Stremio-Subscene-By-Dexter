@@ -11,7 +11,10 @@ function dotsub2vtt(dotsubText){
             const r = reg_sub.exec(lines[i]);
             const start = r[1]; //milliseconds
             const end = r[2];   //milliseconds
-            const text = r[3];
+            let text = r[3];
+
+            const reg_newline = /\|+/g;
+            text = text.replace(reg_newline, '\n');
 
             const start_text = timeText(start);
             const end_text = timeText(end);
