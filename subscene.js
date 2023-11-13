@@ -273,22 +273,37 @@ async function getsubtitles(moviePath, id, lang, episode, year, extras, lvl2 = f
 
           //S1E01,S01E01, -1, -01, - 1, - 01
           episodeText1 = 'S(eason(\\s|\\.)?)?\\d?\\d(.*?)E(P|pisode)?(\\s|\\.)?0?' + episode + '([-\\]\\s\\.]|$)';
-          episodeText1 += '|-\\s?(E(P|pisode)?)?\\s?0?' + episode + '([-\\s\\.]|$)';
+          episodeText1 += '|-\\s?(E(P|pisode)?)?\\s?0?' + episode + '([-\\]\\s\\.]|$)';
           episodeText1 += '|x0?' + episode + '([-\\]\\s\\.]|$)';
           episodeText1 += '|Tập(.*?)0?' + episode;
           const reg = new RegExp(episodeText1, 'i');
-          console.log(reg);
+          console.log('include', reg);
           
+          //filter by episode
           subtitles.forEach(element => {
-            if(reg.test(element.title.toLowerCase().trim())) {
+            if(reg.test(element.title.trim())) {
               console.log(element.title);
               sub.push(element);
             }
           })
-          sub = [...new Set(sub)];
-          subtitles = sub;
+
+          //if not found, return the subtitles for multiple ep
+          if(!sub.length) {
+            excludeEpisodeText = episodeText1.replace(new RegExp(episode, 'g'), (episode <= 9 ? '\\d' : '\\d\\d'));
+            const reg2 = new RegExp(excludeEpisodeText);
+            console.log('exclude', reg2);
+            subtitles.forEach(element => {
+              if(!reg2.test(element.title.trim())) {
+                console.log(element.title);
+                sub.push(element);
+              }
+            })
+          }
+
+          subtitles = [...new Set(sub)];
         }
         console.log("filtered subs ", subtitles.length);
+
 
         //------------------
         // sort movie by extra filename
