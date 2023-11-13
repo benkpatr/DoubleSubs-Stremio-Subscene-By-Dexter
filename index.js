@@ -97,17 +97,19 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 });
 
 if(external_domains?.length) {
-	let start_server = config.env == 'beamup' ? 1 : 0;
-	app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
-		if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
-		if(start_server) {
-			const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-			console.log("Redirect 301: " + redirect_url);
-			return res.redirect(301, redirect_url);
-		}
-		start_server++;
-		next();
-	})	
+	if(config.env != 'local') {
+		let start_server = config.env == 'beamup' ? 1 : 0;
+		app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+			if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
+			if(start_server) {
+				const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+				console.log("Redirect 301: " + redirect_url);
+				return res.redirect(301, redirect_url);
+			}
+			start_server++;
+			next();
+		})
+	}
 }
 
 sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
@@ -185,16 +187,20 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 			
 			file = await sub.getSubtitle();
 			
-			if (!file?.subtitle?.length) throw file?.status
+			if (!file?.data?.subtitle?.length) throw file?.data?.status
+
+			const filename = file.name;
+			file = file.data;
 
 			let sub_head_long = 10;
 			if(episode) sub_head_long = 5;
 			const subtitle_header_info = [
 				'WEBVTT\n',
 				'0',
-				`00:00:05.000 --> 00:00:${5+sub_head_long}.000`,
-				'[REUP]Subscene by Dexter21767',
-				`${title ? title : ''}\n\n`
+				`00:00:03.000 --> 00:00:${5+sub_head_long}.000`,
+				`>>[REUP]Subscene by Dexter21767 v${manifest.version}<<`,
+				`${title ? title : ''}`,
+				`<u>${filename}</u>\n\n`
 			];
 			const lines = file.subtitle.split('\n');
 			for(i = 0; i < lines.length; i++) {

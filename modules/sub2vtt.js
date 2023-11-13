@@ -87,7 +87,10 @@ class sub2vtt {
                     file = await this.GetSub(file)
                 }
             }
-            return file
+            return {
+                name: filename,
+                data: file
+            }
         } catch (e) {
             console.error(e);
         }
