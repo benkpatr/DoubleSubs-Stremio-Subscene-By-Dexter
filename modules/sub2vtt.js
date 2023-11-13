@@ -271,7 +271,7 @@ class sub2vtt {
                 if (this.episode) {
                     if (!this.checkEpisode(filename)) continue;
                 }
-                console.log("matched file : ", filename);
+                console.log("matched file:", filename);
                 
                 files.push({
                     name: filename,
@@ -296,6 +296,7 @@ class sub2vtt {
             const list = extractor.getFileList();
             //const listArcHeader = list.arcHeader; // archive header
             const fileHeaders = [...list.fileHeaders]; // load the file headers
+            console.log('Rar files count:', fileHeaders.length);
             let filesNames = []
             for (var i = 0; i < fileHeaders.length; i++) {
                 var filename = fileHeaders[i].name;
@@ -303,12 +304,22 @@ class sub2vtt {
                 if (this.episode) {
                     if (!this.checkEpisode(filename)) continue;
                 }
-                console.log("matched file: ", filename);
+                console.log("matched file:", filename);
                 filesNames.push(filename)
                 break; // because only takes the first match
             }
 
-            if(!filename.length) throw `matched file: 0`;
+            if(!filesNames.length) {
+                if(fileHeaders.length) {
+                    const extracted = extractor.extract({ files: [fileHeaders[0].name] });
+                    const files = [...extracted.files];
+                    return {
+                        name: files[0].fileHeader.name,
+                        data: files[0].extraction
+                    }
+                } else throw `not found any file inside Rar`;
+            }
+            
 
             const extracted = extractor.extract({ files: filesNames });
             // extracted.arcHeader  : archive header
