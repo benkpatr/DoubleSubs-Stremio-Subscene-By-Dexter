@@ -20,7 +20,7 @@ function ass2vtt(assText){
       let dtext = "0" + start + "0 --> 0" + end + "0" + "\n";
 
       const re_newLine = /\\N/g;
-      const re_text_tag = /\{.*\}/g;
+      const re_text_tag = /\{.*?\}/g;
       text = text.replace(re_newLine, '\n');
       text = text.replace(re_text_tag, '');
       dtext += text + '\n\n';
