@@ -33,7 +33,7 @@ function ass2vtt(assText){
     const resort = resortSubs(subs);
     for(const index in resort) {
       resort[index] = index + '\n' +
-        '0' + resort[index].start + '0' + ' ---> ' + '0' + resort[index].end + '0' + '\n' +
+        '0' + resort[index].start + '0' + ' --> ' + '0' + resort[index].end + '0' + '\n' +
         resort[index].text + '\n';
     }
     resort.unshift('WEBVTT\n');
