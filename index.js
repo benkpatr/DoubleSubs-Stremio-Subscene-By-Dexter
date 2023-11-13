@@ -96,20 +96,18 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.end();
 });
 
-if(external_domains?.length) {
-	if(config.env != 'local') {
-		let start_server = config.env == 'beamup' ? 1 : 0;
-		app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
-			if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
-			if(start_server) {
-				const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-				console.log("Redirect 301: " + redirect_url);
-				return res.redirect(301, redirect_url);
-			}
-			start_server++;
-			next();
-		})
-	}
+if(config.env != 'local' && external_domains?.length) {
+	let start_server = config.env == 'beamup' ? 1 : 0;
+	app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+		if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
+		if(start_server) {
+			const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+			console.log("Redirect 301: " + redirect_url);
+			return res.redirect(301, redirect_url);
+		}
+		start_server++;
+		next();
+	})
 }
 
 sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
@@ -199,7 +197,7 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 				'0',
 				`00:00:03.000 --> 00:00:${5+sub_head_long}.000`,
 				`>>[REUP]Subscene by Dexter21767 v${manifest.version}<<`,
-				`${title ? title : ''}`,
+				`${title}`,
 				`<u>${filename}</u>\n\n`
 			];
 			const lines = file.subtitle.split('\n');
