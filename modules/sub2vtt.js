@@ -280,11 +280,16 @@ class sub2vtt {
                 break; // because only takes the first match
             }
             if (files?.length) return files[0];
-            else if(zipEntries.length) return {
-                name: zipEntries[0].entryName,
-                data: zipEntries[0].getData()
+            else if(zipEntries.length) {
+                const filename = zipEntries[0].entryName; //first file
+                if(this.checkExtension(filename)) {
+                    return {
+                        name: zipEntries[0].entryName,
+                        data: zipEntries[0].getData()
+                    }
+                } else throw `file ${filename} are not support!`;
             }
-            else throw `not match any file!`
+            else throw `not match any file!`;
         } catch (err) {
             console.error(err);
         }
@@ -311,12 +316,15 @@ class sub2vtt {
 
             if(!filesNames.length) {
                 if(fileHeaders.length) {
-                    const extracted = extractor.extract({ files: [fileHeaders[0].name] });
-                    const files = [...extracted.files];
-                    return {
-                        name: files[0].fileHeader.name,
-                        data: files[0].extraction
-                    }
+                    const filename = fileHeaders[0].name;
+                    if(this.checkExtension(filename)) {
+                        const extracted = extractor.extract({ files: [filename] });
+                        const files = [...extracted.files];
+                        return {
+                            name: files[0].fileHeader.name,
+                            data: files[0].extraction
+                        }
+                    } else throw `file ${filename} are not support!`;
                 } else throw `not found any file inside Rar`;
             }
             
