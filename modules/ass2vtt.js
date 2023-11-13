@@ -26,7 +26,7 @@ function ass2vtt(assText){
     for(const index in subs) {
       subs[index] = index + '\n' + subs[index];
     }
-    subs.unshift('WEBVTT\n\n');
+    subs.unshift('WEBVTT\n');
     return subs.join('\n');
   }
   else {

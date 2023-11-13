@@ -5,7 +5,7 @@ const { sharedRouter } = require('../index.js')
 const config = require('../config.js');
 
 app.use((req, res, next) => {
-	console.log("reqpath : ", req.path)
+	console.log("reqpath : ", req.originalUrl)
 	console.log('----------------------------------')
     req.setTimeout(60 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
