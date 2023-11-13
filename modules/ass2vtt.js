@@ -1,7 +1,7 @@
 //get default value only
 function ass2vtt(assText){
   if(!assText) throw `assText is empty!`;
-  const lines = assText.split('\n');
+  const lines = assText.split(/\r?\n/);
 
   //getSubtitle
   const tag_ass = /^dialogue.*default/i;
@@ -13,7 +13,7 @@ function ass2vtt(assText){
   const subs = [];
   for(const line of lines) {
     if(tag_ass.test(line)) {
-      const r = re_ass.exec(line.trim());
+      const r = re_ass.exec(line);
       if(!r) throw `bad line: ${line}`;
       const start = r[1], end = r[2], text = r[3];
       let dtext = "0" + start + "0 --> 0" + end + "0" + "\n";

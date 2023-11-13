@@ -5,7 +5,8 @@ const axios = require('axios');
 const smi2vtt = require('./smi2vtt');
 var detect = require('charset-detector');
 const iconv = require('iconv-lite');
-const ass2vtt = require('./ass2vtt')
+const ass2vtt = require('./ass2vtt');
+const dotsub2vtt = require('./dotsub2vtt')
 
 const iso639 = require('./ISO639');
 
@@ -69,10 +70,13 @@ class sub2vtt {
             if (this.supported.subs.includes(this.type)) {
                 file = await this.GetSub()
             } else {
-                if(filename.match(/\.smi$/)) {
+                if(filename.match(/\.smi$/i)) {
                     file = this.GetSubSmi(file);
                 }
-                else if(filename.match(/\.ass$/)) {
+                else if(filename.match(/\.sub$/i)) {
+                    file = this.GetDotSub(file);
+                }
+                else if(filename.match(/\.ass$/i)) {
                     try {
                         file = this.GetSubAss(file);
                     } catch (e) {
@@ -148,6 +152,21 @@ class sub2vtt {
         }
         else 
             return data.toString();
+    }
+
+    GetDotSub(data) {
+        try {
+            data = this.encodeUTF8(data);
+            const subtitle = dotsub2vtt(data);
+            if(subtitle) {
+                return {subtitle: subtitle, status: 'dotsub2vtt success'}
+            } else {
+                return { subtitle: null, status: 'dotsub2vtt empty content'}
+            }
+        }
+        catch(e) {
+            console.error(e)
+        }
     }
 
     GetSubAss(data) {
@@ -234,7 +253,7 @@ class sub2vtt {
     }
 
     checkExtension(toFilter) { // return index of matched episodes
-        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$/i)
+        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$|\.sub$/i)
     }
     checkEpisode(toFilter) {
         var reEpisode = new RegExp(this.episode, "gi");
@@ -284,6 +303,9 @@ class sub2vtt {
                 filesNames.push(filename)
                 break; // because only takes the first match
             }
+
+            if(!filename.length) throw `matched file: 0`;
+
             const extracted = extractor.extract({ files: filesNames });
             // extracted.arcHeader  : archive header
             const files = [...extracted.files]; //load the files
