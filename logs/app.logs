@@ -1,0 +1,37 @@
+NODE_ENV = beamup
+Addon active on port 63555
+HTTP addon accessible at: https://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
+valid domains [
+  "https://subscene.onrender.com",
+  "https://subscene-ip8j.onrender.com",
+  "https://subscene-h090.onrender.com",
+  "https://subscene-ljxx.onrender.com",
+  "https://subscene-rouge.vercel.app"
+]
+
+reqpath :  /
+----------------------------------
+
+reqpath :  /configure
+----------------------------------
+
+reqpath :  /configure/
+----------------------------------
+
+reqpath :  /assets/index.1e22b833.js
+----------------------------------
+
+reqpath :  /assets/index.0f7efbf1.css
+----------------------------------
+
+reqpath :  /vietnamese/subtitles/series/tt0388629%3A16%3A16/videoHash=92ddcd50ff776f29&videoSize=279455562&filename=[Judas]%20One%20Piece%20-%20594.mkv.json
+----------------------------------
+Redirect 301: https://subscene.onrender.com/vietnamese/subtitles/series/tt0388629%3A16%3A16/videoHash=92ddcd50ff776f29&videoSize=279455562&filename=[Judas]%20One%20Piece%20-%20594.mkv.json
+
+reqpath :  /english/subtitles/series/tt0388629%3A16%3A16/videoHash=92ddcd50ff776f29&videoSize=279455562&filename=[Judas]%20One%20Piece%20-%20594.mkv.json
+----------------------------------
+Redirect 301 cached: https://subscene.onrender.com/english/subtitles/series/tt0388629%3A16%3A16/videoHash=92ddcd50ff776f29&videoSize=279455562&filename=[Judas]%20One%20Piece%20-%20594.mkv.json
+
+reqpath :  /vietnamese/subtitles/movie/tt15398776/videoHash=e7553691eca6ed45&videoSize=5020623039&filename=Oppenheimer.2023.2160p.UHD.HDR.BluRay.x265.10bit.DD5.1.%5BWMAN-LorD%5D.mkv.json
+----------------------------------
+Redirect 301: https://subscene-ip8j.onrender.com/vietnamese/subtitles/movie/tt15398776/videoHash=e7553691eca6ed45&videoSize=5020623039&filename=Oppenheimer.2023.2160p.UHD.HDR.BluRay.x265.10bit.DD5.1.%5BWMAN-LorD%5D.mkv.json

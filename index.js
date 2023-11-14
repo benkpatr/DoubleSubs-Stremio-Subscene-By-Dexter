@@ -10,6 +10,9 @@ const config = require('./config.js');
 const sub2vtt = require('./modules/sub2vtt');
 const currentIP = require('./modules/current-ip');
 let { external_domains, filterDomains } = require('./domain-list');
+const NodeCache = require('node-cache');
+const RedirectCache = new NodeCache(); //sub list
+
 
 if(config.env != 'external') {
 	filterDomains().then(res => {
@@ -99,10 +102,21 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 if(config.env != 'local' && external_domains?.length) {
 	let start_server = config.env == 'beamup' ? 1 : 0;
 	app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+		const { type, id } = req.params;
+		const redirectID = `${type}_${id}`;
+		const redirect_server = RedirectCache.get(redirectID);
+		if(redirect_server) {
+			const redirect_url = redirect_server + req.originalUrl;
+			console.log("Redirect 301 cached: " + redirect_url);
+			return res.redirect(301, redirect_url);
+		}
+		
 		if(start_server > external_domains.length) config.env == 'beamup' ? start_server = 1 : start_server = 0; //force redirect from beamup
 		if(start_server) {
-			const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
+			const redirect_server = external_domains[start_server++ - 1];
+			const redirect_url = redirect_server + req.originalUrl;
 			console.log("Redirect 301: " + redirect_url);
+			RedirectCache.set(redirectID, redirect_server);
 			return res.redirect(301, redirect_url);
 		}
 		start_server++;
