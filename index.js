@@ -195,8 +195,8 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 			const subtitle_header_info = [
 				'WEBVTT\n',
 				'0',
-				`00:00:03.000 --> 00:00:${5+sub_head_long}.000`,
-				`>>[REUP]Subscene by Dexter21767 v${manifest.version}<<`,
+				`00:00:03.000 --> 00:00:${3+sub_head_long}.000`,
+				`&gt;&gt;[REUP]Subscene by Dexter21767 v${manifest.version}&lt;&lt;`,
 				`${title}`,
 				`<u>${filename}</u>\n\n`
 			];
