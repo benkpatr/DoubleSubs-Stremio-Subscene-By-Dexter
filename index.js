@@ -140,7 +140,6 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 		res.setHeader('Cache-Control', CacheControl.off);
 		return res.end(JSON.stringify({ subtitles: [] }));
 	}catch(e){
-		res.setHeader('Cache-Control', CacheControl.off);
 		res.sendStatus(500);
 		console.error(e);
 	}
@@ -219,7 +218,6 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		res.end;
 	} catch (e) {
 		console.error(e);
-		res.setHeader('Cache-Control', CacheControl.off);
 		res.sendStatus(500);
 		//next(e);
 	}

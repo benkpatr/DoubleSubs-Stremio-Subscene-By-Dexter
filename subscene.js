@@ -106,7 +106,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       if (type == "movie") {
         if(!searchMovie) {
           let moviePath = `/subtitles/${meta.slug}`;
-          return await getsubtitles(moviePath, cacheID , lang, null, meta.year, extras, true).catch(error => { throw error });
+          return await getsubtitles(moviePath, cacheID , lang, null, null, meta.year, extras, true).catch(error => { throw error });
         }
         else {
           const searchID = id;
@@ -205,7 +205,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
           if(findSeries?.path){
             console.log(findSeries.path);
-            return await getsubtitles(findSeries.path, cacheID, lang, season, episode).catch(error => { throw error });
+            return await getsubtitles(findSeries.path, cacheID, lang, season, episode, null, extras).catch(error => { throw error });
           } else throw "filtered search series is empty!";
         } else throw "not found search series!";
       } else throw `Type ${type} are not supported!`;
@@ -273,6 +273,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         //S1E01,S01E01, -1, -01, - 1, - 01
         episodeText1 = 'S(eason)?[^a-z0-9]?\\d?\\d(.*?)E(P|pisode)?[^a-z0-9]?0?' + episode + '(\\D|$)';
         episodeText1 += '|[-x]\\s?(E(P|pisode)?[^a-z0-9]?)?0?' + episode + '(\\D|$)';
+        episodeText1 += '|[^s\\d]?' + episode + '(\\D|$)';
         episodeText1 += '|Tập(.*?)0?' + episode + '\\D';
         const reg = new RegExp(episodeText1, 'i');
         console.log('include', reg);
@@ -381,7 +382,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
 
 function sortMovieByFilename(subtitles, filename) {
     const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
-    const sources = [ /(web)(-dl|rip)?/, /blu-?ray/, /a?hdtv/, /dvd(rip)?/, /brrip/ ];
+    const sources = [ /(web)(.dl|rip)?/, /blu.?ray/, /a?hdtv/, /dvd(rip)?/, /brrip/ ];
     const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
 
     let quality = qualitys.findIndex(quality => filename.toLowerCase().match(quality));
