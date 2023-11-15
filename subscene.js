@@ -18,10 +18,10 @@ async function subtitles(type, id, lang, extras) {
   if (id.match(/tt[0-9]/)){
     let tmdb = await (TMDB(type, id, lang, extras)).catch(error => { throw error });
     if(tmdb == null && type != 'series') tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
-    return tmdb ||  [];
+    return tmdb;
 
   }	else if (id.match(/kitsu:[0-9]/)){
-    return await Kitsu(type, id, lang, extras)
+    return await Kitsu(type, id, lang, extras);
   }
 }
 async function Kitsu(type, id, lang, extras) {
@@ -54,27 +54,33 @@ async function Kitsu(type, id, lang, extras) {
       //try to get url has been searced from cache first (to skip search);
       const pathFound = searchFound.get(id);
       if(pathFound == '') return [];
-      if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, null, extras).catch(error => { throw error });
+      if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
       //######################
 
       //console.log(meta)
-      let slug = `${meta.title["en_jp"]} (${meta.title["en"]}) (${meta.year})`;
-      console.log('slug',slug)
-      console.log('title',meta.title["en_jp"])
-      let search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])}`);
+      let slug = `${meta.title["en_jp"]} (${meta.year})`;
+      console.log('Slug:',slug)
+      let search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])} (${meta.year})`);
       if(search?.length) {
-        let find = search.find(x => x.title.includes(meta.title["en_jp"]));
-        
+        //remove (tv) in some anime
+        let metaTitle = meta.title['en_jp'].replace(/\(tv\)/i, '').trim();
+        let metaSlug = meta.slug.replace(/-tv$/, '');
+
+        //filter by slug
+        let find = search.find(x => x.path.split('/subtitles/')[1] == metaSlug);
+
         //filter by Name
         if(!find) {
-          const reg = new  RegExp(`${meta.title}`, 'i');
+          let re_title = metaTitle.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+          const reg = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
+          console.log(reg);
           find = search.find(x => reg.test(x.title));
         }
         
         if(find?.path){
-          console.log(find.path);
+          console.log('found:', find.path);
           searchFound.set(id, find.path);
-          return await getsubtitles(find.path, cacheID, lang, null, episode).catch(error => { throw error });
+          return await getsubtitles(find.path, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
         }
       } else {
         console.log("not found search kitsu!");
@@ -148,11 +154,10 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
             }
 
             if(findMovie?.path) {
-              console.log(findMovie.path);
+              console.log('found:', findMovie.path);
               searchFound.set(id, findMovie.path);
               return await getsubtitles(findMovie.path, cacheID, lang, null, null, meta.year, extras).catch(error => { throw error });
             } else {
-              searchFound.set(id, '');
               console.log('search filter not found any movie');
               Cache.set(cacheID, []);
               return [];
@@ -245,13 +250,27 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       if(subs1?.length) {
         subtitles = subscene.sortByLang(subs1); //return Object
         subsceneCache.set(moviePath, subtitles);
-        if(!episode && subs1[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
-          //# LEVEL2 if the movie id not match
-          subtitles = await movieWithYear(moviePath, year);
-          //# Disable lvl2
-          lvl2 = false
+        if(id.split(':')[0] == 'kitsu') {
+          //check year
+          if(subs1[0].year != year) {
+            console.log(`Kitsu year not match subscene ${subs1[0].year} - kitsu ${year}`);
+            Cache.set(id, []);
+            return [];
+          };
         }
-        else if(episode && subs1[0].imdb_id != id.split(':')[0]) throw `imdb  not match ${subs1[0].imdb_id} - ${id.split(':')[0]}`;
+        else {
+          if(episode && subs1[0].imdb_id != id.split(':')[0]) {
+            console.log(`imdb  not match ${subs1[0].imdb_id} - ${id.split(':')[0]}`);
+            Cache.set(id, []);
+            return [];
+          }
+          else if(!episode && subs1[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
+            //# LEVEL2 if the movie id not match
+            subtitles = await movieWithYear(moviePath, year);
+            //# Disable lvl2
+            lvl2 = false
+          }
+        }
       }
 
       //# LEVEL2 #movie
@@ -293,17 +312,17 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         console.log('exactly filter found:', sub.length);
 
         //filter Estimate
+        const excludeBeforeEP = [
+          '(s(eason)?',
+          'h[^a-z0-9]?', '[ .-]x', 'ddp?5?', 'aac2?', 'dd5',
+          'mpeg',
+          'ion'
+        ];
+        const excludeAfterEP = [
+          'hd'
+        ];
+        episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
         if(!sub.length) {
-          const excludeBeforeEP = [
-            '(s(eason)?',
-            'h[^a-z0-9]?', '[ .-]x', 'ddp?5?', 'aac2?', 'dd5',
-            'mpeg',
-            'ion'
-          ];
-          const excludeAfterEP = [
-            'hd'
-          ];
-          episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
           const reg = new RegExp(episodeText1, 'i');
           sub = subtitles.filter(element => reg.test(element.title));
           console.log('Estimate filter found:', sub.length);
@@ -321,7 +340,6 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
 
           //filterEP
           const filterEP = subtitles.filter(element => !reg.test(element.title));
-          console.log(filterEP.length)
 
           if(filterEP?.length) {
             //exclude another episode
@@ -336,9 +354,11 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
                 return false;
               }
             });
+            console.log('Multiple EP filter found:', sub.length);
 
             //return all if no filter ...
             if(!sub.length) sub = filterEP;
+            console.log('Another without EP found:', sub.length);
           }
         }
 
@@ -385,7 +405,12 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       let cached = Cache.set(id, subs);
       console.log("cached", cached)
       return subs;
-    }else throw `not matched any subs by language`
+    }
+    else {
+      console.log(`not matched any subs by language`);
+      Cache.set(id, []);
+      return [];
+    }
   }
   catch (e) {
     console.error(e);
@@ -400,8 +425,8 @@ function sortMovieByFilename(subtitles, filename) {
     let quality = qualitys.findIndex(quality => filename.toLowerCase().match(quality));
     let source = sources.findIndex(source => filename.toLowerCase().match(source));
     let vcodex = vcodexs.findIndex(vcodec => filename.toLowerCase().match(vcodec));
-
-    console.log(qualitys[quality], sources[source], vcodexs[vcodex]);
+    
+    console.log('sort by:', qualitys[quality], sources[source], vcodexs[vcodex]);
 
     subtitles = sortByKey(subtitles, qualitys[quality], sources[source], vcodexs[vcodex]);
 
