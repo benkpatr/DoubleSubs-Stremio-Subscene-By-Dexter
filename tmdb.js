@@ -1,10 +1,12 @@
-const axios = require('axios');
+const got = require('got-scraping').gotScraping;
 var slugify = require('slugify');
 const BaseURL = require('./config').APIURL;
 const cinemeta = require('./modules/cinemeta')
 
 async function request(url, header) {
-    return await axios.get(url).catch(err => { console.error(`failed to get meta from ${url}`)});
+    return await got.get(url, {
+        retry: { limit: 3}
+    }).json().catch(err => { console.error(`failed to get meta from ${url}`)});
 }
 
 async function getMeta(type, id) {
@@ -12,7 +14,6 @@ async function getMeta(type, id) {
         let url = `${BaseURL}/movie/${id}?language=en-US&api_key=${process.env.API_KEY}`
         let res = await request(url);
         if(!res) return;
-        res = res.data;
         let title = res.title || res.original_title; //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
         if(!title) return cinemeta(type, id);
         let year = res.release_date?.split("-")[0]
@@ -23,7 +24,6 @@ async function getMeta(type, id) {
         console.log(url)
         let res = await request(url);
         if(!res) return;
-        res = res.data;
         let title = res.tv_results[0]?.name || res.tv_results[0]?.original_name; //res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         if(!title) return cinemeta(type, id);
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
@@ -31,5 +31,4 @@ async function getMeta(type, id) {
     }
 }
 
-//getMeta("series", 'tt0903747').then(meta => (console.log(meta)))
 module.exports = getMeta;
