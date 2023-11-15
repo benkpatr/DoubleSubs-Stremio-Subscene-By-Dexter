@@ -4,12 +4,14 @@ const AdmZip = require('adm-zip');
 const axios = require('axios');
 const smi2vtt = require('./smi2vtt');
 var detect = require('charset-detector');
-const iconv = require('iconv-lite');
+const iconv = require('iconv-jschardet');
 const ass2vtt = require('./ass2vtt');
 const dotsub2vtt = require('./dotsub2vtt')
 
 const iso639 = require('./ISO639');
 
+iconv.skipDecodeWarning(true)
+iconv.disableCodecDataWarn(true)
 
 class sub2vtt {
     constructor(url, opts = {}) {
@@ -148,7 +150,16 @@ class sub2vtt {
     }
     
     encodeUTF8(data) {
-        const encoding = detect(data)[0].charsetName;
+        let encoding = detect(data)[0].charsetName;
+        if(encoding) {
+            const encodeName = {
+                "ISO-8859-8-I": "ISO-8859-8"
+            }
+            if(encodeName[encoding]) encoding = encodeName[encoding];
+        } else {
+            encoding = iconv.detect(data);
+        }
+        
         if(encoding != 'UTF-8'){
             console.log(encoding,'=> UTF-8');
             return iconv.decode(data, encoding).toString('UTF-8');

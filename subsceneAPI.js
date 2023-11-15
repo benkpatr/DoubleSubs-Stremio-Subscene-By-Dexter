@@ -4,7 +4,7 @@ const config = require('./config')
 const baseUrl = config.BaseURL
 const { parse } = require("node-html-parser");
 
-const gotConfig = {
+let gotConfig = {
   headerGeneratorOptions: {
     browsers: [
       {
@@ -190,7 +190,9 @@ function sortByLang(subs = Array) {
 }
   
 async function downloadUrl(url = String) {
-  let res = await got.get(url,{retry:{limit:5}})
+  let config = gotConfig;
+  config.retry = { limit: 5 };
+  let res = await got.get(url,config);
   if (!res||!res.body)throw "No Data Found"
   let $ = cheerio.load(res.body),
   downUrl
