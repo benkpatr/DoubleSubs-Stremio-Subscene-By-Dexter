@@ -12,6 +12,7 @@ const currentIP = require('./modules/current-ip');
 let { external_domains, filterDomains } = require('./domain-list');
 const NodeCache = require('node-cache');
 const RedirectCache = new NodeCache(); //sub list
+const QueueCache = new NodeCache({ stdTTL: 5 });
 
 
 if(config.env != 'external' && config.env != 'local') {
@@ -130,6 +131,12 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 		console.log(req.params);
 		var { configuration, type, id } = req.params;
 
+		const reqID = `${type}_${id}`;
+		while(QueueCache.get(reqID)) {
+			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
+		}
+		QueueCache.set(reqID, true); //requesting
+
 		if (configuration && languages[configuration]) {
 			let lang = configuration;
 			let req_extras = req.params.extra?.split('&');
@@ -142,12 +149,14 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				return res.end(JSON.stringify({ subtitles: subs }));
+				res.end(JSON.stringify({ subtitles: subs }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
-				return res.end(JSON.stringify({ subtitles: [] }));
+				res.end(JSON.stringify({ subtitles: [] }));
 			}
+			QueueCache.set(reqID, false); //allow new request if before request done
+			return; //exit
 		} else console.log("no config");
 
 		//default response

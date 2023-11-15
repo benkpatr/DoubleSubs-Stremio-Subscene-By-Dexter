@@ -26,13 +26,13 @@ function delay(ms) {
 
 async function untilSearching(){
   while(global.isSearching.value) {
-    await delay(50);
+    await delay(500);
   }
 }
 
 async function untilGetting(){
   while(global.isGetting.value) {
-    await delay(50);
+    await delay(500);
   }
 }
 
