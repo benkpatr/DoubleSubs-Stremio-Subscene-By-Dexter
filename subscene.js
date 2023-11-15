@@ -59,7 +59,6 @@ async function Kitsu(type, id, lang, extras) {
 
       //console.log(meta)
       let slug = `${meta.title["en_jp"]} (${meta.title["en"]}) (${meta.year})`;
-      var moviePath = '';
       console.log('slug',slug)
       console.log('title',meta.title["en_jp"])
       let search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])}`);
@@ -79,6 +78,7 @@ async function Kitsu(type, id, lang, extras) {
         }
       } else {
         console.log("not found search kitsu!");
+        Cache.set(cacheID, []);
         return [];
       }
     } else throw 'meta is empty!';
@@ -154,6 +154,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
             } else {
               searchFound.set(id, '');
               console.log('search filter not found any movie');
+              Cache.set(cacheID, []);
               return [];
             }
           } else throw "search returning empty page!";
@@ -219,6 +220,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           } else {
             searchFound.set(id, '');
             console.log('search filter not found any series');
+            Cache.set(cacheID, []);
             return [];
           }
         } else throw "search returning empty page!";
