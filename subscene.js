@@ -1,5 +1,4 @@
 const tmdb = require('./tmdb');
-// const cinemeta = require('./cinemeta');
 const kitsu = require('./kitsu');
 const subscene = require('./subsceneAPI');
 const config = require('./config');
@@ -316,13 +315,19 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           );
           //exclude another episode
           sub = subtitles.filter(element => {
-            if(regSeason.test(element.title)) return true;
-            if(regFromTo.test(element.title)) return true;
-            return !reg.test(element.title);
+            const title = element.title.trim();
+            if(regSeason.test(title)) return true;
+            if(regFromTo.test(title)) {
+              const r = regFromTo.exec(title);
+              const fromEP = r[2];
+              const toEP = r[5];
+              if(parseInt(fromEP) <= parseInt(episode) && parseInt(episode) <= parseInt(toEP)) return true;
+              return false;
+            }
           });
 
           //return all if no filter ...
-          if(!sub.length) sub = subtitles;
+          if(!sub.length) sub = subtitles.filter(element => !reg.test(element.title));
         }
 
         subtitles = [...new Set(sub)];

@@ -1,11 +1,11 @@
-const got = require('got-scraping').gotScraping;
+const got = require('./got');
 var slugify = require('slugify');
 const { CineV3 } = require('../config');
 
 async function request(url, header) {
-    return await got.get(url, {
+    return await got.getJSON(url, {
         retry: { limit: 3}
-    }).json().catch(err => { console.error(`failed to get meta from ${url}`) });
+    }).catch(err => { console.error(`failed to get meta from ${url}`) });
 }
 
 async function getMeta(type, id) {

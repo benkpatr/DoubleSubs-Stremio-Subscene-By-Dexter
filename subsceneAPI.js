@@ -1,22 +1,8 @@
-const got = require("got-scraping").gotScraping
+const got = require('./modules/got')
 const cheerio = require("cheerio")
 const config = require('./config')
 const baseUrl = config.BaseURL
-const unzip = require("adm-zip")
 const { parse } = require("node-html-parser");
-
-const gotConfig = {
-  headerGeneratorOptions: {
-    browsers: [
-      {
-        name: 'firefox',
-        minVersion: 102
-      }
-    ],
-    devices: [ 'desktop' ],
-    operatingSystems: [ 'linux' ],
-  }
-}
 
 global.isSearching = {
   value: false,
@@ -69,7 +55,7 @@ async function search(query) {
     while(loopReq) {
       let url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
       console.log('searching:', url)
-      res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+      res = await got.get(url).catch(err => {console.log(`Request fail: ${url}`)});
       if(res?.body) break;
       await delay(500);
       loopReq--
@@ -126,7 +112,7 @@ async function subtitle(url = String) {
     let loopReq = 3;
     var res;
     while(loopReq) {
-      res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+      res = await got.get(baseUrl+url).catch(err => {console.log(`Request fail: ${url}`)});
       if(res?.body) break;
       await delay(500);
       loopReq--

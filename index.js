@@ -210,7 +210,7 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 				'0',
 				`00:00:03.000 --> 00:00:${3+sub_head_long}.000`,
 				`&gt;&gt;[REUP]Subscene by Dexter21767 v${manifest.version}&lt;&lt;`,
-				`${title}`,
+				`${title?.trim()}`,
 				`<u>${filename}</u>\n\n`
 			];
 			const lines = file.subtitle.split('\n');
