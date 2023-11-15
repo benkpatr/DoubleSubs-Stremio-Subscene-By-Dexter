@@ -1,4 +1,4 @@
-const got = require('got-scraping');
+const got = require('got-scraping').gotScraping;
 var slugify = require('slugify');
 const { CineV3 } = require('../config');
 

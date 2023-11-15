@@ -234,21 +234,22 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
   try {
     let breakTitle = moviePath.match(/[a-z]+/gi)
     //console.log("breakTitle : " , breakTitle)
+    let subs = [];
     var subtitles = subsceneCache.get(moviePath);
     if (!subtitles) {
       //# Level1 #
-      let subs = await subscene.getSubtitles(moviePath).catch(error => { throw error }) // moviepath without year
-      console.log("no year scraping:", subs ? subs.length : 0);
-      if(subs?.length) {
-        subtitles = subscene.sortByLang(subs); //return Object
+      const subs1 = await subscene.getSubtitles(moviePath).catch(error => { throw error }) // moviepath without year
+      console.log("no year scraping:", subs1 ? subs1.length : 0);
+      if(subs1?.length) {
+        subtitles = subscene.sortByLang(subs1); //return Object
         subsceneCache.set(moviePath, subtitles);
-        if(!episode && subs[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
+        if(!episode && subs1[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
           //# LEVEL2 if the movie id not match
           subtitles = await movieWithYear(moviePath, year);
           //# Disable lvl2
           lvl2 = false
         }
-        else if(episode && subs[0].imdb_id != id.split(':')[0]) throw `imdb  not match ${subs[0].imdb_id} - ${id.split(':')[0]}`;
+        else if(episode && subs1[0].imdb_id != id.split(':')[0]) throw `imdb  not match ${subs1[0].imdb_id} - ${id.split(':')[0]}`;
       }
 
       //# LEVEL2 #movie

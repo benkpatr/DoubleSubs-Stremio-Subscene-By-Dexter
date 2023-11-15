@@ -1,4 +1,4 @@
-const got = require('./modules/got')
+const got = require('got-scraping').gotScraping;
 const cheerio = require("cheerio")
 const config = require('./config')
 const baseUrl = config.BaseURL
