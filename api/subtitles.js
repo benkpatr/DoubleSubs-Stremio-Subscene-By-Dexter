@@ -1,6 +1,8 @@
 const {CacheControl} = require('../config');
 const languages = require('../languages.json');
 const { subtitles, downloadUrl } = require('../subscene');
+const NodeCache = require('node-cache');
+const QueueCache = new NodeCache({ stdTTL: 5 });
 
 export default async function handler(req, res) {
   try{
@@ -12,6 +14,12 @@ export default async function handler(req, res) {
 		}
 		
 		var { configuration, type, id } = req.params;
+
+		const reqID = `${type}_${id}`;
+		while(QueueCache.get(reqID)) {
+			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
+		}
+		QueueCache.set(reqID, true); //requesting
 
 		if (configuration && languages[configuration]) {
 			let lang = configuration;
@@ -25,12 +33,15 @@ export default async function handler(req, res) {
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				return res.end(JSON.stringify({ subtitles: subs }));
+				res.end(JSON.stringify({ subtitles: subs }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
-				return res.end(JSON.stringify({ subtitles: [] }));
+				res.end(JSON.stringify({ subtitles: [] }));
 			}
+
+			QueueCache.set(reqID, false);
+			return;
 		} else console.log("no config");
 
 		//default response
