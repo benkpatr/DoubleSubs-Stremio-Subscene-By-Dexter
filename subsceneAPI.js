@@ -2,8 +2,10 @@ const got = require("got-scraping").gotScraping
 const cheerio = require("cheerio")
 const config = require('./config')
 const baseUrl = config.BaseURL
-const unzip = require("adm-zip")
 const { parse } = require("node-html-parser");
+
+const NodeCache = require('node-cache');
+const urlCache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
 
 const gotConfig = {
   headerGeneratorOptions: {
@@ -55,29 +57,33 @@ async function search(query) {
   try {
     if (!query?.length) throw "Query Is Null"
 
-    //##############################
-    if(global.isSearching.value) await untilSearching();
-    global.isSearching.value = true;
-
-    let currenTime = new Date().getTime();
-    if(( currenTime - global.isSearching.lastUpdate) <= global.isSearching.spaceTime) {
-      await delay(global.isSearching.spaceTime - (currenTime - global.isSearching.lastUpdate));
-    }
-
-    let loopReq = 3;
     var res;
-    while(loopReq) {
-      let url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
-      console.log('searching:', url)
-      res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
-      if(res?.body) break;
-      await delay(500);
-      loopReq--
-    }
+    res = urlCache.get(query);
+    if(!res) {
+      //##############################
+      if(global.isSearching.value) await untilSearching();
+      global.isSearching.value = true;
 
-    //##############################
-    global.isSearching.value = false;
-    global.isSearching.lastUpdate = new Date().getTime();
+      let currenTime = new Date().getTime();
+      if(( currenTime - global.isSearching.lastUpdate) <= global.isSearching.spaceTime) {
+        await delay(global.isSearching.spaceTime - (currenTime - global.isSearching.lastUpdate));
+      }
+
+      let loopReq = 3;
+      while(loopReq) {
+        let url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
+        console.log('searching:', url)
+        res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+        if(res?.body) break;
+        await delay(500);
+        loopReq--
+      }
+
+      urlCache.set(query, res);
+      //##############################
+      global.isSearching.value = false;
+      global.isSearching.lastUpdate = new Date().getTime();
+    }
 
     if (!res?.body) throw "No Response Found"
     if (res?.body?.includes("To many request")) throw ("Search: Too Many Request");
@@ -114,27 +120,32 @@ async function subtitle(url = String) {
     if (!url.length) throw "Path Not Specified"
     console.log(baseUrl + url)
     
-    //##############################
-    if(global.isGetting.value) await untilGetting();
-    global.isGetting.value = true;
-
-    let currenTime = new Date().getTime();
-    if(( currenTime - global.isGetting.lastUpdate) <= global.isGetting.spaceTime) {
-      await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
-    }
-
-    let loopReq = 3;
     var res;
-    while(loopReq) {
-      res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
-      if(res?.body) break;
-      await delay(500);
-      loopReq--
-    }
+    //cache
+    res = urlCache.get(url);
+    if(!res) {
+      //##############################
+      if(global.isGetting.value) await untilGetting();
+      global.isGetting.value = true;
 
-    //##############################
-    global.isGetting.value = false;
-    global.isGetting.lastUpdate = new Date().getTime(); 
+      let currenTime = new Date().getTime();
+      if(( currenTime - global.isGetting.lastUpdate) <= global.isGetting.spaceTime) {
+        await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
+      }
+
+      let loopReq = 3;
+      while(loopReq) {
+        res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+        if(res?.body) break;
+        await delay(500);
+        loopReq--
+      }
+
+      urlCache.set(url, res);
+      //##############################
+      global.isGetting.value = false;
+      global.isGetting.lastUpdate = new Date().getTime(); 
+    }    
 
     if (!res?.body) throw "No Response Found"
     if (res.body.includes("To many request")) throw "Get: Too Many Request"
@@ -166,6 +177,7 @@ async function subtitle(url = String) {
     } 
     //results = sortByLang(results) // sort happen after this function
     //console.log("results",results["english"])
+
     return results || null
   } catch(e) {
     console.error(e);

@@ -14,7 +14,7 @@ const NodeCache = require('node-cache');
 const RedirectCache = new NodeCache(); //sub list
 
 
-if(config.env != 'external') {
+if(config.env != 'external' && config.env != 'local') {
 	filterDomains().then(res => {
 		external_domains = res;
 		console.log('valid domains', external_domains);
