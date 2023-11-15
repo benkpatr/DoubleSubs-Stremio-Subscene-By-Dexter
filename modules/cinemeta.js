@@ -15,7 +15,7 @@ async function getMeta(type, id) {
         if(!res) return;
         let title = res.meta.name //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
         if(!title) throw `not found any meta from cinemeta`;
-        let year = res.meta.year?.split("-")[0]
+        let year = res.meta.year?.split("-")[0] || res.meta.releaseInfo?.split('\u2013')[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
         return { title: title, slug: slug, year: year }
     } else if (type == "series") {

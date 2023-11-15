@@ -192,7 +192,7 @@ function sortByLang(subs = Array) {
 async function downloadUrl(url = String) {
   let config = gotConfig;
   config.retry = { limit: 5 };
-  let res = await got.get(url,config);
+  let res = await got.get(url, config);
   if (!res||!res.body)throw "No Data Found"
   let $ = cheerio.load(res.body),
   downUrl

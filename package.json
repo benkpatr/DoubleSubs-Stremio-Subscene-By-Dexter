@@ -25,7 +25,8 @@
     "node-unrar-js": "^2.0.0",
     "slugify": "^1.6.5",
     "subtitle-converter": "^3.0.12",
-    "swagger-stats": "^0.99.5"
+    "swagger-stats": "^0.99.5",
+    "vercel": "latest"
   },
   "devDependencies": {
     "nodemon": "latest"
