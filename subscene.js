@@ -284,32 +284,32 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       let sub = [];
       let episodeText, episodeText1;
       if (episode) {
-        // episodeText = (episode.length == 1) ? ('0' + episode) : episode;
-        // episodeText = 'E' + episodeText
-
         //S1E01,S01E01, -1, -01, - 1, - 01
-        // episodeText1 = 'S(eason)?[^a-z0-9]?\\d?\\d(.*?)E(P|pisode)?[^a-z0-9]?0?' + episode + '([^p\\d]|$)';
-        // episodeText1 += '|[-x]\\s?(E(P|pisode)?[^a-z0-9]?)?0?' + episode + '([^p\\d]|$)';
-        const excludeBeforeEP = [
-          '(s(eason)?',
-          'h[^a-z0-9]?', '[ .-]x', 'ddp?5?',
-          'ion'
-        ]
-        episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + '([^p\\d]|$)';
-        //episodeText1 += '|Tập(.*?)0?' + episode + '([^p\\d]|$)';
-        const reg = new RegExp(episodeText1, 'i');
-        //console.log('include', reg);
-        
-        //filter by episode
-        subtitles.forEach(element => {
-          if(reg.test(element.title.trim())) {
-            console.log(element.title);
-            sub.push(element);
-          }
-        })
+        //filter exactly
+        episodeText = 'S(eason)?[^a-z0-9]?\\d?\\d(.*?)E(P|pisode)?[^a-z0-9]?0?' + episode + '([^a-z\\d]|$)';
+        episodeText += '|[-x]\\s?(E(P|pisode)?[^a-z0-9]?)?0?' + episode + '([^a-z\\d]|$)';
+        const reg = new RegExp(episodeText, 'i');
+        sub = subtitles.filter(element => reg.test(element.title));
+        console.log('exactly filter found:', sub.length);
+
+        //filter Estimate
+        if(!sub.length) {
+          const excludeBeforeEP = [
+            '(s(eason)?',
+            'h[^a-z0-9]?', '[ .-]x', 'ddp?5?', 'aac2?', 'dd5',
+            'mpeg',
+            'ion'
+          ];
+          const excludeAfterEP = [
+            'hd'
+          ];
+          episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
+          const reg = new RegExp(episodeText1, 'i');
+          sub = subtitles.filter(element => reg.test(element.title));
+          console.log('Estimate filter found:', sub.length);
+        }
 
         //if not found, return the subtitles for multiple ep
-        //filter lv2
         if(!sub.length) {
           let excludeEpisodeText = episodeText1.replace(new RegExp('(?<!ddp\\?)' + episode, 'g'), `\\d{1,4}`);
           const reg = new RegExp(excludeEpisodeText, 'i');
@@ -319,13 +319,14 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             'i'
           );
 
-          //filterEPP
-          const filterEP = subtitles.filter(element => !reg.test(element.title.trim()));
+          //filterEP
+          const filterEP = subtitles.filter(element => !reg.test(element.title));
+          console.log(filterEP.length)
 
           if(filterEP?.length) {
             //exclude another episode
             sub = filterEP.filter(element => {
-              const title = element.title.trim();
+              const title = element.title;
               if(season && regSeason.test(title)) return true;
               if(regFromTo.test(title)) {
                 const r = regFromTo.exec(title);
@@ -338,8 +339,6 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
 
             //return all if no filter ...
             if(!sub.length) sub = filterEP;
-          } else {
-            sub = subtitles;
           }
         }
 
