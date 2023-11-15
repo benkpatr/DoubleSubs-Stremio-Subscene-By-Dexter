@@ -288,13 +288,13 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         // episodeText1 += '|[-x]\\s?(E(P|pisode)?[^a-z0-9]?)?0?' + episode + '([^p\\d]|$)';
         const excludeBeforeEP = [
           '(s(eason)?',
-          'h[^a-z0-9]?', '[.-]x', 'ddp?5?',
+          'h[^a-z0-9]?', '[ .-]x', 'ddp?5?',
           'ion'
         ]
         episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + '([^p\\d]|$)';
         //episodeText1 += '|Tập(.*?)0?' + episode + '([^p\\d]|$)';
         const reg = new RegExp(episodeText1, 'i');
-        console.log('include', reg);
+        //console.log('include', reg);
         
         //filter by episode
         subtitles.forEach(element => {
