@@ -23,7 +23,6 @@ async function getMeta(type, id) {
         let url = `${BaseURL}/find/${id.split(':')[0]}?language=en-US&api_key=${process.env.API_KEY}&external_source=imdb_id`;
         let res = await request(url);
         if(!res) return;
-        cons
         let title = res.tv_results[0]?.name || res.tv_results[0]?.original_name; //res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         if(!title) return cinemeta(type, id);
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
