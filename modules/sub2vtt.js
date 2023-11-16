@@ -70,7 +70,7 @@ class sub2vtt {
                 file = file.data
             }
             if (this.supported.subs.includes(this.type)) {
-                file = await this.GetSub()
+                file = await this.GetSub();
             } else {
                 if(filename.match(/\.smi$/i)) {
                     file = this.GetSubSmi(file);
@@ -83,6 +83,12 @@ class sub2vtt {
                         file = this.GetSubAss(file);
                     } catch (e) {
                         file = await this.GetSub(file)
+                    }
+                }
+                else if(filename.match(/\.srt$|\.vtt$/i)) {
+                    file = {
+                        subtitle: this.encodeUTF8(file),
+                        status: 'found srt/vtt sub'
                     }
                 }
                 else {
