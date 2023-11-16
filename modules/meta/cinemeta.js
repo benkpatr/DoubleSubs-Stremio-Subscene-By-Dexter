@@ -1,6 +1,6 @@
 const got = require('got-scraping').gotScraping;
 var slugify = require('slugify');
-const { CineV3 } = require('../config');
+const { CineV3 } = require('../../configs/config');
 
 async function request(url, header) {
     return await got.get(url, {

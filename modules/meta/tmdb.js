@@ -1,7 +1,7 @@
 const got = require('got-scraping').gotScraping;
 var slugify = require('slugify');
-const BaseURL = require('./config').APIURL;
-const cinemeta = require('./modules/cinemeta.js')
+const BaseURL = require('../../configs/config').APIURL;
+const cinemeta = require('./cinemeta.js')
 
 async function request(url, header) {
     return await got.get(url, {

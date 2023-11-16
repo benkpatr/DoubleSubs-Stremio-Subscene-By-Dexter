@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const config = require('./config.js');
+const config = require('./configs/config.js');
 
 if(config.env == 'external') var app = require('./external/index.js')
 else {

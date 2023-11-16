@@ -1,5 +1,5 @@
 const got = require('got-scraping').gotScraping;
-const BaseURL = require('./config').kitsuURL;
+const BaseURL = require('../../configs/config').kitsuURL;
 
 async function request(url) {
     return await got.get(url, {

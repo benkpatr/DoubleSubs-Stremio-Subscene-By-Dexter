@@ -1,6 +1,6 @@
 const got = require('got-scraping').gotScraping;
 const cheerio = require("cheerio")
-const config = require('./config')
+const config = require('./configs/config')
 const baseUrl = config.BaseURL
 const { parse } = require("node-html-parser");
 

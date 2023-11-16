@@ -1,10 +1,11 @@
-const tmdb = require('./tmdb');
-const kitsu = require('./kitsu');
+const tmdb = require('./modules/meta/tmdb');
+const kitsu = require('./modules/meta/kitsu');
 const subscene = require('./subsceneAPI');
-const config = require('./config');
+const config = require('./configs/config');
 const languages = require('./languages.json');
 const NodeCache = require("node-cache");
 const sub2vtt = require('./modules/sub2vtt');
+const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
 const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //meta from tmdb or cinemeta
@@ -327,35 +328,21 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       let sub = [];
       let episodeText, episodeText1;
       if (episode) {
-        //S1E01,S01E01, -1, -01, - 1, - 01
         //filter exactly
-        episodeText = 'S(eason)?[^a-z0-9]?\\d?\\d(.*?)E(P|pisode)?[^a-z0-9]?0?' + episode + '([^a-z\\d]|$)';
-        episodeText += '|[-x]\\s?(E(P|pisode)?[^a-z0-9]?)?0?' + episode + '([^a-z\\d]|$)';
-        const reg = new RegExp(episodeText, 'i');
+        const reg = exactlyEpisodeRegex(episode).include();
         sub = subtitles.filter(element => reg.test(element.title));
         console.log('exactly filter found:', sub.length);
 
         //filter Estimate
-        const excludeBeforeEP = [
-          '(s(eason)?',
-          'h[^a-z0-9]?', '[ .-]x', 'ddp?5?', 'aac2?', 'dd5',
-          'mpeg',
-          'ion'
-        ];
-        const excludeAfterEP = [
-          'hd'
-        ];
-        episodeText1 = `(?<!${excludeBeforeEP.join('|')})[^a-z0-9]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
         if(!sub.length) {
-          const reg = new RegExp(episodeText1, 'i');
+          const reg = estimateEpisodeRegex(episode).include();
           sub = subtitles.filter(element => reg.test(element.title));
           console.log('Estimate filter found:', sub.length);
         }
 
         //if not found, return the subtitles for multiple ep
         if(!sub.length) {
-          let excludeEpisodeText = episodeText1.replace(new RegExp('(?<!ddp\\?)' + episode, 'g'), `\\d{1,4}`);
-          const reg = new RegExp(excludeEpisodeText, 'i');
+          const reg = estimateEpisodeRegex(episode).exclude();
           const regFromTo = /(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})\s?(-|~|to)\s?(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})/i;
           const regSeason = new RegExp(
             's(eason)?[^a-z0-9]?0?' + season + '(\\D|$)',
@@ -412,7 +399,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             let path = config.BaseURL + value.path;
             let url;
             if (episode) {
-              url = config.local+"/sub.vtt?"+`lang=${lang}&title=${encodeURIComponent(subtitles[i].title)}&episode=${encodeURIComponent(episodeText1)}`+"&"+sub2vtt.gerenateUrl(path, {});
+              url = config.local+"/sub.vtt?"+`lang=${lang}&title=${encodeURIComponent(subtitles[i].title)}&episode=${episode}&` + sub2vtt.gerenateUrl(path, {});
             } else {
               url = config.local+"/sub.vtt?"+`lang=${lang}&title=${encodeURIComponent(subtitles[i].title)}&` + sub2vtt.gerenateUrl(path, {});
             }
@@ -555,4 +542,4 @@ function ordinalInWord(cardinal) {
 }
 
 
-module.exports = { subtitles, downloadUrl };
+module.exports = { subtitles, downloadUrl, exactlyEpisodeRegex, estimateEpisodeRegex };

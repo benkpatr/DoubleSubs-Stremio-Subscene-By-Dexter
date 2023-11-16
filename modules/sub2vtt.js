@@ -2,11 +2,12 @@ const { convert } = require('subtitle-converter');
 const unrar = require("node-unrar-js");
 const AdmZip = require('adm-zip');
 const axios = require('axios');
-const smi2vtt = require('./smi2vtt');
+const smi2vtt = require('./converts/smi2vtt');
 var detect = require('charset-detector');
 const iconv = require('iconv-jschardet');
-const ass2vtt = require('./ass2vtt');
-const dotsub2vtt = require('./dotsub2vtt')
+const ass2vtt = require('./converts/ass2vtt');
+const dotsub2vtt = require('./converts/dotsub2vtt');
+const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./episodeRegex');
 
 const iso639 = require('./ISO639');
 
@@ -276,81 +277,72 @@ class sub2vtt {
         return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$|\.sub$/i)
     }
     checkEpisode(toFilter) {
-        var reEpisode = new RegExp(this.episode, "gi");
-        return toFilter.match(reEpisode)
+        return {
+            exactly: () => {
+                const exactlyRegex = exactlyEpisodeRegex(this.episode).include();
+                return exactlyRegex.test(toFilter)
+            },
+            estimate: () => {
+                const estimateRegex = estimateEpisodeRegex(this.episode).include();
+                return estimateRegex.test(toFilter)
+            }
+        }
     }
-    async unzip(file) {
+    async unzip(zipdata) {
         try {
-            var zip = new AdmZip(file);
+            var zip = new AdmZip(zipdata);
             var zipEntries = zip.getEntries();
             console.log("zip file count:", zipEntries.length)
-            let files = []
-            for (var i = 0; i < zipEntries.length; i++) {
-                var filename = zipEntries[i].entryName;
-                if (!this.checkExtension(filename)) continue;
-                if (this.episode) {
-                    if (!this.checkEpisode(filename)) continue;
-                }
-                console.log("matched file:", filename);
-                
-                files.push({
-                    name: filename,
-                    data: zipEntries[i].getData()
-                })
-                break; // because only takes the first match
-            }
-            if (files?.length) return files[0];
-            else if(zipEntries.length) {
-                const file = zipEntries.find(x => this.checkExtension(x.entryName)); //return first support file
-                if(file) {
-                    return {
-                        name: file.entryName,
-                        data: file.getData()
+            let files, file;
+            files = zipEntries.filter(file => this.checkExtension(file.entryName));
+            if(files.length) {
+                if(this.episode) {
+                    if(files.length >= 2) {
+                        file = files.find(file => this.checkEpisode(file.entryName).exactly());
+                        if(!file)
+                            file = files.find(file => this.checkEpisode(file.entryName).estimate());
                     }
-                } else throw `Unzip all files are not support!`;
+                }
+            } else throw 'Unzip all files are not support!';
+
+            if(!file) file = files[0];
+
+            console.log("extract file:", file.entryName);
+
+            return {
+                name: file.entryName,
+                data: file.getData()
             }
-            else throw `no file in Zip!`;
         } catch (err) {
             console.error(err);
         }
     }
 
-    async unrar(file) {
+    async unrar(rardata) {
         try {
-            const extractor = await unrar.createExtractorFromData({ data: file });
+            const extractor = await unrar.createExtractorFromData({ data: rardata });
             const list = extractor.getFileList();
             //const listArcHeader = list.arcHeader; // archive header
             const fileHeaders = [...list.fileHeaders]; // load the file headers
             console.log('Rar files count:', fileHeaders.length);
-            let filesNames = []
-            for (var i = 0; i < fileHeaders.length; i++) {
-                var filename = fileHeaders[i].name;
-                if (!this.checkExtension(filename)) continue;
-                if (this.episode) {
-                    if (!this.checkEpisode(filename)) continue;
+
+            let files_head, file_head;
+            files_head = fileHeaders.filter(header => this.checkExtension(header.name));
+
+            if(files_head.length) {
+                if(this.episode) {
+                    if(files_head.length >= 2) {
+                        file_head = files_head.find(header => this.checkEpisode(header.name).exactly);
+                        if(!file_head)
+                            file_head  = files_head.find(header => this.checkEpisode(header.name).estimate);
+                    }
                 }
-                console.log("matched file:", filename);
-                filesNames.push(filename)
-                break; // because only takes the first match
-            }
+            } else throw 'Unrar all files are not support!';
 
-            if(!filesNames.length) {
-                if(fileHeaders.length) {
-                    const fileHeader = fileHeaders.find(x => this.checkExtension(x.name));
-                    if(fileHeader) {
-                        const filename = fileHeader.name;
-                        const extracted = extractor.extract({ files: [filename] });
-                        const files = [...extracted.files];
-                        return {
-                            name: files[0].fileHeader.name,
-                            data: files[0].extraction
-                        }
-                    } else throw `all files are not support!`;
-                } else throw `not found any file inside Rar`;
-            }
+            if(!file_head) file_head = files_head[0];
+            console.log("extract file:", file_head.name);
             
-
-            const extracted = extractor.extract({ files: filesNames });
+            const extracted = extractor.extract({ files: file_head.name });
             // extracted.arcHeader  : archive header
             const files = [...extracted.files]; //load the files
             // files[0].fileHeader; // file header
