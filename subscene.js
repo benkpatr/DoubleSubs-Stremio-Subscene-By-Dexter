@@ -151,7 +151,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       if (type == "movie") {
         if(!searchMovie) {
           let moviePath = `/subtitles/${meta.slug}`;
-          return await getsubtitles(moviePath, cacheID , lang, null, null, meta.year, extras, true).catch(error => { throw error });
+          return await getsubtitles(moviePath, cacheID , lang, null, null, meta.year, extras).catch(error => { throw error });
         }
         else {
           let search = await subscene.search(`${meta.title} ${`(${meta.year})` || ''}`).catch(error => { throw error });
@@ -172,7 +172,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
             if(findMovie?.path) {
               console.log('found:', findMovie.path);
               searchFound.set(id, findMovie.path);
-              return await getsubtitles(findMovie.path, cacheID, lang, null, null, meta.year, extras).catch(error => { throw error });
+              return await getsubtitles(findMovie.path, cacheID, lang, null, null, meta.year, extras, false).catch(error => { throw error });
             } else {
               console.log('search filter not found any movie');
               Cache.set(cacheID, []);
@@ -253,7 +253,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 }
 
 
-async function getsubtitles(moviePath, id, lang, season, episode, year, extras, lvl2 = false) {
+async function getsubtitles(moviePath, id, lang, season, episode, year, extras, movieLvlYear=true) {
   try {
     let breakTitle = moviePath.match(/[a-z]+/gi)
     //console.log("breakTitle : " , breakTitle)
@@ -280,19 +280,12 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             Cache.set(id, []);
             return [];
           }
-          else if(!episode && !subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
+          else if(movieLvlYear && !episode && !subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
             //# LEVEL2 if the movie id not match
             subtitles = await movieWithYear(moviePath, year);
-            //# Disable lvl2
-            lvl2 = false
           }
         }
       }
-
-      //# LEVEL2 #movie
-      if(!subtitles && lvl2 && !episode)
-        subtitles = await movieWithYear(moviePath, year);
-
       async function movieWithYear(moviePath, year) {
         let subtitles = subsceneCache.get(`${moviePath}-${year}`);
         if(!subtitles?.length) {
