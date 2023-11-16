@@ -2,7 +2,7 @@ const tmdb = require('./modules/meta/tmdb');
 const kitsu = require('./modules/meta/kitsu');
 const subscene = require('./subsceneAPI');
 const config = require('./configs/config');
-const languages = require('./languages.json');
+const languages = require('./configs/languages.json');
 const NodeCache = require("node-cache");
 const sub2vtt = require('./modules/sub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
@@ -326,7 +326,6 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       subtitles = subtitles[lang];
       console.log('subtitles matched lang : ',subtitles.length)
       let sub = [];
-      let episodeText, episodeText1;
       if (episode) {
         //filter exactly
         const reg = exactlyEpisodeRegex(episode).include();
@@ -375,7 +374,9 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           }
         }
 
-        subtitles = [...new Set(sub)];
+        //subtitles = [...new Set(sub)];
+        //filter duplicate title
+        subtitles = sub.filter((x, index, self) => index === self.findIndex(y => y.title === x.title));
       }
       console.log("filtered subs:", subtitles.length);
 
