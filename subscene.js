@@ -15,6 +15,7 @@ const subsceneCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 6
 const searchFound = new NodeCache( { stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60)});
 
 async function subtitles(type, id, lang, extras) {
+  console.log(type, id, lang);
   if (id.match(/tt[0-9]/)){
     let tmdb = await (TMDB(type, id, lang, extras)).catch(error => { throw error });
     if(tmdb == null && type != 'series') tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
@@ -26,8 +27,6 @@ async function subtitles(type, id, lang, extras) {
 }
 async function Kitsu(type, id, lang, extras) {
   try {
-    console.log(type, id, lang);
-
     const episode = id.split(':')[2];
 
     let metaid = id.split(':')[1];
@@ -75,6 +74,21 @@ async function Kitsu(type, id, lang, extras) {
           const reg = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
           console.log(reg);
           find = search.find(x => reg.test(x.title));
+
+          //some anime have the title like series
+          //https://subscene.com/subtitles/jujutsu-kaisen-second-season
+          if(!find) {
+            const RegSeason = /(.*?)(?:Season\s?(\d{1,3})|(\d{1,3})(?:st|nd|th)\s?Season)/i;
+            if(RegSeason.test(metaTitle)) {
+              const r = RegSeason.exec(metaTitle);
+              let animeName = r[1], season = r[2];
+              animeName = animeName.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+              let season_text = ordinalInWord(season);
+              const reg = new RegExp(`${animeName}${season_text}\\s?Season`, 'i');
+              console.log(reg);
+              find = search.find(x => reg.test(x.title));
+            }
+          }
         }
         
         if(find?.path){
@@ -357,8 +371,10 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             console.log('Multiple EP filter found:', sub.length);
 
             //return all if no filter ...
-            if(!sub.length) sub = filterEP;
-            console.log('Another without EP found:', sub.length);
+            if(!sub.length) {
+              sub = filterEP;
+              console.log('Another without EP found:', sub.length);
+            }
           }
         }
 
