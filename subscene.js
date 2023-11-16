@@ -280,7 +280,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             Cache.set(id, []);
             return [];
           }
-          else if(!episode && subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
+          else if(!episode && !subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
             //# LEVEL2 if the movie id not match
             subtitles = await movieWithYear(moviePath, year);
             //# Disable lvl2
