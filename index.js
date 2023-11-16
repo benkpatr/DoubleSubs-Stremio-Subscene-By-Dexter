@@ -185,17 +185,22 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	try {
 
-		let url,proxy,episode,title;
+		let url,proxy,episode,title, lang;
 		
 		if (req?.query?.proxy) proxy = JSON.parse(Buffer.from(req.query.proxy, 'base64').toString());
 		if (req?.query?.from) url = req.query.from
 		else throw 'error: no url';
 		if (req?.query?.episode) episode = req.query.episode
 		if(req?.query?.title) title = req.query.title
+		if(req?.query?.lang) lang = req.query.lang
+
+		if(!lang || !title || !url) return res.redirect('/404');
+
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
 		let file = {};
-		file.subtitle = await DiskCache.getItem(title);
+		let fileID = lang + '_' + title; //some file have the same name in the multi language
+		file.subtitle = await DiskCache.getItem(fileID);
 		if(file.subtitle) {
 			console.log(`file ${title} is loaded from storage cache!`);
 		} else {
@@ -232,7 +237,7 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 				}
 			}
 
-			DiskCache.setItem(title, file.subtitle);
+			DiskCache.setItem(fileID, file.subtitle);
 		}
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
