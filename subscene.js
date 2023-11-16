@@ -275,14 +275,29 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           };
         }
         else {
-          if(episode && !subs1[0].imdb_id.includes(id.split(':')[0].split('tt')[1])) {
-            console.log(`imdb  not match ${subs1[0].imdb_id} - ${id.split(':')[0]}`);
-            Cache.set(id, []);
-            return [];
-          }
-          else if(movieLvlYear && !episode && !subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
-            //# LEVEL2 if the movie id not match
-            subtitles = await movieWithYear(moviePath, year);
+          let foundImdb = subs1[0].imdb_id;
+          if(foundImdb) {
+            if(episode) {
+              let Imdb_number = id.split(':')[0].split('tt')[1];
+              if(!foundImdb.includes(Imdb_number)) {
+                console.log(`imdb  not match ${foundImdb} - ${Imdb_number}`);
+                Cache.set(id, []);
+                return [];
+              }
+            }
+            else {
+              let Imdb_number = id.split('_')[0].split('tt')[1];
+              if(!foundImdb.includes(Imdb_number)) {
+                if(movieLvlYear) {
+                  subtitles = await movieWithYear(moviePath, year);
+                }
+                else {
+                  console.log(`imdb  not match ${foundImdb} - ${Imdb_number}`);
+                  Cache.set(id, []);
+                  return [];
+                }
+              }
+            }
           }
         }
       }
