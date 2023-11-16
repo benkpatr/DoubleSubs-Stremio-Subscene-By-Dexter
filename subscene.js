@@ -38,6 +38,7 @@ async function Kitsu(type, id, lang, extras) {
         }
     }
     if(meta){
+      let season;
       const cacheID = `${id}_${lang}`
       const subtitles = Cache.get(cacheID);
       if(subtitles) {
@@ -81,7 +82,8 @@ async function Kitsu(type, id, lang, extras) {
             const RegSeason = /(.*?)(?:Season\s?(\d{1,3})|(\d{1,3})(?:st|nd|th)\s?Season)/i;
             if(RegSeason.test(metaTitle)) {
               const r = RegSeason.exec(metaTitle);
-              let animeName = r[1], season = r[2];
+              let animeName = r[1];
+              season = r[2];
               animeName = animeName.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
               let season_text = ordinalInWord(season);
               const reg = new RegExp(`${animeName}${season_text}\\s?Season`, 'i');
@@ -94,7 +96,7 @@ async function Kitsu(type, id, lang, extras) {
         if(find?.path){
           console.log('found:', find.path);
           searchFound.set(id, find.path);
-          return await getsubtitles(find.path, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
+          return await getsubtitles(find.path, cacheID, lang, season, episode, meta.year, extras).catch(error => { throw error });
         }
       } else {
         console.log("not found search kitsu!");
@@ -273,12 +275,12 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           };
         }
         else {
-          if(episode && subs1[0].imdb_id != id.split(':')[0]) {
+          if(episode && !subs1[0].imdb_id.includes(id.split(':')[0].split('tt')[1])) {
             console.log(`imdb  not match ${subs1[0].imdb_id} - ${id.split(':')[0]}`);
             Cache.set(id, []);
             return [];
           }
-          else if(!episode && subs1[0].imdb_id != id.split('_')[0]) { // if the id is not match, find by year
+          else if(!episode && subs1[0].imdb_id.includes(id.split('_')[0].split('tt')[1])) { // if the id is not match, find by year
             //# LEVEL2 if the movie id not match
             subtitles = await movieWithYear(moviePath, year);
             //# Disable lvl2

@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 		return res.end(JSON.stringify({ subtitles: [] }));
 	}catch(e){
 		res.setHeader('Cache-Control', CacheControl.off);
-		res.status(500);
+		res.status(500).end();
 		console.error(e);
 	}
 }
