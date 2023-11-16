@@ -542,4 +542,4 @@ function ordinalInWord(cardinal) {
 }
 
 
-module.exports = { subtitles, downloadUrl, exactlyEpisodeRegex, estimateEpisodeRegex };
+module.exports = { subtitles, downloadUrl };
