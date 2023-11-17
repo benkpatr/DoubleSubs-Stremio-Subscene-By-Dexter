@@ -342,7 +342,8 @@ class sub2vtt {
             if(!file_head) file_head = files_head[0];
             console.log("extract file:", file_head.name);
             
-            const extracted = extractor.extract({ files: file_head.name });
+            const extracted = extractor.extract({ files: [file_head.name] });
+            console.log(extracted.files);
             // extracted.arcHeader  : archive header
             const files = [...extracted.files]; //load the files
             // files[0].fileHeader; // file header
