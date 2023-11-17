@@ -27,7 +27,7 @@ function exactlyEpisodeRegex(episode) {
     ];
     //let episodeText = `(?<!${excludeBeforeEP.join('|')})[^\\w\\d]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
     let episodeText = `(?<!${excludeBeforeEP.join('|')})` +
-    `[\\s\\.\\[\\]]?0?` + episode + `[\\s\\.\\[\\]]?` +
+    `([\\s\\.\\[\\]]?|e(pisode)?)0?` + episode + `[\\s\\.\\[\\]]?` +
     `(?!(?=${excludeAfterEP.join('|')}))`
     return {
       include: function(){
