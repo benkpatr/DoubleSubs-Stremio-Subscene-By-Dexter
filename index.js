@@ -160,8 +160,7 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 		} else console.log("no config");
 
 		//default response
-		res.setHeader('Cache-Control', CacheControl.off);
-		return res.end(JSON.stringify({ subtitles: [] }));
+		res.sendStatus(500);
 	}catch(e){
 		res.sendStatus(500);
 		console.error(e);

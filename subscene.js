@@ -366,6 +366,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         //if not found, return all(without estimate ep) ...
         if(!sub.length) {
           const reg = estimateEpisodeRegex(episode).exclude();
+          console.log(reg)
           sub = subtitles.filter(element => !reg.test(element.title));
           console.log('Another without EP found:', sub.length);
         }
