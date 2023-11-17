@@ -14,7 +14,8 @@ function exactlyEpisodeRegex(episode) {
   
   function estimateEpisodeRegex(episode) {
     const excludeBeforeEP = [
-      's(eason)?', '[\\w\\d]'
+      's(eason)?', '[\\w\\d]',
+      'aa?c\\d\\.?', '[ \\.-](h|x)[\\.-]?'
       // 's(eason)?'
       //'h[^\\w\\d]?', '[ .-]x', 'ddp?\\d?', 'aa?c\\d?', 'dvd[^\\w\\d]?r?2?',
       //'mpeg',
