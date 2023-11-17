@@ -6,6 +6,7 @@ const QueueCache = new NodeCache({ stdTTL: 5 });
 
 export default async function handler(req, res) {
   try{
+		res.setHeader('Access-Control-Allow-Origin', '*');
 		res.setHeader('Content-Type', 'application/json');
 		req.params = {
 		configuration: req.url.split('/')[1],

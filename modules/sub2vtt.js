@@ -332,9 +332,9 @@ class sub2vtt {
             if(files_head.length) {
                 if(this.episode) {
                     if(files_head.length >= 2) {
-                        file_head = files_head.find(header => this.checkEpisode(header.name).exactly);
+                        file_head = files_head.find(header => this.checkEpisode(header.name).exactly());
                         if(!file_head)
-                            file_head  = files_head.find(header => this.checkEpisode(header.name).estimate);
+                            file_head  = files_head.find(header => this.checkEpisode(header.name).estimate());
                     }
                 }
             } else throw 'Unrar all files are not support!';
