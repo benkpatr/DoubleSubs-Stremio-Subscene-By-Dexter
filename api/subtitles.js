@@ -1,5 +1,5 @@
-const {CacheControl} = require('../config');
-const languages = require('../languages.json');
+const {CacheControl} = require('../configs/config');
+const languages = require('../configs/languages.json');
 const { subtitles, downloadUrl } = require('../subscene');
 const NodeCache = require('node-cache');
 const QueueCache = new NodeCache({ stdTTL: 5 });

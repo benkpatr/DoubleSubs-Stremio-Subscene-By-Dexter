@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { sharedRouter } = require('../index.js')
-const config = require('../config.js');
+const config = require('../configs/config.js');
 
 app.use((req, res, next) => {
 	console.log("reqpath : ", req.originalUrl)
