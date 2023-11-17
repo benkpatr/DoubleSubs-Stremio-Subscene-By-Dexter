@@ -25,6 +25,7 @@ class sub2vtt {
         this.type = type || null;
         this.client = null;
         this.episode = episode || null;
+        this.filename = null;
     }
 
     async GetData() {
@@ -48,6 +49,7 @@ class sub2vtt {
     DatafromHeaders(headers) {
         this.type = this.type || headers["content-type"].split(';')[0];
         this.size = Number(headers["content-length"]);
+        this.filename = headers["content-disposition"].split('filename=')[1].trim();
     }
 
     async getSubtitle() {
@@ -69,35 +71,29 @@ class sub2vtt {
 
                 filename = file.name
                 file = file.data
+                
+                file = await this.encodeSub(filename, file);
             }
-            if (this.supported.subs.includes(this.type)) {
-                file = await this.GetSub();
-            } else {
-                if(filename.match(/\.smi$/i)) {
-                    file = this.GetSubSmi(file);
+            else {
+                if(this.supported.subs.includes(this.type)) {
+                    if(this.type == "application/x-subrip" || this.type == "text/vtt")
+                        file = this.encodeUTF8(this.data);
+                    if(this.type == 'application/sub') 
+                        file = this.GetDotSub(this.data);
+                    else if(this.type == 'application/octet-stream')
+                        file = this.GetSubAss(this.data);
+                    else
+                        file = await this.GetSub();
                 }
-                else if(filename.match(/\.sub$/i)) {
-                    file = this.GetDotSub(file);
+                else if(this.checkExtension(this.filename)) {
+                    file = await this.encodeSub(this.filename, file);
                 }
-                else if(filename.match(/\.ass$/i)) {
-                    try {
-                        file = this.GetSubAss(file);
-                    } catch (e) {
-                        file = await this.GetSub(file)
-                    }
-                }
-                else if(filename.match(/\.srt$|\.vtt$/i)) {
-                    file = {
-                        subtitle: this.encodeUTF8(file),
-                        status: 'found srt/vtt sub'
-                    }
-                }
-                else {
-                    file = await this.GetSub(file)
-                }
+                else throw `Extension ${this.type}: ${this.filename} are not support!`;
+                
             }
+
             return {
-                name: filename,
+                name: filename || this.filename,
                 data: file
             }
         } catch (e) {
@@ -156,6 +152,33 @@ class sub2vtt {
 
     }
     
+    async encodeSub(filename, file) {
+        if(filename.match(/\.smi$/i)) {
+            file = this.GetSubSmi(file);
+        }
+        else if(filename.match(/\.sub$/i)) {
+            file = this.GetDotSub(file);
+        }
+        else if(filename.match(/\.ass$/i)) {
+            try {
+                file = this.GetSubAss(file);
+            } catch (e) {
+                file = await this.GetSub(file)
+            }
+        }
+        else if(filename.match(/\.srt$|\.vtt$/i)) {
+            file = {
+                subtitle: this.encodeUTF8(file),
+                status: 'found srt/vtt sub'
+            }
+        }
+        else {
+            file = await this.GetSub(file)
+        }
+        
+        return file;
+    }
+
     encodeUTF8(data) {
         let encoding = detect(data)[0].charsetName;
         if(encoding) {
@@ -265,7 +288,7 @@ class sub2vtt {
 
     supported = {
         arc: ["application/zip", "application/x-zip-compressed", "application/x-rar", "application/x-rar-compressed", "application/vnd.rar"],
-        subs: ["application/x-subrip", "text/vtt", "application/octet-stream"],
+        subs: ["application/x-subrip", "text/vtt", "application/octet-stream", "application/sub"],
         arcs: {
             rar: ["application/x-rar", "application/x-rar-compressed", "application/vnd.rar"],
             zip: ["application/zip", "application/x-zip-compressed"]

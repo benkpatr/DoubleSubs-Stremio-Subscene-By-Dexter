@@ -341,41 +341,37 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
 
         //if not found, return the subtitles for multiple ep
         if(!sub.length) {
-          const reg = estimateEpisodeRegex(episode).exclude();
+          //exclude exactly ep first
+          const reg = exactlyEpisodeRegex(episode).exclude();
           const regFromTo = /(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})\s?(-|~|to)\s?(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})/i;
           const regSeason = new RegExp(
             's(eason)?[^a-z0-9]?0?' + season + '(\\D|$)',
             'i'
           );
 
-          //filterEP
-          const filterEP = subtitles.filter(element => !reg.test(element.title));
-
-          if(filterEP?.length) {
-            //exclude another episode
-            sub = filterEP.filter(element => {
-              const title = element.title;
-              if(season && regSeason.test(title)) return true;
-              if(regFromTo.test(title)) {
-                const r = regFromTo.exec(title);
-                const fromEP = r[2];
-                const toEP = r[5];
-                if(parseInt(fromEP) <= parseInt(episode) && parseInt(episode) <= parseInt(toEP)) return true;
-                return false;
-              }
-            });
-            console.log('Multiple EP filter found:', sub.length);
-
-            //return all if no filter ...
-            if(!sub.length) {
-              sub = filterEP;
-              console.log('Another without EP found:', sub.length);
+          sub = subtitles.filter(element => {
+            const title = element.title;
+            if(regFromTo.test(title)) {
+              const r = regFromTo.exec(title);
+              const fromEP = r[2];
+              const toEP = r[5];
+              if(parseInt(fromEP) <= parseInt(episode) && parseInt(episode) <= parseInt(toEP)) return true;
+              return false;
             }
-          }
+            else if(season && regSeason.test(title) && !reg.test(title)) return true;
+          });
+          console.log('Multiple EP filter found:', sub.length);
+        }
+
+        //if not found, return all(without estimate ep) ...
+        if(!sub.length) {
+          const reg = estimateEpisodeRegex(episode).exclude();
+          sub = subtitles.filter(element => !reg.test(element.title));
+          console.log('Another without EP found:', sub.length);
         }
 
         //subtitles = [...new Set(sub)];
-        //filter duplicate title
+        //remove duplicate title
         subtitles = sub.filter((x, index, self) => index === self.findIndex(y => y.title === x.title));
       }
       console.log("filtered subs:", subtitles.length);
