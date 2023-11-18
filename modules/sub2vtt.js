@@ -69,10 +69,10 @@ class sub2vtt {
                 file = await this.extract()
                 if (!file?.data) throw "error extracting archive"
 
-                filename = file.name
+                this.filename = file.name
                 file = file.data
                 
-                file = await this.encodeSub(filename, file);
+                file = await this.encodeSub(this.filename, file);
             }
             else {
                 if(this.supported.subs.includes(this.type)) {
@@ -93,7 +93,7 @@ class sub2vtt {
             }
 
             return {
-                name: filename || this.filename,
+                name: this.filename,
                 data: file
             }
         } catch (e) {
@@ -183,7 +183,7 @@ class sub2vtt {
             if (!extract?.data) throw "error extracting archive"
 
             let name = extract.name;
-            
+            this.filename += '\n=&gt;' + name;
             file = await this.encodeSub(name, extract.data);
         }
         else {
@@ -408,7 +408,6 @@ class sub2vtt {
     }
     getClient() {
         let config = {
-            responseType: 'arraybuffer',
             maxContentLength: 10000000, //~10MB
             timeout: 15000,
             headers: {}
