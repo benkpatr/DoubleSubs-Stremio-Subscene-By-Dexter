@@ -35,7 +35,9 @@ class sub2vtt {
             responseType: 'arraybuffer',
             Accept: this.type,
         });
-        //console.log("res",res)
+
+        if(res?.headers) this.DatafromHeaders(res.headers);
+
         if (res?.data) {
             this.type = this.type || res.headers["content-type"].split(';')[0];
             this.data = res.data;
@@ -58,7 +60,8 @@ class sub2vtt {
 
             let file, filename
 
-            if (!this.type) await this.CheckUrl()
+            //skip headers, too many request...
+            //if (!this.type) await this.CheckUrl()
 
             if (!this.type || !this.data) await this.GetData();
             if (!this.type || !this.data) throw "error getting sub"
@@ -413,7 +416,7 @@ class sub2vtt {
             headers: {}
         }
         if (this.proxy) config.headers = this.proxy;
-        config.headers["Accept-Encoding"] = "gzip,deflate,compress,br";
+        config.headers["Accept-Encoding"] = "gzip,deflate,compress";
         this.client = axios.create(config);
     }
     static gerenateUrl(url = String, opts) {
