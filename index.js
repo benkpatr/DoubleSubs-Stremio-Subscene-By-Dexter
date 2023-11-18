@@ -241,7 +241,6 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		res.setHeader('Cache-Control', CacheControl.oneDay);
 		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');
 		res.send(file.subtitle);
-		res.end;
 	} catch (e) {
 		console.error(e);
 		res.sendStatus(500);
