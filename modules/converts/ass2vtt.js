@@ -4,16 +4,21 @@ function ass2vtt(assText){
   const lines = assText.split(/\r?\n/);
 
   //getSubtitle
+  //.ssa
+  //Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+  //Dialogue: Marked=0,0:00:19.10,0:00:21.10,NORMAL,00,0000,0000,0000,,"La lámpara del cuerpo es el ojo.
+  //.ass
   //Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
   //Dialogue: 0,0:00:01.92,0:00:05.76,Narration,Narrator,0000,0000,0000,,،العالم مليء بالكثير من الألعاب
-  const re_ass = /dialogue: (\d),(\d+:\d\d:\d\d.\d\d),(\d+:\d\d:\d\d.\d\d),.*?,.*?,.*?,.*?,.*?,(.*?),(.*)$/i
+  const re_ass = /dialogue: (?:marked=)?(\d),(\d+:\d\d:\d\d.\d\d),(\d+:\d\d:\d\d.\d\d),.*?,.*?,.*?,.*?,.*?,(.*?),(.*)$/i
   const subs = [];
   for(const line of lines) {
     if(re_ass.test(line)) {
       const r = re_ass.exec(line);
       if(!r) throw `bad line: ${line}`;
       let layer = r[1], start = r[2], end = r[3] , effect = r[4], text = r[5];
-      if(effect == '' && layer == '0') {
+
+      if(!effect && layer == '0') {
         const re_newLine = /\\N+/g;
         const re_text_tag = /\{.*?\}/g;
         const re_hardspace = /\\h/g;
@@ -40,7 +45,7 @@ function ass2vtt(assText){
     return resort.join('\n');
   }
   else {
-    throw `.ass convert failed`;
+    throw `.ssa/.ass convert failed`;
   }
 }
 
