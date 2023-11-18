@@ -149,21 +149,20 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				res.end(JSON.stringify({ subtitles: subs }));
+				res.send(JSON.stringify({ subtitles: subs }));
 			} else if(!subs?.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
-				res.end(JSON.stringify({ subtitles: [] }));
+				res.send(JSON.stringify({ subtitles: [] }));
 			}
 			QueueCache.set(reqID, false); //allow new request if before request done
-			return; //exit
-		} else console.log("no config");
-
-		//default response
-		res.sendStatus(500);
+		} else {
+			console.log("no config");
+			res.sendStatus(500);
+		};
 	}catch(e){
-		res.sendStatus(500);
 		console.error(e);
+		res.sendStatus(500);
 	}
 })
 

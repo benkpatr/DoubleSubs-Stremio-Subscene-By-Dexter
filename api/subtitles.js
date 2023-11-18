@@ -34,22 +34,18 @@ export default async function handler(req, res) {
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				res.end(JSON.stringify({ subtitles: subs }));
+				res.send(JSON.stringify({ subtitles: subs }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
-				res.end(JSON.stringify({ subtitles: [] }));
+				res.send(JSON.stringify({ subtitles: [] }));
 			}
-
 			QueueCache.set(reqID, false);
-			return;
-		} else console.log("no config");
-
-		//default response
-		res.setHeader('Cache-Control', CacheControl.off);
-		return res.end(JSON.stringify({ subtitles: [] }));
+		} else{
+			console.log("no config");
+			res.status(500).end();
+		}
 	}catch(e){
-		res.setHeader('Cache-Control', CacheControl.off);
 		res.status(500).end();
 		console.error(e);
 	}
