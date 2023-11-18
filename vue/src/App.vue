@@ -228,7 +228,7 @@ import { reactive, ref, onMounted } from 'vue';
 import Modal from 'flowbite/src/components/modal';
 import { useHead } from "@vueuse/head";
 import * as manifest from '../../manifest.json';
-import * as langs from '../../languages.json';
+import * as langs from '../../configs/languages.json';
 const languages = langs.default 
 
 const stylizedTypes = manifest.types.map(t => t[0].toUpperCase() + t.slice(1));
