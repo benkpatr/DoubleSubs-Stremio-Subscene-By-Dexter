@@ -172,6 +172,20 @@ class sub2vtt {
                 status: 'found srt/vtt sub'
             }
         }
+        else if(filename.match(/\.rar$|\.zip$/i)) {
+            let extract;
+
+            if(filename.match(/\.rar$/i)) {
+                extract = await this.unrar(file);
+            } else {
+                extract = await this.unzip(file);
+            }
+            if (!extract?.data) throw "error extracting archive"
+
+            let name = extract.name;
+            
+            file = await this.encodeSub(name, extract.data);
+        }
         else {
             file = await this.GetSub(file)
         }
@@ -295,7 +309,7 @@ class sub2vtt {
     }
 
     checkExtension(toFilter) { // return index of matched episodes
-        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$|\.sub$/i)
+        return toFilter.match(/\.dfxp$|\.scc$|\.srt$|\.ttml$|\.ssa$|\.vtt$|\.ass$|\.srt$|\.smi$|\.sub$|\.rar$|\.zip$/i)
     }
     checkEpisode(toFilter) {
         return {
