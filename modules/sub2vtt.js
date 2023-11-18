@@ -394,12 +394,13 @@ class sub2vtt {
     }
     getClient() {
         let config = {
+            responseType: 'arraybuffer',
+            maxContentLength: 10000000, //~10MB
             timeout: 15000,
             headers: {}
         }
         if (this.proxy) config.headers = this.proxy;
-        config.headers["Accept-Encoding"] = "gzip,deflate,compress";
-
+        config.headers["Accept-Encoding"] = "gzip,deflate,compress,br";
         this.client = axios.create(config);
     }
     static gerenateUrl(url = String, opts) {
