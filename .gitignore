@@ -12,7 +12,6 @@
 bun.lockb
 build.bat
 deploy.sh
-Dockerfile
 .dockerignore
 vercel.json
 .vercel
