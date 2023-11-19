@@ -13,6 +13,7 @@ let { external_domains, filterDomains } = require('./configs/domain-list');
 const NodeCache = require('node-cache');
 const RedirectCache = new NodeCache({ stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60) }); //normaly the external server save the cache up to 12hours
 const QueueCache = new NodeCache({ stdTTL: 5 });
+const QueueSub = new NodeCache({ stdTTL: 10 });
 
 
 if(config.env != 'external' && config.env != 'local') {
@@ -196,8 +197,15 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
-		let file = {};
 		let fileID = lang + '_' + title; //some file have the same name in the multi language
+
+		//limit request
+		while(QueueSub.get(fileID)) {
+			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
+		}
+		QueueSub.set(fileID, true); //requesting
+
+		let file = {};
 		file.subtitle = await DiskCache.getItem(fileID);
 		if(file.subtitle) {
 			console.log(`file ${title} is loaded from storage cache!`);
@@ -237,6 +245,8 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 
 			DiskCache.setItem(fileID, file.subtitle);
 		}
+
+		QueueSub.set(fileID, false);
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
 		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');
