@@ -14,6 +14,7 @@ const NodeCache = require('node-cache');
 const RedirectCache = new NodeCache({ stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60) }); //normaly the external server save the cache up to 12hours
 const QueueCache = new NodeCache({ stdTTL: 5 });
 const QueueSub = new NodeCache({ stdTTL: 10 });
+const QueueIP = new NodeCache({ stdTTL: 3 });
 
 
 if(config.env != 'external' && config.env != 'local') {
@@ -73,6 +74,16 @@ app.use('/assets', express.static(path.join(__dirname, 'vue', 'dist', 'assets'))
 
 app.use(cors())
 
+app.get('*', async (req, res, next) => {
+	const req_ip = req.ip;
+	let requesting = QueueIP.get(req_ip) || 1;
+	if(requesting >= 2) {
+		console.error(req_ip, `Too many request!`);
+		return res.sendStatus(429);
+	};
+	QueueIP.set(req_ip, requesting+1);
+	next();
+});
 
 app.get('/', (_, res) => {
 	res.redirect('/configure')
