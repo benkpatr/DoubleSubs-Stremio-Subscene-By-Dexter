@@ -346,10 +346,8 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           //exclude exactly ep first
           const reg = exactlyEpisodeRegex(episode).exclude();
           const regFromTo = /(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})\s?(-|~|to)\s?(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})/i;
-          const regSeason = new RegExp(
-            's(eason)?[^a-z\\d]?0?' + season + '(\\D|$)',
-            'i'
-          );
+          const re_Season = 's(eason)?[^a-z\\d]?0?' + season + '(\\D|$)|' + season + '(st|nd|th)[^a-z\\d]season';
+          const regSeason = new RegExp(re_Season, 'i');
 
           sub = subtitles.filter(element => {
             const title = element.title;
@@ -368,7 +366,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           //this way like really take long time ~~
           if(!sub.length) {
             const reg = estimateEpisodeRegex(episode).exclude();
-            const exSS = 's(eason)?[^a-z\\d]?0?\\d{1,3}(\\D|$)';
+            const exSS = re_Season.replace(new RegExp(season, 'g'), '\\d{1,3}');
             const excludeRegSeason = new RegExp(exSS, 'i');
             //console.log(reg)
             sub = subtitles.filter(element => 
