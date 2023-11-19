@@ -17,7 +17,10 @@ RUN npm install
 COPY --chown=node:node . .
 
 # Expose cổng mà ứng dụng sẽ chạy trên
-EXPOSE ${PORT}
+#EXPOSE 61120
+
+#ARG DOKKU_PROXY_PORT_MAP http:80:61120
+ENV PORT ${PORT}
 
 # Khởi chạy ứng dụng khi container được khởi động
 CMD ["npm", "start"]
