@@ -17,5 +17,6 @@ const server = app.listen((config.port), function () {
     console.log(`NODE_ENV = ${config.env}`);
     console.log(`Addon active on port ${config.port}`);
     console.log(`HTTP addon accessible at: ${config.local}/configure`);
+    console.log(process.env);
 });
 

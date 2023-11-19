@@ -16,4 +16,3 @@ deploy.sh
 vercel.json
 .vercel
 .vercelignore
-Dockerfile
