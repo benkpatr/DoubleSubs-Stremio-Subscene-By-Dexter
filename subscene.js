@@ -371,8 +371,8 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             //console.log(reg)
             sub = subtitles.filter(element => 
               !reg.test(element.title)
-              || !regFromTo.test(element.title)
-              || !excludeRegSeason.test(element.title)
+              && !regFromTo.test(element.title)
+              && !excludeRegSeason.test(element.title)
             );
             console.log('Another without (EP, MultiEP) found:', sub.length);
           }
