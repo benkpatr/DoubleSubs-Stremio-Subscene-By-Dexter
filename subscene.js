@@ -64,7 +64,8 @@ async function Kitsu(type, id, lang, extras) {
       let search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])} (${meta.year})`);
       if(search?.length) {
         //remove (tv) in some anime
-        let metaTitle = meta.title['en_jp'].replace(/\(tv\)/i, '').trim();
+        let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
+        metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
         let metaSlug = meta.slug.replace(/-tv$/, '');
 
         //filter by slug
