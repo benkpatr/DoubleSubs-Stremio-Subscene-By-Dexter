@@ -100,11 +100,12 @@ async function Kitsu(type, id, lang, extras) {
           searchFound.set(id, find.path);
           return await getsubtitles(find.path, cacheID, lang, season, episode, meta.year, extras).catch(error => { throw error });
         }
-      } else {
-        console.log("not found search kitsu!");
-        Cache.set(cacheID, []);
-        return [];
-      }
+        else {
+          console.log("kitsu, search filter not found!");
+          Cache.set(cacheID, []);
+          return [];
+        }
+      } else throw `Search return empty page!`
     } else throw 'meta is empty!';
   } catch(e) {
     console.error(e);
