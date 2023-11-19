@@ -1,5 +1,5 @@
 # Sử dụng một image Node.js làm base image
-FROM node:18.18.2-bullseye-slim
+FROM node:18.18.2-bookworm-slim
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 # Thiết lập thư mục làm việc cho ứng dụng
@@ -18,7 +18,6 @@ COPY --chown=node:node . .
 
 # Expose cổng mà ứng dụng sẽ chạy trên
 #EXPOSE 5136
-ENV PORT=
 
 # Khởi chạy ứng dụng khi container được khởi động
 CMD ["npm", "start"]
