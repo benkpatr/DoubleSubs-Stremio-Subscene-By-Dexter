@@ -11,7 +11,7 @@ const sub2vtt = require('./modules/sub2vtt');
 const currentIP = require('./modules/current-ip');
 let { external_domains, filterDomains } = require('./configs/domain-list');
 const NodeCache = require('node-cache');
-const RedirectCache = new NodeCache({ stdTTL: (12 * 60 * 60) }); //normaly the external server save the cache up to 12hours
+const RedirectCache = new NodeCache({ stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60) }); //normaly the external server save the cache up to 12hours
 const QueueCache = new NodeCache({ stdTTL: 5 });
 
 
