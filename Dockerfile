@@ -17,7 +17,8 @@ RUN npm install
 COPY --chown=node:node . .
 
 # Expose cổng mà ứng dụng sẽ chạy trên
-EXPOSE 5136
+#EXPOSE 5136
+ENV PORT=
 
 # Khởi chạy ứng dụng khi container được khởi động
 CMD ["npm", "start"]
