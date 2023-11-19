@@ -347,7 +347,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           const reg = exactlyEpisodeRegex(episode).exclude();
           const regFromTo = /(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})\s?(-|~|to)\s?(?:E(pisode)?)?[^a-z0-9]?(\d{1,4})/i;
           const regSeason = new RegExp(
-            's(eason)?[^a-z0-9]?0?' + season + '(\\D|$)',
+            's(eason)?[^a-z\\d]?0?' + season + '(\\D|$)',
             'i'
           );
 
@@ -363,14 +363,21 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
             else if(season && regSeason.test(title) && !reg.test(title)) return true;
           });
           console.log('Multiple EP filter found:', sub.length);
-        }
 
-        //if not found, return all(without estimate ep) ...
-        if(!sub.length) {
-          const reg = estimateEpisodeRegex(episode).exclude();
-          //console.log(reg)
-          sub = subtitles.filter(element => !reg.test(element.title));
-          console.log('Another without EP found:', sub.length);
+          //if not found, return all(without estimate ep, multi ep) ...
+          //this way like really take long time ~~
+          if(!sub.length) {
+            const reg = estimateEpisodeRegex(episode).exclude();
+            const exSS = 's(eason)?[^a-z\\d]?0?\\d{1,3}(\\D|$)';
+            const excludeRegSeason = new RegExp(exSS, 'i');
+            //console.log(reg)
+            sub = subtitles.filter(element => 
+              !reg.test(element.title)
+              || !regFromTo.test(element.title)
+              || !excludeRegSeason.test(element.title)
+            );
+            console.log('Another without (EP, MultiEP) found:', sub.length);
+          }
         }
 
         //subtitles = [...new Set(sub)];
