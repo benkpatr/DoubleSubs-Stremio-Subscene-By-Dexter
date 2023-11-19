@@ -156,11 +156,12 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 				res.setHeader('Cache-Control', CacheControl.oneHour);
 				res.send(JSON.stringify({ subtitles: [] }));
 			}
-			QueueCache.set(reqID, false); //allow new request if before request done
 		} else {
 			console.log("no config");
 			res.sendStatus(500);
 		};
+
+		QueueCache.set(reqID, false); //allow new request if before request done
 	}catch(e){
 		console.error(e);
 		res.sendStatus(500);
@@ -203,13 +204,14 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		while(QueueSub.get(fileID)) {
 			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
 		}
-		QueueSub.set(fileID, true); //requesting
 
 		let file = {};
 		file.subtitle = await DiskCache.getItem(fileID);
 		if(file.subtitle) {
 			console.log(`file ${title} is loaded from storage cache!`);
 		} else {
+			QueueSub.set(fileID, true); //requesting
+
 			url = await downloadUrl(url);
 
 			console.log({url, proxy, episode})
