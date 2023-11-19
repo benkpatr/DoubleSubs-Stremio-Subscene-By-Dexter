@@ -77,7 +77,7 @@ app.use(cors())
 app.get('*', async (req, res, next) => {
 	const req_ip = req.ip;
 	let requesting = QueueIP.get(req_ip) || 1;
-	if(requesting >= 3) {
+	if(requesting >= 5) {
 		console.error(req_ip, `Too many request!`);
 		return res.sendStatus(429);
 	};

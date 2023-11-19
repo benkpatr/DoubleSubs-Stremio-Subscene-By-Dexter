@@ -31,8 +31,8 @@ class sub2vtt {
     }
 
     async GetData() {
-        if(global.isGetSub) {
-            await new Promise(r => setTimeout(r, 500));
+        while(global.isGetSub) {
+            await new Promise(r => setTimeout(r, 1000));
         }
         global.isGetSub = true;
         let res = await this.request({
