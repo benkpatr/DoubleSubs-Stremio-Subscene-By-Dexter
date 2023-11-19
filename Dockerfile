@@ -23,7 +23,7 @@ COPY --chown=node:node . .
 # ARG PORT=61120
 # ENV PORT 61120
 
-RUN 'export PORT=$PORT' echo $PORT
+RUN export PORT=$PORT echo $PORT
 
 # Khởi chạy ứng dụng khi container được khởi động
 CMD ["npm", "start"]
