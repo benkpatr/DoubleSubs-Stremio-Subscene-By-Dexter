@@ -21,7 +21,7 @@ setInterval(() => {
 	LimitDownload.flushAll();
 }, 24*60*60*1000);
 
-const aesPass = '2906@1611';
+const aesPass = process.env.AES_PWD;
 
 // if(config.env != 'external' && config.env != 'local') {
 // 	filterDomains().then(res => {
@@ -62,13 +62,13 @@ app.use(swStats.getMiddleware({
 app.use((req, res, next) => {
 	console.log("\nreqpath : ", req.originalUrl)
 	console.log('----------------------------------')
-    req.setTimeout(180 * 1000); // timeout time
+    req.setTimeout(60 * 1000); // timeout time
 	//long timeout, still give time to cache subs, next play will load from cache
     req.socket.removeAllListeners('timeout'); 
     req.socket.once('timeout', () => {
         req.timedout = true;
 		//res.setHeader('Cache-Control', CacheControl.off);
-        res.status(504).end();
+        return res.status(504).end();
     });
 	if (!req.timedout) next()
 });
@@ -108,11 +108,11 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 });
 
 //Limit 1 Request/IP
-sharedRouter.use(async (req, res, next) => {
+sharedRouter.use((req, res, next) => {
 	const req_ip = req.ip;
 	const requesting = QueueIP.get(req_ip) || 0;
 	if(requesting >= 1) {
-		console.error(req_ip, `Too many request!`);
+		console.warn(req_ip, `Too many request!`);
 		return res.sendStatus(429);
 	};
 	QueueIP.set(req_ip, requesting+1);
@@ -169,7 +169,7 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
-				res.status(200).send(JSON.stringify({ subtitles: subs }));
+				res.status(200).send(JSON.stringify({ subtitles: subs.slice(0,10) }));
 				next();
 			} else if(!subs?.length) {
 				console.log("no subs");
@@ -200,7 +200,7 @@ sharedRouter.get('/sub.vtt', (req, res, next) => {
 		if(sourceIP != req.ip) {
 			const req_count = QueueIP.get(sourceIP) || 0;
 			if(req_count >= 1) {
-				console.error(sourceIP, 'Fetching to multi sub got from one IP');
+				console.warn(sourceIP, 'Fetching to multi sub got from one IP');
 				return res.sendStatus(429);
 			};
 			QueueIP.set(sourceIP, req_count+1);
@@ -341,6 +341,11 @@ if(config.env == 'beamup') {
 	app.get('/logs/error', (req, res) => {
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.end(console.readError());
+	})
+
+	app.get('/logs/warn', (req, res) => {
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.end(console.readWarn());
 	})
 }
 app.use(sharedRouter);

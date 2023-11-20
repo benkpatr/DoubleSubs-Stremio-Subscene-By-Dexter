@@ -3,7 +3,7 @@ const languages = require('../configs/languages.json');
 const { subtitles, downloadUrl } = require('../subscene');
 const aes = require('../modules/aes');
 
-const aesPass = '2906@1611';
+const aesPass = process.env.AES_PWD;
 
 export default async function handler(req, res) {
   try{
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.headers['x-forwarded-for'], aesPass)}`);
-				res.send(JSON.stringify({ subtitles: subs }));
+				res.send(JSON.stringify({ subtitles: subs.slice(0,10) }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);

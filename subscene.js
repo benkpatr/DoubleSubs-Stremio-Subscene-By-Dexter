@@ -379,11 +379,11 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         }
 
         //subtitles = [...new Set(sub)];
-        //remove duplicate title
-        subtitles = sub.filter((x, index, self) => index === self.findIndex(y => y.title === x.title));
+        subtitles = sub;
       }
+      //remove duplicate title
+      subtitles = subtitles.filter((x, index, self) => index === self.findIndex(y => y.title === x.title));
       console.log("filtered subs:", subtitles.length);
-
 
       //------------------
       // sort movie by extra filename

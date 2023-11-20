@@ -9,6 +9,7 @@ else {
         console = logger;
         console.empty();
         console.emptyError();
+        console.emptyWarn();
     }
 }
 

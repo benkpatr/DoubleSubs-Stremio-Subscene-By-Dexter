@@ -171,7 +171,7 @@ class sub2vtt {
         }
         else if(filename.match(/\.srt$|\.vtt$/i)) {
             file = {
-                subtitle: this.encodeUTF8(file),
+                subtitle: this.encodeUTF8(file).replace(/\{.*?\}/g, ''),
                 status: 'found srt/vtt sub'
             }
         }
