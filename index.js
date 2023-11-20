@@ -146,7 +146,6 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 
 sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res, next) => {
 	try{
-		res.setHeader('Content-Type', 'application/json');
 		//console.log(req.params);
 		var { configuration, type, id } = req.params;
 
@@ -167,12 +166,14 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 			}
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
+				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
 				res.status(200).send(JSON.stringify({ subtitles: subs }));
 				next();
 			} else if(!subs?.length) {
 				console.log("no subs");
+				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.oneHour);
 				res.status(200).send(JSON.stringify({ subtitles: [] }));
 				next();
