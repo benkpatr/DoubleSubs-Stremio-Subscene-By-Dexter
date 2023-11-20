@@ -317,12 +317,12 @@ sharedRouter.use((req, res) => {
 
 
 if(config.env == 'beamup') {
-	sharedRouter.get('/logs', (req, res) => {
+	app.get('/logs', (req, res) => {
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.end(console.read());
 	})
 
-	sharedRouter.get('/logs/error', (req, res) => {
+	app.get('/logs/error', (req, res) => {
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.end(console.readError());
 	})
