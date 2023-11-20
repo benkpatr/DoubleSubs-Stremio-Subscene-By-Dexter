@@ -23,12 +23,12 @@ setInterval(() => {
 
 const aesPass = '2906@1611';
 
-if(config.env != 'external' && config.env != 'local') {
-	filterDomains().then(res => {
-		external_domains = res;
-		console.log('valid domains', external_domains);
-	})
-}
+// if(config.env != 'external' && config.env != 'local') {
+// 	filterDomains().then(res => {
+// 		external_domains = res;
+// 		console.log('valid domains', external_domains);
+// 	})
+// }
 
 const DiskCache = require('node-persist');
 
@@ -310,23 +310,11 @@ sharedRouter.get('/sub.vtt', async (req, res, next) => {
 	}
 })
 
-sharedRouter.use((req, res) => {
+sharedRouter.use((req, res, next) => {
 	if(res.statusCode == 200)
 		QueueIP.del(req.ip);
+	next();
 });
-
-
-if(config.env == 'beamup') {
-	app.get('/logs', (req, res) => {
-		res.setHeader('Cache-Control', CacheControl.off);
-		res.end(console.read());
-	})
-
-	app.get('/logs/error', (req, res) => {
-		res.setHeader('Cache-Control', CacheControl.off);
-		res.end(console.readError());
-	})
-}
 
 sharedRouter.get('/current-ip', async (req, res) => {
 	const ip_adr = await currentIP();
@@ -344,6 +332,18 @@ sharedRouter.get('*', (req, res) => {
 	return res.redirect(301, '/404');
 })
 
+//beamup logs
+if(config.env == 'beamup') {
+	app.get('/logs', (req, res) => {
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.end(console.read());
+	})
+
+	app.get('/logs/error', (req, res) => {
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.end(console.readError());
+	})
+}
 app.use(sharedRouter);
 
 module.exports = {
