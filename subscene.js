@@ -474,7 +474,7 @@ function sortMovieByFilename(subtitles, filename) {
       });
 
       if(strs.length != 1) {
-        for(i = 1; i < strs.length; i++)  {
+        for(let i = 1; i < strs.length; i++)  {
           inList = sortByKey(inList, strs[i]);
           notList = sortByKey(notList, strs[i]);
         }

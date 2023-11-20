@@ -310,10 +310,9 @@ sharedRouter.get('/sub.vtt', async (req, res, next) => {
 	}
 })
 
-sharedRouter.use((req, res, next) => {
+sharedRouter.get(['/:configuration?/subtitles/:type/:id/:extra?.json', '/sub.vtt'], (req, res) => {
 	if(res.statusCode == 200)
 		QueueIP.del(req.ip);
-	next();
 });
 
 sharedRouter.get('/current-ip', async (req, res) => {

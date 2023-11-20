@@ -3,6 +3,8 @@ const languages = require('../configs/languages.json');
 const { subtitles, downloadUrl } = require('../subscene');
 const aes = require('../modules/aes');
 
+const aesPass = '2906@1611';
+
 export default async function handler(req, res) {
   try{
 		let _req = req.url.split('/');
@@ -29,7 +31,7 @@ export default async function handler(req, res) {
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
+				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.headers['x-forwarded-for'], aesPass)}`);
 				res.send(JSON.stringify({ subtitles: subs }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
