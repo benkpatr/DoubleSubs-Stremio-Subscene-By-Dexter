@@ -10,12 +10,18 @@ const config = require('./configs/config');
 const sub2vtt = require('./modules/sub2vtt');
 const currentIP = require('./modules/current-ip');
 let { external_domains, filterDomains } = require('./configs/domain-list');
+const aes = require('./modules/aes');
 const NodeCache = require('node-cache');
 const RedirectCache = new NodeCache({ stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60) }); //normaly the external server save the cache up to 12hours
 const QueueCache = new NodeCache({ stdTTL: 5 });
 const QueueSub = new NodeCache({ stdTTL: 10 });
-const QueueIP = new NodeCache({ stdTTL: 3 });
+const QueueIP = new NodeCache({ stdTTL: 5 });
+let LimitDownload = new NodeCache({ stdTTL: 24*60*60, checkperiod: 24*60*60 });
+setInterval(() => {
+	LimitDownload.flushAll();
+}, 24*60*60*1000);
 
+const aesPass = '2906@1611';
 
 if(config.env != 'external' && config.env != 'local') {
 	filterDomains().then(res => {
@@ -74,17 +80,6 @@ app.use('/assets', express.static(path.join(__dirname, 'vue', 'dist', 'assets'))
 
 app.use(cors())
 
-app.get('*', async (req, res, next) => {
-	const req_ip = req.ip;
-	let requesting = QueueIP.get(req_ip) || 1;
-	if(requesting >= 5) {
-		console.error(req_ip, `Too many request!`);
-		return res.sendStatus(429);
-	};
-	QueueIP.set(req_ip, requesting+1);
-	next();
-});
-
 app.get('/', (_, res) => {
 	res.redirect('/configure')
 	res.end();
@@ -112,9 +107,21 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.end();
 });
 
-if(config.env != 'local' && external_domains?.length) {
+//Limit 1 Request/IP
+sharedRouter.use(async (req, res, next) => {
+	const req_ip = req.ip;
+	const requesting = QueueIP.get(req_ip) || 0;
+	if(requesting >= 1) {
+		console.error(req_ip, `Too many request!`);
+		return res.sendStatus(429);
+	};
+	QueueIP.set(req_ip, requesting+1);
+	next();
+});
+
+if(config.env != 'local' && config.env != 'external' && external_domains?.length) {
 	let start_server = config.env == 'beamup' ? 1 : 0;
-	app.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
+	sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
 		const { type, id } = req.params;
 		const redirectID = `${type}_${id}`;
 		const redirect_server = RedirectCache.get(redirectID);
@@ -137,7 +144,7 @@ if(config.env != 'local' && external_domains?.length) {
 	})
 }
 
-sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res) => {
+sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res, next) => {
 	try{
 		res.setHeader('Content-Type', 'application/json');
 		//console.log(req.params);
@@ -161,11 +168,14 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
-				res.send(JSON.stringify({ subtitles: subs }));
+				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
+				res.status(200).send(JSON.stringify({ subtitles: subs }));
+				next();
 			} else if(!subs?.length) {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
-				res.send(JSON.stringify({ subtitles: [] }));
+				res.status(200).send(JSON.stringify({ subtitles: [] }));
+				next();
 			}
 		} else {
 			console.log("no config");
@@ -179,31 +189,55 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 	}
 })
 
-//############
-//No limit download && dont need redirect bc req always return selfhost
-
-// app.get('/sub.vtt', (req, res, next) => {
-// 	if(start_server > external_domains.length) start_server = 0;
-// 	if(start_server) {
-// 		const redirect_url = external_domains[start_server++ - 1] + req.originalUrl;
-// 		console.log("Redirect 301: " + redirect_url);
-// 		return res.redirect(301, redirect_url);
-// 	}
-// 	start_server++;
-// 	next();
-// })
-
-sharedRouter.get('/sub.vtt', async (req, res,next) => {
+//Block someone using multiple ip to fetch multi sub got from one ip
+sharedRouter.get('/sub.vtt', (req, res, next) => {
+	let secure;
+	if(req.query.s) secure = req.query.s;
+	if(!secure) return res.sendStatus(400);
 	try {
+		const sourceIP = aes.decrypt(secure, aesPass);
+		if(sourceIP != req.ip) {
+			const req_count = QueueIP.get(sourceIP) || 0;
+			if(req_count >= 1) {
+				console.error(sourceIP, 'Fetching to multi sub got from one IP');
+				return res.sendStatus(429);
+			};
+			QueueIP.set(sourceIP, req_count+1);
+		}
+		next();
+	} catch(e) {
+		return res.sendStatus(400);
+	}
+})
+//Limit downloads
+sharedRouter.get('/sub.vtt', async (req, res, next) => {
+	const download = LimitDownload.get(req.ip) || 0;
+	if(download >= 30)  {
+		const subtitle = [
+			'WEBVTT\n',
+			'1',
+			'00:00:00.000 --> 02:00:00.000',
+			'[REUP]Subscene by Dexter21767',
+			'Limit download: 30/day'
+		]
 
+		res.setHeader('Cache-Control', CacheControl.off);
+		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');
+		res.send(subtitle.join('\n'));
+	} else
+		next();
+})
+//get subtitle
+sharedRouter.get('/sub.vtt', async (req, res, next) => {
+	try {
 		let url,proxy,episode,title, lang;
 		
-		if (req?.query?.proxy) proxy = JSON.parse(Buffer.from(req.query.proxy, 'base64').toString());
-		if (req?.query?.from) url = req.query.from
+		//if (req?.query?.proxy) proxy = JSON.parse(Buffer.from(req.query.proxy, 'base64').toString());
+		if (req.query.from) url = req.query.from
 		else throw 'error: no url';
-		if (req?.query?.episode) episode = req.query.episode
-		if(req?.query?.title) title = req.query.title
-		if(req?.query?.lang) lang = req.query.lang
+		if (req.query.episode) episode = req.query.episode
+		if(req.query.title) title = req.query.title
+		if(req.query.lang) lang = req.query.lang
 
 		if(!lang || !title || !url) return res.redirect('/404');
 
@@ -211,7 +245,7 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 
 		let fileID = lang + '_' + title; //some file have the same name in the multi language
 
-		//limit request
+		//Queue request to one file
 		while(QueueSub.get(fileID)) {
 			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
 		}
@@ -221,7 +255,7 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 		if(file.subtitle) {
 			console.log(`file ${title} is loaded from storage cache!`);
 		} else {
-			QueueSub.set(fileID, true); //requesting
+			QueueSub.set(fileID, true); //file is loading
 
 			url = await downloadUrl(url);
 
@@ -257,13 +291,17 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 			}
 
 			DiskCache.setItem(fileID, file.subtitle);
+			QueueSub.set(fileID, false); //file is load done
 		}
 
-		QueueSub.set(fileID, false);
+		//Count download
+		const downloaded = LimitDownload.get(req.ip) || 0;
+		LimitDownload.set(req.ip, downloaded+1);
 
 		res.setHeader('Cache-Control', CacheControl.oneDay);
 		res.setHeader('Content-Type', 'text/vtt;charset=UTF-8');
-		res.send(file.subtitle);
+		res.status(200).send(file.subtitle);
+		next();
 	} catch (e) {
 		console.error(e);
 		res.sendStatus(500);
@@ -271,13 +309,19 @@ sharedRouter.get('/sub.vtt', async (req, res,next) => {
 	}
 })
 
+sharedRouter.use((req, res) => {
+	if(res.statusCode == 200)
+		QueueIP.del(req.ip);
+});
+
+
 if(config.env == 'beamup') {
-	app.get('/logs', (req, res) => {
+	sharedRouter.get('/logs', (req, res) => {
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.end(console.read());
 	})
 
-	app.get('/logs/error', (req, res) => {
+	sharedRouter.get('/logs/error', (req, res) => {
 		res.setHeader('Cache-Control', CacheControl.off);
 		res.end(console.readError());
 	})

@@ -14,8 +14,6 @@ const iso639 = require('./ISO639');
 iconv.skipDecodeWarning(true)
 iconv.disableCodecDataWarn(true)
 
-global.isGetSub = false;
-
 class sub2vtt {
     constructor(url, opts = {}) {
         let { proxy, episode, type } = opts;
@@ -31,17 +29,12 @@ class sub2vtt {
     }
 
     async GetData() {
-        while(global.isGetSub) {
-            await new Promise(r => setTimeout(r, 1000));
-        }
-        global.isGetSub = true;
         let res = await this.request({
             method: 'get',
             url: this.url,
             responseType: 'arraybuffer',
             Accept: this.type,
         });
-        global.isGetSub = false;
 
         if(res?.headers) this.DatafromHeaders(res.headers);
 

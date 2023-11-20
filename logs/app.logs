@@ -1,13 +1,6 @@
 NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: https://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
-
-reqpath :  /404
-----------------------------------
-
-reqpath :  /404
-----------------------------------
-::ffff:127.0.0.1 Too many request!
 valid domains [
   "https://subscene.onrender.com",
   "https://subscene-ip8j.onrender.com",
@@ -16,16 +9,6 @@ valid domains [
   "https://subscene-rouge.vercel.app"
 ]
 
-reqpath :  /404
+reqpath :  /spanish/subtitles/series/tt9140554%3A1%3A2/videoHash=c8036bef82333e8e&videoSize=1575987315&filename=Loki.S01e02.Ita.Eng.Spa.5.1.1080p.h265.SubS-Me7alh.mkv.json
 ----------------------------------
-
-reqpath :  /404
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /404
-----------------------------------
-
-reqpath :  /404
-----------------------------------
-::ffff:127.0.0.1 Too many request!
+Redirect 301: https://subscene.onrender.com/spanish/subtitles/series/tt9140554%3A1%3A2/videoHash=c8036bef82333e8e&videoSize=1575987315&filename=Loki.S01e02.Ita.Eng.Spa.5.1.1080p.h265.SubS-Me7alh.mkv.json
