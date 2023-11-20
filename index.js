@@ -123,7 +123,9 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 	let start_server = config.env == 'beamup' ? 1 : 0;
 	sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
 		const { type, id } = req.params;
-		const redirectID = `${type}_${id}`;
+		let metaid = id;
+		if(type == 'series') metaid = id.split(':')[0];
+		const redirectID = `${type}_${metaid}`;
 		const redirect_server = RedirectCache.get(redirectID);
 		if(redirect_server) {
 			const redirect_url = redirect_server + req.originalUrl;
