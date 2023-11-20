@@ -1,12 +1,10 @@
 const {CacheControl} = require('../configs/config');
 const languages = require('../configs/languages.json');
 const { subtitles, downloadUrl } = require('../subscene');
+const aes = require('../modules/aes');
 
 export default async function handler(req, res) {
   try{
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.setHeader('Content-Type', 'application/json');
-
 		let _req = req.url.split('/');
 		req.params = {
 			configuration: _req[1],
@@ -18,6 +16,8 @@ export default async function handler(req, res) {
 		var { configuration, type, id } = req.params;
 
 		if (configuration && languages[configuration]) {
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			res.setHeader('Content-Type', 'application/json');
 			let lang = configuration;
 			let req_extras = req.params.extra?.split('&');
 			let extras = {};
@@ -29,6 +29,7 @@ export default async function handler(req, res) {
 			const subs = await subtitles(type, id, lang, extras)
 			if(subs){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
+				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
 				res.send(JSON.stringify({ subtitles: subs }));
 			} else if(subs && !subs.length) {
 				console.log("no subs");
