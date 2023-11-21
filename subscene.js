@@ -6,7 +6,6 @@ const languages = require('./configs/languages.json');
 const NodeCache = require("node-cache");
 const sub2vtt = require('./modules/sub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
-const { type } = require('os');
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
 const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //meta from tmdb or cinemeta
@@ -18,20 +17,21 @@ const searchFound = new NodeCache( { stdTTL: (12 * 60 * 60), checkperiod: (1 * 6
 
 async function subtitles(type, id, lang, extras) {
   console.log(type, id, lang);
-  if (id.match(/tt[0-9]/)){
+  if (id.match(/tt[0-9]/)) {
     let tmdb = await (TMDB(type, id, lang, extras)).catch(error => { throw error });
-    if(tmdb == null && type != 'series') tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
+    if(tmdb == null && type != 'series')
+      tmdb = await (TMDB(type, id, lang, extras, true)).catch(error => { throw error });
     return tmdb;
-
-  }	else if (id.match(/kitsu:[0-9]/)){
+  }
+  else if (id.match(/kitsu:[0-9]/)) {
     return await Kitsu(type, id, lang, extras);
   }
 }
 async function Kitsu(type, id, lang, extras) {
   try {
     const episode = id.split(':')[2];
+    const metaid = id.split(':')[1];
 
-    let metaid = id.split(':')[1];
     let meta = KitsuCache.get(metaid);
     if (!meta) {
         meta = await kitsu(metaid);
@@ -39,8 +39,8 @@ async function Kitsu(type, id, lang, extras) {
             KitsuCache.set(metaid, meta);
         }
     }
+
     if(meta){
-      let season;
       const cacheID = `${id}_${lang}`
       const subtitles = Cache.get(cacheID);
       if(subtitles) {
@@ -55,20 +55,17 @@ async function Kitsu(type, id, lang, extras) {
       //######################
       //try to get url has been searced from cache first (to skip search);
       const pathFound = searchFound.get(id);
-      if(pathFound == '') return [];
       if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
       //######################
 
       //console.log(meta)
-      let slug = `${meta.title["en_jp"]} (${meta.year})`;
-      console.log('Slug:',slug)
-      let search = await subscene.search(`${encodeURIComponent(meta.title["en_jp"])} (${meta.year})`);
+      //remove (tv) in some anime
+      let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
+      metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
+      let metaSlug = meta.slug.replace(/-tv$/, '');
+      console.log('Slug:', metaTitle, `(${meta.year}`);
+      let search = await subscene.search(`${encodeURIComponent(metaTitle)} (${meta.year})`);
       if(search?.length) {
-        //remove (tv) in some anime
-        let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
-        metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
-        let metaSlug = meta.slug.replace(/-tv$/, '');
-
         //filter by slug
         let find = search.find(x => x.path.split('/subtitles/')[1] == metaSlug);
 
@@ -82,11 +79,11 @@ async function Kitsu(type, id, lang, extras) {
           //some anime have the title like series
           //https://subscene.com/subtitles/jujutsu-kaisen-second-season
           if(!find) {
-            const RegSeason = /(.*?)(?:Season\s?(\d{1,3})|(\d{1,3})(?:st|nd|th)\s?Season)/i;
+            const RegSeason = /(.*?)(?:Season\s?(\d{1,3})|(\d{1,3})(?:st|nd|rd|th)\s?Season)/i;
             if(RegSeason.test(metaTitle)) {
               const r = RegSeason.exec(metaTitle);
               let animeName = r[1];
-              season = r[2];
+              const season = r[2];
               animeName = animeName.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
               let season_text = ordinalInWord(season);
               const reg = new RegExp(`${animeName}${season_text}\\s?Season`, 'i');
@@ -115,7 +112,7 @@ async function Kitsu(type, id, lang, extras) {
 
 async function TMDB(type, id, lang, extras, searchMovie=false) {
   try {
-    let metaid = id.split(':')[0];
+    const metaid = id.split(':')[0];
     let season, episode;
     if(type == 'series') {
       season = parseInt(id.split(':')[1]);
@@ -132,7 +129,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       console.log("meta",meta)
       //######################
       //try to get results from cache first (to skip search);
-      let cacheID = `${id}_${lang}`;
+      const cacheID = `${id}_${lang}`;
       const subtitles = Cache.get(cacheID);
       if(subtitles) {
         console.log('cached main', cacheID);
@@ -147,7 +144,6 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       //try to get url has been searced from cache first (to skip search);
       if(searchMovie  || type == 'series') {
         const pathFound = searchFound.get(id);
-        if(pathFound == '') return [];
         if(pathFound) return await getsubtitles(pathFound, cacheID, lang, season, episode, meta.year, extras).catch(error => { throw error });
       }
 
@@ -243,7 +239,6 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
             searchFound.set(id, findSeries.path);
             return await getsubtitles(findSeries.path, cacheID, lang, season, episode, null, extras).catch(error => { throw error });
           } else {
-            searchFound.set(id, '');
             console.log('search filter not found any series');
             Cache.set(cacheID, []);
             return [];
@@ -278,7 +273,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
     if (!subtitles) {
       //# Level1 #
       const subs1 = await subscene.getSubtitles(moviePath).catch(error => { throw error }) // moviepath without year
-      console.log("no year scraping:", subs1 ? subs1.length : 0);
+      console.log("no year scraping:", subs1?.length || 0);
       if(subs1?.length) {
         subtitles = subscene.sortByLang(subs1); //return Object
         subsceneCache.set(moviePath, subtitles);
@@ -322,7 +317,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         if(!subtitles?.length) {
           await new Promise((r) => setTimeout(r, 2000)); // prevent too many request, still finding the other way
           const subs = await subscene.getSubtitles(`${moviePath}-${year}`).catch(error => { throw error }) // moviepath with year
-          console.log("with year scraping :", subs ? subs.length : 0);
+          console.log("with year scraping :", subs?.length || 0);
           if(subs?.length) {
             subtitles = subscene.sortByLang(subs);
             subsceneCache.set(`${moviePath}-${year}`, subtitles);

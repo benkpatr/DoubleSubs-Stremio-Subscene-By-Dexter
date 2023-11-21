@@ -8,8 +8,8 @@ else {
         const logger = require('./modules/logger.js');
         console = logger;
         console.empty();
-        console.emptyError();
         console.emptyWarn();
+        console.emptyError();
     }
 }
 
