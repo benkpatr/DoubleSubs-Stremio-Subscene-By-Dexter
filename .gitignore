@@ -13,8 +13,6 @@ bun.lockb
 build.bat
 deploy.sh
 .dockerignore
-vercel.json
 .vercel
 .vercelignore
 Dockerfile
-/api

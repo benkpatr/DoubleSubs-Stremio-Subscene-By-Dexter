@@ -6,6 +6,7 @@ const languages = require('./configs/languages.json');
 const NodeCache = require("node-cache");
 const sub2vtt = require('./modules/sub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
+const { type } = require('os');
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
 const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //meta from tmdb or cinemeta
@@ -262,6 +263,18 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
     //console.log("breakTitle : " , breakTitle)
     let subs = [];
     var subtitles = subsceneCache.get(moviePath);
+
+    //try to validate Cache
+    if(!episode) {
+      if(!subtitles) subtitles = subsceneCache.get(`${moviePath}-${year}`);
+      else {
+        const resID = Object.values(subtitles)[0][0].imdb_id;
+        const imdbNumber = id.split('_')[0].replace('tt', '');
+        if(!resID || !resID.includes(imdbNumber))
+          subtitles = subsceneCache.get(`${moviePath}-${year}`);
+      }
+    }
+
     if (!subtitles) {
       //# Level1 #
       const subs1 = await subscene.getSubtitles(moviePath).catch(error => { throw error }) // moviepath without year
@@ -281,15 +294,15 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
           let foundImdb = subs1[0].imdb_id;
           if(foundImdb) {
             if(episode) {
-              let Imdb_number = id.split(':')[0].split('tt')[1];
+              let Imdb_number = id.split(':')[0].replace('tt', '');
               if(!foundImdb.includes(Imdb_number)) {
-                console.log(`imdb  not match ${foundImdb} - ${Imdb_number}`);
+                console.log(`imdb not match ${foundImdb} - ${Imdb_number}`);
                 Cache.set(id, []);
                 return [];
               }
             }
             else {
-              let Imdb_number = id.split('_')[0].split('tt')[1];
+              let Imdb_number = id.split('_')[0].replace('tt', '');
               if(!foundImdb.includes(Imdb_number)) {
                 if(movieLvlYear) {
                   subtitles = await movieWithYear(moviePath, year);
