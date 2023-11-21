@@ -31,11 +31,11 @@ export default async function handler(req, res) {
 				})
 			}
 			const subs = await subtitles(type, id, lang, extras)
-			if(subs){
+			if(subs?.length){
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.headers['x-forwarded-for'], aesPass)}`);
 				res.send(JSON.stringify({ subtitles: subs.slice(0,10) }));
-			} else if(subs && !subs.length) {
+			} else {
 				console.log("no subs");
 				res.setHeader('Cache-Control', CacheControl.oneHour);
 				res.send(JSON.stringify({ subtitles: [] }));

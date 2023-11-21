@@ -30,7 +30,7 @@ global.isGetting = {
 
 if(config.env == 'external') {
   global.isSearching.spaceTime = 5000;
-  global.isGetting.spaceTime = 2000;
+  global.isGetting.spaceTime = 1000;
 }
 
 function delay(ms) {
@@ -135,6 +135,7 @@ async function subtitle(url = String) {
     global.isGetting.value = false;
     global.isGetting.lastUpdate = new Date().getTime(); 
 
+    if(res.statusCode == 404) return [];
     if (!res?.body) throw "No Response Found"
     if (res.body.includes("To many request")) throw "Get: Too Many Request"
     let results = []
@@ -165,7 +166,7 @@ async function subtitle(url = String) {
     } 
     //results = sortByLang(results) // sort happen after this function
     //console.log("results",results["english"])
-    return results || null
+    return results
   } catch(e) {
     console.error(e);
   }

@@ -50,12 +50,11 @@ app.use(swStats.getMiddleware({
 	name: manifest.name,
 	version: manifest.version,
 	authentication: true,
-	onAuthenticate: function (req, username, password) {
+	onAuthenticate: (req, username, password) => {
 		// simple check for username and password
-		const User = process.env.USER?process.env.USER:'stremio'
-		const Pass = process.env.PASS?process.env.PASS:'stremioIsTheBest'
-		return ((username === User
-			&& (password === Pass)))
+		const User = process.env.SWAGGER_USER?process.env.SWAGGER_USER:'stremio'
+		const Pass = process.env.SWAGGER_PASS?process.env.SWAGGER_PASS:'stremioIsTheBest'
+		return username === User && password === Pass
 	}
 }))
 
@@ -167,13 +166,13 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 				})
 			}
 			const subs = await subtitles(type, id, lang, extras)
-			if(subs){
+			if(subs?.length){
 				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
 				res.status(200).send(JSON.stringify({ subtitles: subs.slice(0,10) }));
 				next();
-			} else if(!subs?.length) {
+			} else {
 				console.log("no subs");
 				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.oneHour);
