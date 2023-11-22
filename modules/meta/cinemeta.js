@@ -1,4 +1,7 @@
-const got = require('got-scraping').gotScraping;
+//const got = require('got-scraping').gotScraping;
+const got = {
+    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
+}
 var slugify = require('slugify');
 const { CineV3 } = require('../../configs/config');
 
@@ -13,6 +16,7 @@ async function getMeta(type, id) {
         let url = `${CineV3}/movie/${id}.json`
         let res = await request(url);
         if(!res) return;
+        res = JSON.parse(res.body);
         let title = res.meta.name //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
         if(!title) throw `not found any meta from cinemeta`;
         let year = res.meta.year?.split("-")[0] || res.meta.releaseInfo?.split('\u2013')[0]
@@ -21,6 +25,8 @@ async function getMeta(type, id) {
     } else if (type == "series") {
         let url = `${CineV3}/series/${id.split(':')[0]}.json`
         let res = await request(url);
+        if(!res) return;
+        res = JSON.parse(res.body);
         let title = res.meta.name;//res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         if(!title) throw `not found any meta from cinemeta`
         let year = res.meta.year?.split("-")[0];

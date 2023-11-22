@@ -255,14 +255,14 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
   try {
     //[]: PageNotFound or No subs or Not match ID,Year
     var subtitles = await getSubtitlesWithYear(moviePath, id, episode, year);
-    if(!subtitles.length && !episode && withYear) {
+    if(!subtitles?.length && !episode && withYear) {
       subtitles = await getSubtitlesWithYear(moviePath, id, episode, year, withYear);
     }
 
-    if(!episode && !subtitles.length)
+    if(!episode && !subtitles?.length)
       return null; //null mean => try search movie by name
 
-    console.log('Scrapted:', subtitles.length);
+    console.log('Scrapted:', subtitles?.length);
 
     subtitles = subscene.sortByLang(subtitles);
     
@@ -371,7 +371,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       return subs;
     }
     else {
-      if(subtitles.length) console.log(`not matched any subs by language`);
+      console.log(`not matched any subs by language`);
       Cache.set(id, []);
       return [];
     }

@@ -1,4 +1,7 @@
-const got = require('got-scraping').gotScraping;
+//const got = require('got-scraping').gotScraping;
+const got = {
+    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
+}
 const BaseURL = require('../../configs/config').kitsuURL;
 
 async function request(url) {
@@ -17,6 +20,7 @@ async function getMeta(id) {
     let url = `${BaseURL}/anime/${id}`
     let res = await request(url);
     if(!res) return;
+    res = JSON.parse(res.body);
     let attributes = res.data.attributes;
     if(!attributes) return;
     return {

@@ -1,13 +1,16 @@
 const { convert } = require('subtitle-converter');
 const unrar = require("node-unrar-js");
 const AdmZip = require('adm-zip');
-const axios = require('axios');
 const smi2vtt = require('./converts/smi2vtt');
 var detect = require('charset-detector');
 const iconv = require('iconv-jschardet');
 const ass2vtt = require('./converts/ass2vtt');
 const dotsub2vtt = require('./converts/dotsub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./episodeRegex');
+const got = {
+    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args),
+    extends: async (...args) => (await import('got-scraping')).gotScraping.extend(...args)
+}
 
 const iso639 = require('./ISO639');
 
@@ -32,15 +35,17 @@ class sub2vtt {
         let res = await this.request({
             method: 'get',
             url: this.url,
-            responseType: 'arraybuffer',
-            Accept: this.type,
+            responseType: 'buffer',
+            //Accept: this.type,
         });
+
+        //console.log(res)
 
         if(res?.headers) this.DatafromHeaders(res.headers);
 
-        if (res?.data) {
+        if (res?.rawBody) {
             this.type = this.type || res.headers["content-type"].split(';')[0];
-            this.data = res.data;
+            this.data = res.rawBody;
             this.size = Number(res.headers["content-length"]);
         }
     }
@@ -396,7 +401,7 @@ class sub2vtt {
     }
 
     async request(options) {
-        if (!this.client) this.getClient()
+        if (!this.client) await this.getClient()
         return await this.client(options)
             .catch(error => {
                 if (error.response) {
@@ -409,15 +414,20 @@ class sub2vtt {
             });
 
     }
-    getClient() {
+    async getClient() {
         let config = {
-            maxContentLength: 10000000, //~10MB
-            timeout: 15000,
+            timeout: {
+                request: 15000
+            },
+            retry: {
+                limit: 3
+            },
             headers: {}
         }
         if (this.proxy) config.headers = this.proxy;
         config.headers["Accept-Encoding"] = "gzip,deflate,compress";
-        this.client = axios.create(config);
+        // this.client = axios.create(config);
+        this.client = await got.extends(config);
     }
     static gerenateUrl(url = String, opts) {
         let { proxy, type } = opts;

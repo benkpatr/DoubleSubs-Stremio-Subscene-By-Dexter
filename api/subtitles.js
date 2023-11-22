@@ -17,8 +17,6 @@ export default async function handler(req, res) {
 		
 		var { configuration, type, id } = req.params;
 
-		
-
 		if (configuration && languages[configuration]) {
 			res.setHeader('Access-Control-Allow-Origin', '*');
 			res.setHeader('Content-Type', 'application/json');

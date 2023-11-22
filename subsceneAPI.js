@@ -1,4 +1,7 @@
-const got = require('got-scraping').gotScraping;
+//const got = require('got-scraping').gotScraping;
+const got = {
+  get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
+}
 const cheerio = require("cheerio")
 const config = require('./configs/config')
 const baseUrl = config.BaseURL
@@ -30,7 +33,7 @@ global.isGetting = {
 
 if(config.env == 'external') {
   global.isSearching.spaceTime = 5000;
-  global.isGetting.spaceTime = 1000;
+  global.isGetting.spaceTime = 2000;
 }
 
 function delay(ms) {
