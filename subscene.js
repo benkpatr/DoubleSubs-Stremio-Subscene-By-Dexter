@@ -13,7 +13,7 @@ const KitsuCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 *
 const filesCache =  new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //download url
 
 const subsceneCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //subtitles page => update sub every 4 hours
-const searchFound = new NodeCache( { stdTTL: (12 * 60 * 60), checkperiod: (1 * 60 * 60)});
+const searchFound = new NodeCache( { stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60)});
 
 async function subtitles(type, id, lang, extras) {
   console.log(type, id, lang);
@@ -31,6 +31,7 @@ async function Kitsu(type, id, lang, extras) {
   try {
     const episode = id.split(':')[2];
     const metaid = id.split(':')[1];
+    const kitsuID = 'kitsu:' + metaid;
 
     let meta = KitsuCache.get(metaid);
     if (!meta) {
@@ -54,7 +55,7 @@ async function Kitsu(type, id, lang, extras) {
 
       //######################
       //try to get url has been searced from cache first (to skip search);
-      const pathFound = searchFound.get(id);
+      const pathFound = searchFound.get(kitsuID);
       if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
       //######################
 
@@ -62,6 +63,7 @@ async function Kitsu(type, id, lang, extras) {
       //remove (tv) in some anime
       let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
       metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
+      metaTitle = metaTitle.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
       let metaSlug = meta.slug.replace(/-tv$/, '');
       console.log('Slug:', metaTitle, `(${meta.year})`);
       let search = await subscene.search(`${encodeURIComponent(metaTitle)} (${meta.year})`);
@@ -95,7 +97,7 @@ async function Kitsu(type, id, lang, extras) {
         
         if(find?.path){
           console.log('found:', find.path);
-          searchFound.set(id, find.path);
+          searchFound.set(kitsuID, find.path);
           return await getsubtitles(find.path, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
         }
         else {
@@ -143,7 +145,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       //######################
       //try to get url has been searced from cache first (to skip search);
       if(searchMovie  || type == 'series') {
-        const pathFound = searchFound.get(id);
+        const pathFound = searchFound.get(metaid);
         if(pathFound) return await getsubtitles(pathFound, cacheID, lang, season, episode, meta.year, extras).catch(error => { throw error });
       }
 
@@ -171,7 +173,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
             if(findMovie?.path) {
               console.log('found:', findMovie.path);
-              searchFound.set(id, findMovie.path);
+              searchFound.set(metaid, findMovie.path);
               return await getsubtitles(findMovie.path, cacheID, lang, null, null, meta.year, extras, false).catch(error => { throw error });
             } else {
               console.log('search filter not found any movie');
@@ -190,7 +192,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
           //https://subscene.com/subtitles/spy-kyoushitsu-2nd-season-spy-classroom-season-2
           //https://subscene.com/subtitles/kami-tachi-ni-hirowareta-otoko-2nd-season
           //https://subscene.com/subtitles/shameless-us-seventh-season-2017
-          let oi = season == 1 ? 'st' : season == 2 ? 'nd' : 'th'; //ordinal indicators
+          let oi = season == 1 ? 'st' : season == 2 ? 'nd' : season == 3 ? 'rd' : 'th'; //ordinal indicators
           let fillSeason = 0 <= season.length <= 9 ? '0' + season : season;
 
           //#filter lvl1
@@ -236,7 +238,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
           if(findSeries?.path){
             console.log(findSeries.path);
-            searchFound.set(id, findSeries.path);
+            searchFound.set(metaid, findSeries.path);
             return await getsubtitles(findSeries.path, cacheID, lang, season, episode, null, extras).catch(error => { throw error });
           } else {
             console.log('search filter not found any series');

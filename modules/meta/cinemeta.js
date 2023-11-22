@@ -8,7 +8,7 @@ const { CineV3 } = require('../../configs/config');
 async function request(url, header) {
     return await got.get(url, {
         retry: { limit: 3}
-    }).json().catch(err => { console.error(`CineMeta: failed to get meta from ${url}`) });
+    }).catch(err => { console.error(`CineMeta: failed to get meta from ${url}`) });
 }
 
 async function getMeta(type, id) {

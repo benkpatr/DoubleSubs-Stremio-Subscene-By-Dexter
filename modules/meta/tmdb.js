@@ -9,7 +9,7 @@ const cinemeta = require('./cinemeta.js')
 async function request(url, header) {
     return await got.get(url, {
         retry: { limit: 3 }
-    }).catch(err => { console.error(`TMDB: failed to get meta from ${url}`)});
+    }).catch(err => { console.error(`TMDB: failed to get meta from ${url}`) });
 }
 
 async function getMeta(type, id) {
