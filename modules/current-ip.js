@@ -1,10 +1,11 @@
-const axios = require('axios');
-
+const got = {
+    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
+}
 const api_server = 'https://api.ipify.org'
 
 async function getIP() {
-    return axios.get(api_server).then(result => {
-        return result.data;
+    return got.get(api_server).then(result => {
+        return result.body;
     }).catch(err => { throw "failed to get current ip" });
 }
 
