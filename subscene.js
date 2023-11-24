@@ -67,8 +67,8 @@ async function Kitsu(type, id, lang, extras) {
 
       //######################
       //try to get url has been searced from cache first (to skip search);
-      //const pathFound = searchFound.get(kitsuID);
-      const pathFound = db.get(db.Tables.Search, 'id', kitsuID)?.path;
+      const pathFound = searchFound.get(kitsuID);
+      //const pathFound = db.get(db.Tables.Search, 'id', kitsuID)?.path;
       if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
       //######################
 
