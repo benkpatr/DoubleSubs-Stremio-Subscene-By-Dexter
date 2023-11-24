@@ -6,6 +6,7 @@ const languages = require('./configs/languages.json');
 const NodeCache = require("node-cache");
 const sub2vtt = require('./modules/sub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
+//const db = require('./modules/bettersqlite3');
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
 const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //meta from tmdb or cinemeta
@@ -13,7 +14,7 @@ const KitsuCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 *
 const filesCache =  new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //download url
 
 const subsceneCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //subtitles page => update sub every 4 hours
-const searchFound = new NodeCache( { stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60)});
+const searchFound = new NodeCache({ stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60)});
 
 async function subtitles(type, id, lang, extras) {
   console.log(type, id, lang);
@@ -34,6 +35,7 @@ async function Kitsu(type, id, lang, extras) {
     const kitsuID = 'kitsu:' + metaid;
 
     let meta = KitsuCache.get(metaid);
+    // let meta = db.get(db.Tables.Meta, 'id', kitsuID);
     if (!meta) {
         meta = await kitsu(metaid);
         if (meta) {
@@ -42,6 +44,16 @@ async function Kitsu(type, id, lang, extras) {
     }
 
     if(meta){
+      //console.log(meta)
+      //remove (tv) in some anime
+      let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
+      metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
+      metaTitle = metaTitle.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
+      let metaSlug = meta.slug.replace(/-tv$/, '');
+      console.log('Slug:', metaTitle, `(${meta.year})`);
+
+      //db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [kitsuID, metaTitle, metaSlug,  meta.year]);
+
       const cacheID = `${id}_${lang}`
       const subtitles = Cache.get(cacheID);
       if(subtitles) {
@@ -55,17 +67,11 @@ async function Kitsu(type, id, lang, extras) {
 
       //######################
       //try to get url has been searced from cache first (to skip search);
-      const pathFound = searchFound.get(kitsuID);
+      //const pathFound = searchFound.get(kitsuID);
+      const pathFound = db.get(db.Tables.Search, 'id', kitsuID)?.path;
       if(pathFound) return await getsubtitles(pathFound, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
       //######################
 
-      //console.log(meta)
-      //remove (tv) in some anime
-      let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
-      metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
-      metaTitle = metaTitle.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
-      let metaSlug = meta.slug.replace(/-tv$/, '');
-      console.log('Slug:', metaTitle, `(${meta.year})`);
       let search = await subscene.search(`${encodeURIComponent(metaTitle)} (${meta.year})`);
       if(search?.length) {
         //filter by slug
@@ -98,7 +104,8 @@ async function Kitsu(type, id, lang, extras) {
         if(find?.path){
           console.log('found:', find.path);
           searchFound.set(kitsuID, find.path);
-          return await getsubtitles(find.path, cacheID, lang, null, episode, meta.year, extras).catch(error => { throw error });
+          //db.set(db.Tables.Search, ['id', 'path'], [kitsuID, find.path]);
+          return await getsubtitles(find.path, kitsuID, lang, null, episode, meta.year, extras).catch(error => { throw error });
         }
         else {
           console.log("kitsu, search filter not found!");
@@ -121,10 +128,12 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       episode = id.split(':')[2];
     }
     let meta = MetaCache.get(metaid);
+    //let meta = db.get(db.Tables.Meta, 'id', metaid);
     if (!meta) {
         meta = await tmdb(type, metaid);
         if (meta) {
             MetaCache.set(metaid, meta);
+            //db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [metaid, meta.title, meta.slug, meta.year]);
         }
     }
     if(meta){
@@ -144,16 +153,18 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
       //######################
       //try to get url has been searced from cache first (to skip search);
+      const foundID = metaid + (season ? ':' + season : '');
       if(searchMovie  || type == 'series') {
-        const pathFound = searchFound.get(metaid);
-        if(pathFound) return await getsubtitles(pathFound, cacheID, lang, season, episode, meta.year, extras).catch(error => { throw error });
+        const pathFound = searchFound.get(foundID);
+        //const pathFound = db.get(db.Tables.Search, 'id', foundID)?.path;
+        if(pathFound) return await getsubtitles(pathFound, foundID, lang, season, episode, meta.year, extras).catch(error => { throw error });
       }
 
       //######################
       if (type == "movie") {
         if(!searchMovie) {
           let moviePath = `/subtitles/${meta.slug}`;
-          return await getsubtitles(moviePath, cacheID , lang, null, null, meta.year, extras).catch(error => { throw error });
+          return await getsubtitles(moviePath, foundID , lang, null, null, meta.year, extras).catch(error => { throw error });
         }
         else {
           let search = await subscene.search(`${meta.title} ${`(${meta.year})` || ''}`).catch(error => { throw error });
@@ -173,8 +184,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
             if(findMovie?.path) {
               console.log('found:', findMovie.path);
-              searchFound.set(metaid, findMovie.path);
-              return await getsubtitles(findMovie.path, cacheID, lang, null, null, meta.year, extras, false).catch(error => { throw error });
+              searchFound.set(foundID, findMovie.path);
+              //db.set(db.Tables.Search, ['id', 'path'], [foundID, findMovie.path]);
+              return await getsubtitles(findMovie.path, foundID, lang, null, null, meta.year, extras, false).catch(error => { throw error });
             } else {
               console.log('search filter not found any movie');
               Cache.set(cacheID, []);
@@ -238,8 +250,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
 
           if(findSeries?.path){
             console.log(findSeries.path);
-            searchFound.set(metaid, findSeries.path);
-            return await getsubtitles(findSeries.path, cacheID, lang, season, episode, null, extras).catch(error => { throw error });
+            searchFound.set(foundID, findSeries.path);
+            //db.set(db.Tables.Search, ['id', 'path'], [foundID, findSeries.path]);
+            return await getsubtitles(findSeries.path, foundID, lang, season, episode, null, extras).catch(error => { throw error });
           } else {
             console.log('search filter not found any series');
             Cache.set(cacheID, []);
@@ -265,6 +278,13 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
       return null; //null mean => try search movie by name
 
     console.log('Scrapted:', subtitles?.length);
+
+    // subtitles.forEach(sub => {
+    //   db.set(db.Tables.Subtitles,
+    //     ['id', 'lang', 'title', 'path'],
+    //     [id, sub.lang, sub.title, sub.path]
+    //   )
+    // });
 
     subtitles = subscene.sortByLang(subtitles);
     
@@ -328,8 +348,8 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras, 
         //subtitles = [...new Set(sub)];
         subtitles = sub;
       }
-      //remove duplicate title
-      subtitles = subtitles.filter((x, index, self) => index === self.findIndex(y => y.title === x.title));
+      //remove duplicate title (duplicate id, path)
+      subtitles = subtitles.filter((x, index, self) => index === self.findIndex(y => y.path === x.path || y.title === x.title));
       console.log("filtered subs:", subtitles.length);
 
       //------------------

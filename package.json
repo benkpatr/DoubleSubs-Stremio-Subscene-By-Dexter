@@ -1,6 +1,6 @@
 {
   "name": "stremio-subscene",
-  "version": "0.1.4",
+  "version": "0.1.4-2",
   "description": "Addon for getting subtitles from Subscene, by Dexter21767",
   "main": "server.js",
   "scripts": {
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.10",
+    "better-sqlite3": "^9.1.1",
     "charset-detector": "^0.0.2",
     "cheerio": "^1.0.0-rc.10",
     "cors": "^2.8.5",
