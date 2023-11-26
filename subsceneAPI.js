@@ -6,6 +6,7 @@ const cheerio = require("cheerio")
 const config = require('./configs/config')
 const baseUrl = config.BaseURL
 const { parse } = require("node-html-parser");
+const languages = require('./configs/convertLanguages.json');
 
 let gotConfig = {
   headerGeneratorOptions: {
@@ -152,6 +153,8 @@ async function subtitle(url = String) {
         let e = row.querySelector("td a")
         let url = e.rawAttributes["href"]
         let lang = e.querySelectorAll("span")[0].rawText.replace(/\t|\n|\r/g, "")
+        //fix language, convert to std
+        lang = languages[lang];
         let title = e.querySelectorAll("span")[1].rawText.replace(/\t|\n|\r/g, "")
         let hi = row.querySelector("td.a41")?true:false;
         let comment = row.querySelector('td.a6 div').rawText.replace(/\t|\n|\r/g, "")

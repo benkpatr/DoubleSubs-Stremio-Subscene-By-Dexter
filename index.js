@@ -245,7 +245,7 @@ sharedRouter.get('/sub.vtt', async (req, res, next) => {
 
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
-		let fileID = lang + '_' + url.split('/').pop();
+		let fileID = lang + '_' + url.split('/').pop() + (episode ? '_' + episode : '');
 
 		//Queue request to one file
 		while(QueueSub.get(fileID)) {

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const config = require('./configs/config.js');
+require('./modules/subsceneRSS.js');
 
 if(config.env == 'external') var app = require('./external/index.js')
 else {

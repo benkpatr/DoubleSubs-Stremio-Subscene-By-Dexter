@@ -30,8 +30,9 @@ async function getMeta(type, id) {
         res = JSON.parse(res.body);
         let title = res.tv_results[0]?.name || res.tv_results[0]?.original_name; //res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         if(!title) return cinemeta(type, id);
+        let year = res.tv_results[0].first_air_date?.split("-")[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
-        return { title: title, slug: slug }
+        return { title: title, slug: slug, year: year }
     }
 }
 
