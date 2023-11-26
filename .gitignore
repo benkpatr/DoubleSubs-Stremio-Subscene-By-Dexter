@@ -16,3 +16,4 @@ deploy.sh
 .vercel
 .vercelignore
 Dockerfile
+sqlite.db*

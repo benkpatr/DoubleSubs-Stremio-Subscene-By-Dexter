@@ -61,15 +61,8 @@ app.use(swStats.getMiddleware({
 app.use((req, res, next) => {
 	console.log("\nreqpath : ", req.originalUrl)
 	console.log('----------------------------------')
-    req.setTimeout(60 * 1000); // timeout time
-	//long timeout, still give time to cache subs, next play will load from cache
-    req.socket.removeAllListeners('timeout'); 
-    req.socket.once('timeout', () => {
-        req.timedout = true;
-		//res.setHeader('Cache-Control', CacheControl.off);
-        return res.status(504).end();
-    });
-	if (!req.timedout) next()
+    req.setTimeout(60 * 1000, () => res.sendStatus(504)); // timeout time
+    next();
 });
 
 app.set('trust proxy', true)
@@ -81,7 +74,6 @@ app.use(cors())
 
 app.get('/', (_, res) => {
 	res.redirect('/configure')
-	res.end();
 });
 
 app.get('/:configuration?/configure', (req, res) => {
@@ -95,7 +87,6 @@ app.get('/manifest.json', (_, res) => {
 	res.setHeader('Content-Type', 'application/json');
 	manifest.behaviorHints.configurationRequired = true;
 	res.send(manifest);
-	res.end();
 });
 
 app.get('/:configuration?/manifest.json', (_, res) => {
@@ -103,7 +94,6 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.setHeader('Content-Type', 'application/json');
 	manifest.behaviorHints.configurationRequired = false;
 	res.send(manifest);
-	res.end();
 });
 
 //Limit 1 Request/IP
@@ -145,15 +135,16 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 	})
 }
 
-sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req, res, next) => {
+sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async (req, res, next) => {
 	try{
 		//console.log(req.params);
 		var { configuration, type, id } = req.params;
-
+		
 		const reqID = `${type}_${id}`;
 		while(QueueCache.get(reqID)) {
 			await new Promise(resolve => setTimeout(resolve, 1000)); //wait 5s (cache timing) if still getting
 		}
+
 		QueueCache.set(reqID, true); //requesting
 
 		if (configuration && languages[configuration]) {
@@ -165,25 +156,24 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 					extras[extra.split('=')[0]] = extra.split('=')[1];
 				})
 			}
-			const subs = await subtitles(type, id, lang, extras)
+			const subs = await subtitles(type, id, lang, extras);
+
+			res.setHeader('Content-Type', 'application/json');
 			if(subs?.length){
-				res.setHeader('Content-Type', 'application/json');
-				res.setHeader('Cache-Control', CacheControl.fourHour);
 				subs.map(sub => sub.url+=`&s=${aes.encrypt(req.ip, aesPass)}`);
+				res.setHeader('Cache-Control', CacheControl.fourHour);
 				res.status(200).send(JSON.stringify({ subtitles: subs.slice(0,10) }));
-				next();
 			} else {
 				console.log("no subs");
-				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Cache-Control', CacheControl.oneHour);
 				res.status(200).send(JSON.stringify({ subtitles: [] }));
-				next();
 			}
+
+			next();
 		} else {
 			console.log("no config");
-			res.sendStatus(500);
+			res.sendStatus(400);
 		};
-
 		QueueCache.set(reqID, false); //allow new request if before request done
 	}catch(e){
 		console.error(e);
@@ -192,7 +182,7 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async(req,
 })
 
 //Block someone using multiple ip to fetch multi sub got from one ip
-sharedRouter.get('/sub.vtt', (req, res, next) => {
+const blockMultiReqFromIP = (req, res, next) => {
 	let secure;
 	if(req.query.s) secure = req.query.s;
 	if(!secure) return res.sendStatus(400);
@@ -208,11 +198,11 @@ sharedRouter.get('/sub.vtt', (req, res, next) => {
 		}
 		next();
 	} catch(e) {
-		return res.sendStatus(400);
+		res.sendStatus(400);
 	}
-})
+}
 //Limit downloads
-sharedRouter.get('/sub.vtt', async (req, res, next) => {
+const limitVTTDownload = (req, res, next) => {
 	const download = LimitDownload.get(req.ip) || 0;
 	if(download >= 30)  {
 		const subtitle = [
@@ -228,9 +218,9 @@ sharedRouter.get('/sub.vtt', async (req, res, next) => {
 		res.send(subtitle.join('\n'));
 	} else
 		next();
-})
+}
 //get subtitle
-sharedRouter.get('/sub.vtt', async (req, res, next) => {
+sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, res, next) => {
 	try {
 		let url,proxy,episode,title, lang;
 		
@@ -311,7 +301,7 @@ sharedRouter.get('/sub.vtt', async (req, res, next) => {
 	}
 })
 
-sharedRouter.get(['/:configuration?/subtitles/:type/:id/:extra?.json', '/sub.vtt'], (req, res) => {
+sharedRouter.use(['/:configuration?/subtitles/:type/:id/:extra?.json', '/sub.vtt'], (req, res) => {
 	if(res.statusCode == 200)
 		QueueIP.del(req.ip);
 });
@@ -329,7 +319,7 @@ sharedRouter.get('/404', (req, res) => {
 })
 
 sharedRouter.get('*', (req, res) => {
-	return res.redirect(301, '/404');
+	res.redirect(301, '/404');
 })
 
 //beamup logs

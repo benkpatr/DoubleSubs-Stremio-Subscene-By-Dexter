@@ -8,6 +8,7 @@ const NodeCache = require("node-cache");
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
 const db = require('./modules/bettersqlite3');
 
+const HOUR_IN_S = 60 * 60;
 const FOUR_HOUR_IN_MS = 4 * 60 * 60 * 1000;
 const SEVEN_DAY_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -130,7 +131,7 @@ async function Kitsu(type, id, lang, extras) {
           return [];
         }
       } else throw `Search return empty page!`
-    } else throw 'meta is empty!';
+    } else throw 'Kitsu meta is empty!';
   } catch(e) {
     console.error(e);
   }
@@ -165,7 +166,6 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       console.log('From SQL:', subtitles?.length);
       if(subtitles) {
         subtitles = subscene.sortByLang(subtitles);
-        console.log(subtitles)
         if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, season, episode, extras.filename);
         Cache.set(cacheID, subtitles);
         return subtitles;
@@ -563,7 +563,7 @@ function sortMovieByFilename(subtitles, filename) {
 async function downloadUrl(path, episode) {
   //let cachID = episode ? path + '_' + episode : path;
   //let cached = filesCache.get(cachID);
-  let cached = db.get(db.Tables.Subtitles, 'path', path)?.dlpath;
+  let cached = db.get(db.Tables.Subtitles, ['path'], [path])?.dlpath;
   if (cached) {
     console.log('File already cached', path.split('/').pop());
     return cached
