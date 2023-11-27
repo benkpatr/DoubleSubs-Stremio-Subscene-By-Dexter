@@ -5,6 +5,7 @@ const { sharedRouter } = require('../index.js')
 const config = require('../configs/config.js');
 
 app.use((req, res, next) => {
+    if(req.path.includes('/sql/')) return next();
 	console.log("\nreqpath : ", req.originalUrl)
 	console.log('----------------------------------')
     req.setTimeout(60 * 1000, () => res.sendStatus(504)); // timeout time

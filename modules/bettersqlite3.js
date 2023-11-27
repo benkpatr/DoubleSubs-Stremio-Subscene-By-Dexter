@@ -12,7 +12,7 @@ const KILOBYTES = 1024;
 const MEGABYTES = 1024 * KILOBYTES;
 const GIGABYTES = 1024 * MEGABYTES;
 
-const sql_file = process.cwd() + '/sqlite.db';
+let sql_file = process.cwd() + '/sqlite.db';
 var db = require('better-sqlite3')(sql_file);
 db.pragma('journal_mode = WAL');
 
@@ -150,7 +150,8 @@ function fileInfo() {
 
 function loadSQL(path) {
     db.close();
-    db = new Database(path);
+    sql_file = path;
+    db = new Database(sql_file);
     db.pragma('journal_mode = WAL');
     init();
 }

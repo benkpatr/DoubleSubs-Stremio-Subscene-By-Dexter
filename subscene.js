@@ -62,15 +62,15 @@ async function Kitsu(type, id, lang, extras) {
           //remove (tv) in some anime
           meta.title = meta.title['en_jp'] || meta.title['canonicalTitle'];
           meta.title = meta.title.replace(/\(tv\)/i, '').trim();
-          meta.title = meta.title.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
+          meta.title = meta.title.replace(new RegExp(`\\(${meta.year}\\)`, 'i'), '').trim();
           meta.slug = meta.slug.replace(/-tv$/, '');
-          console.log('Slug:', meta.title, `(${meta.year})`);
           db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [kitsuID, meta.title, meta.slug,  meta.year]);
         }
     }
 
     if(meta){
       //console.log(meta)
+      console.log('Slug:', meta.title, `(${meta.year})`);
       //######################
       //try to get url has been searced from cache first (to skip search);
       //const pathFound = searchFound.get(kitsuID);
@@ -81,7 +81,7 @@ async function Kitsu(type, id, lang, extras) {
       let search = await subscene.search(`${encodeURIComponent(meta.title)}`);
       if(search?.length) {
         //filter by slug
-        let find = search.find(x => x.path.split('/subtitles/')[1] == meta.slug);
+        let find = search.find(x => x.path.split('/subtitles/')[1].startsWith(meta.slug));
 
         //filter by Name
         if(!find) {

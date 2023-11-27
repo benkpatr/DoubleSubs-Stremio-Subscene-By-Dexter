@@ -8,7 +8,8 @@
 <body style="text-align: center;">
     <form action="/sql/upload" method="post" enctype="multipart/form-data">
         <h3>Upload SQL</h3>
-        <input type="file" name="sql" />
+        <input type="file" name="sql" /><br><br>
+        <label for="sql_pass">SQL Pass: </label><input type="text" name="sql_pass" id="sql_pass"/>
         <input type="submit" value="Upload" />
     </form>
     <br /><hr />
@@ -18,6 +19,7 @@
         <span>Load redirect?</span>
         <input type="radio" id="radio1" name="redirect" value="true"><label for="radio1">True</label>
         <input type="radio" id="radio2" name="redirect" value="false" checked><label for="radio2">False</label><br><br>
+        <label for="sql_pass">SQL Pass: </label><input type="text" name="sql_pass" id="sql_pass"/>
         <input type="submit" value="Upload" />
     </form>
 </body>

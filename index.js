@@ -102,7 +102,15 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.send(manifest);
 });
 
-sharedRouter.post('/sql/upload', upload.any(), (req, res) => {
+const checkSQLPASS = (req, res, next) => {
+	const sql_pass = process.env.SQL_PASS || 'stremio';
+	if(req.body?.sql_pass == sql_pass || req.query?.p == sql_pass)
+		next();
+	else
+		return res.sendStatus(400);
+}
+
+sharedRouter.post('/sql/upload', checkSQLPASS, upload.any(), (req, res) => {
 	if(!req.files || req.files.length === 0) return res.sendStatus(400);
 	const file = req.files[0];
 	switch(file.fieldname) {
@@ -120,7 +128,12 @@ sharedRouter.post('/sql/upload', upload.any(), (req, res) => {
 			if(req.body.redirect == 'true') {
 				const redirects = rssDB.prepare(`SELECT * FROM redirect`).all();
 				console.log('Updating Redirects...');
-				redirects.forEach(redirect => RedirectCache.set(redirect.id, redirect.dest));
+				const insert = [];
+				redirects.forEach(redirect => {
+					insert.push([redirect.id, redirect.dest]);
+					RedirectCache.set(redirect.id, redirect.dest);
+				});
+				if(insert.length) db.InsertMany(db.Tables.Redirect, ['id', 'dest'], insert);
 			}
 			rssDB.close();
 			res.send('Success!');
@@ -138,6 +151,7 @@ sharedRouter.get('/sql/:action', (req, res) => {
             res.send(JSON.stringify(sqlInfo));
         }; break;
         case 'download': {
+			checkSQLPASS(req, res, () => true);
 			db.forceCheckPoint('RESTART');
             res.download(db.sql_file);
         }; break;

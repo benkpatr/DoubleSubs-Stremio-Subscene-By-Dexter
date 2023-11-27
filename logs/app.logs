@@ -2,61 +2,7 @@ NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: https://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
 
-reqpath :  /favicon.ico
+reqpath :  /subtitles/series/kitsu:6448.json
 ----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
+kitsu:6448
+Redirect 301: https://subscene.onrender.com/subtitles/series/kitsu:6448.json
