@@ -102,8 +102,8 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
 
 setInterval(async function(){
     await fetchRSS(baseURL + 'series');
-    setTimeout(async ()  => await fetchRSS(baseURL + 'film'), 5*MINUTES);
-}, 5*MINUTES)
+    setTimeout(async ()  => await fetchRSS(baseURL + 'film'), 1*MINUTES);
+}, 10*MINUTES)
 
 const getLastFetch = () => lastFetch;
 
