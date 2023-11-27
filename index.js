@@ -13,6 +13,9 @@ let { external_domains, filterDomains } = require('./configs/domain-list');
 const aes = require('./modules/aes');
 const NodeCache = require('node-cache');
 const RSS = require('./modules/subsceneRSS');
+const db = require('./modules/bettersqlite3');
+const multer  = require('multer');
+const upload = multer({ dest: process.cwd() + '/uploads/'});
 
 const RedirectCache = new NodeCache({ stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60) }); //normaly the external server save the cache up to 30days
 const QueueCache = new NodeCache({ stdTTL: 5 });
@@ -98,12 +101,48 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.send(manifest);
 });
 
+sharedRouter.post('/sql/upload', upload.single('file'), (req, res) => {
+	switch(req.file.fieldname) {
+		case 'sql': {
+			console.log('Loading SQL file:', req.file.originalname);
+			db.loadSQL(req.file.path);
+			res.send('Success!')
+		} break;
+		case 'rss': {
+			console.log('Loading RSS file:', req.file.originalname);
+			const rssDB = require('better-sqlite3')(req.file.path);
+			const rss = rssDB.prepare(`SELECT * FROM rss`).all();
+			RSS.updateSQL(rss, []);
+			res.send('Success!');
+		} break;
+		default: res.sendStatus(400);
+	}
+})
+
+sharedRouter.get('/sql/:action', (req, res) => {
+    const action = req.params.action;
+    switch(action) {
+        case 'info': {
+            const sqlInfo = db.fileInfo();
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(sqlInfo));
+        }; break;
+        case 'download': {
+            res.download(db.sql_file);
+        }; break;
+        case 'upload': res.sendFile(process.cwd() + '/htmls/upload.html'); break;
+        default: {
+            res.sendStatus(400);
+        }
+    }
+})
+
 sharedRouter.get('/RSS/:type', (req, res) => {
 	res.setHeader('Content-Type', 'application/json');
 	res.setHeader('Cache-Control', config.CacheControl.off);
 	switch(req.params.type) {
-		case 'film': res.send(JSON.stringify(RSS().movie)); break;
-		case 'series': res.send(JSON.stringify(RSS().series)); break;
+		case 'film': res.send(JSON.stringify(RSS.getLastFetch().movie)); break;
+		case 'series': res.send(JSON.stringify(RSS.getLastFetch().series)); break;
 		default: res.send(JSON.stringify([]));
 	}
 })
@@ -124,13 +163,14 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 	let start_server = config.env == 'beamup' ? 1 : 0;
 	sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', (req, res, next) => {
 		const { type, id } = req.params;
-		let metaid = id;
-		if(type == 'series') metaid = id.split(':')[0];
-		const redirectID = `${type}_${metaid}`;
+		let redirectID = id;
+		if(type == 'series') redirectID = id.split(':').slice(0, 2).join(':');
+		console.log(redirectID);
 		const redirect_server = RedirectCache.get(redirectID);
 		if(redirect_server) {
 			const redirect_url = redirect_server + req.originalUrl;
 			console.log("Redirect 301 cached: " + redirect_url);
+			db.set(db.Tables.Redirect, ['id', 'path', 'dest'], [redirectID, req.originalUrl, redirect_server]);
 			return res.redirect(301, redirect_url);
 		}
 		
@@ -140,6 +180,7 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 			const redirect_url = redirect_server + req.originalUrl;
 			console.log("Redirect 301: " + redirect_url);
 			RedirectCache.set(redirectID, redirect_server);
+			db.set(db.Tables.Redirect, ['id', 'path', 'dest'], [redirectID, req.originalUrl, redirect_server]);
 			return res.redirect(301, redirect_url);
 		}
 		start_server++;

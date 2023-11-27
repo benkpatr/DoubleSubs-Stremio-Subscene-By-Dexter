@@ -6,6 +6,8 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 const MAX_TBL_ROWS = 100000 * 500; //100.000(movie) * 500(sub/movie)
 const SAFE_TBL_ROWS = 90000 * 500;
 
+const MAX_RSS_SAVE_DAYS = 30;
+
 const KILOBYTES = 1024;
 const MEGABYTES = 1024 * KILOBYTES;
 const GIGABYTES = 1024 * MEGABYTES;
@@ -16,6 +18,35 @@ db.pragma('journal_mode = WAL');
 
 //init table
 function init() {
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS redirect (
+            id TEXT PRIMARY KEY,
+            path TEXT,
+            dest TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
+
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS rss (
+            lang TEXT,
+            path TEXT,
+            dlpath TEXT PRIMARY KEY,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
+
+    db.exec(`
+        CREATE TRIGGER IF NOT EXISTS before_insert_rss
+        BEFORE INSERT ON rss
+        BEGIN
+            DELETE FROM rss
+            WHERE updated_at <= DATETIME('now', '-${MAX_RSS_SAVE_DAYS} days');
+        END;
+    `);
+
     db.prepare(`
         CREATE TABLE IF NOT EXISTS meta (
             id TEXT PRIMARY KEY,
@@ -52,6 +83,8 @@ function init() {
 init();
 
 const Tables = {
+    Redirect: 'redirect',
+    RSS: 'rss',
     Meta: 'meta',
     Search: 'search_found',
     Subtitles: 'subtitles_files'

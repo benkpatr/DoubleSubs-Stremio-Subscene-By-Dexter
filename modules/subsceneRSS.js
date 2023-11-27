@@ -42,26 +42,35 @@ async function fetchRSS(url) {
                     path: path,
                     dlpath: dlpath
                 });
-                
             })
+
+            if(currentFetch.length) {
+                //save to db
+                const insert_many = [];
+                currentFetch.forEach(item => insert_many.push(Object.values(item)));
+                db.InsertMany(db.Tables.RSS, ['lang', 'path', 'dlpath'], insert_many);
+            }
         }
         else {
             currentFetch = JSON.parse(res.body);
         }
     }
 
-    switch(type) {
-        case 'film': {
-            await updateSQL(currentFetch, lastFetch.movie);
-            lastFetch.movie = currentFetch;
-        } break;
-        case 'series': {
-            await updateSQL(currentFetch, lastFetch.series);
-            lastFetch.series = currentFetch;
+    if(currentFetch.length) {
+        switch(type) {
+            case 'film': {
+                await updateSQL(currentFetch, lastFetch.movie);
+                lastFetch.movie = currentFetch;
+            } break;
+            case 'series': {
+                await updateSQL(currentFetch, lastFetch.series);
+                lastFetch.series = currentFetch;
+            }
         }
     }
 }
 
+fetchRSS('https://subscene.com/browse/latest/film')
 async function updateSQL(fetch = Array, lastFetch = Array) {
     for(const item of fetch) {
         const { lang, path, dlpath } = item;
@@ -107,4 +116,4 @@ setInterval(async function(){
 
 const getLastFetch = () => lastFetch;
 
-module.exports = getLastFetch;
+module.exports = { getLastFetch, updateSQL };

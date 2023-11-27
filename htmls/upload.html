@@ -5,9 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
 </head>
-<body>
+<body style="text-align: center;">
     <form action="/sql/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
+        <h3>Upload SQL</h3>
+        <input type="file" name="sql" />
+        <input type="submit" value="Upload" />
+    </form>
+    <br /><hr />
+    <form action="/sql/upload" method="post" enctype="multipart/form-data">
+        <h3>Upload RSS</h3>
+        <input type="file" name="rss" />
         <input type="submit" value="Upload" />
     </form>
 </body>
