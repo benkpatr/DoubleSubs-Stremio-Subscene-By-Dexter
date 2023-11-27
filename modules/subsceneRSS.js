@@ -91,7 +91,7 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
                         db.set(db.Tables.Subtitles, ['id', 'lang', 'title', 'path', 'dlpath'], [tbl_search_id, lang, titles.join('\n'), dlpath, dlpath1]);
 
                         //Force remove cache
-                        const cacheKey = Cache.keys.find(key => key.startsWith(tbl_search_id));
+                        const cacheKey = Cache.keys().find(key => key.startsWith(tbl_search_id));
                         if(cacheKey) Cache.del(cacheKey);
                     }
                 }

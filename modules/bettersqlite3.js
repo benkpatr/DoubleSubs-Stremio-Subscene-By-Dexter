@@ -14,19 +14,6 @@ const sql_file = process.cwd() + '/sqlite.db';
 var db = require('better-sqlite3')(sql_file);
 db.pragma('journal_mode = WAL');
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS large (a)
-`).run()
-const insertBlob = db.prepare(`
-    INSERT INTO large VALUES (zeroblob(?))
-`)
-for(let i = 1; i <= 10; i++) {
-    insertBlob.run(500*MEGABYTES)
-}
-db.prepare(`
-    DROP TABLE large
-`).run()
-
 //init table
 function init() {
     db.prepare(`
