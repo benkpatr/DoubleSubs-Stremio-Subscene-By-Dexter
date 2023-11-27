@@ -17,7 +17,7 @@ const db = require('./modules/bettersqlite3');
 const multer  = require('multer');
 const upload = multer({ dest: process.cwd() + '/uploads/'});
 
-const RedirectCache = new NodeCache({ stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60) }); //normaly the external server save the cache up to 30days
+const RedirectCache = new NodeCache();
 const QueueCache = new NodeCache({ stdTTL: 5 });
 const QueueSub = new NodeCache({ stdTTL: 10 });
 const QueueIP = new NodeCache({ stdTTL: 5 });
@@ -64,6 +64,7 @@ app.use(swStats.getMiddleware({
 }))
 
 app.use((req, res, next) => {
+	if(req.path.includes('/sql/')) return next();
 	console.log("\nreqpath : ", req.originalUrl)
 	console.log('----------------------------------')
     req.setTimeout(60 * 1000, () => res.sendStatus(504)); // timeout time
@@ -112,7 +113,14 @@ sharedRouter.post('/sql/upload', upload.single('file'), (req, res) => {
 			console.log('Loading RSS file:', req.file.originalname);
 			const rssDB = require('better-sqlite3')(req.file.path);
 			const rss = rssDB.prepare(`SELECT * FROM rss`).all();
+			console.log('Updating RSS...');
 			RSS.updateSQL(rss, []);
+			if(req.body.redirect == 'true') {
+				const redirects = rssDB.prepare(`SELECT * FROM redirect`).all();
+				console.log('Updating Redirects...');
+				redirects.forEach(redirect => RedirectCache.set(redirect.id, redirect.dest));
+			}
+			rssDB.close();
 			res.send('Success!');
 		} break;
 		default: res.sendStatus(400);
@@ -128,6 +136,7 @@ sharedRouter.get('/sql/:action', (req, res) => {
             res.send(JSON.stringify(sqlInfo));
         }; break;
         case 'download': {
+			db.forceCheckPoint('RESTART');
             res.download(db.sql_file);
         }; break;
         case 'upload': res.sendFile(process.cwd() + '/htmls/upload.html'); break;

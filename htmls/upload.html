@@ -14,7 +14,10 @@
     <br /><hr />
     <form action="/sql/upload" method="post" enctype="multipart/form-data">
         <h3>Upload RSS</h3>
-        <input type="file" name="rss" />
+        <input type="file" name="rss" /><br><br>
+        <span>Load redirect?</span>
+        <input type="radio" id="radio1" name="redirect" value="true"><label for="radio1">True</label>
+        <input type="radio" id="radio2" name="redirect" value="false" checked><label for="radio2">False</label><br><br>
         <input type="submit" value="Upload" />
     </form>
 </body>

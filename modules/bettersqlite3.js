@@ -156,10 +156,14 @@ function loadSQL(path) {
     init();
 }
 
+function forceCheckPoint(type) {
+    db.pragma(`wal_checkpoint(${type})`);
+}
+
 module.exports = {
     get, set,
     getAll, InsertMany,
     Tables,
     fileInfo, sql_file,
-    loadSQL
+    loadSQL, forceCheckPoint
 };

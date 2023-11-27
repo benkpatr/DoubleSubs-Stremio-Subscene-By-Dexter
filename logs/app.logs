@@ -2,119 +2,61 @@ NODE_ENV = beamup
 Addon active on port 63555
 HTTP addon accessible at: https://43433fff4541-subscene-by-dexter.baby-beamup.club/configure
 
-reqpath :  /sql/upload
+reqpath :  /favicon.ico
 ----------------------------------
 
-reqpath :  /404
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
+reqpath :  /favicon.ico
 ----------------------------------
 
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
 
-reqpath :  /sql/upload
+reqpath :  /favicon.ico
+----------------------------------
+::ffff:127.0.0.1 Too many request!
+
+reqpath :  /favicon.ico
+----------------------------------
+::ffff:127.0.0.1 Too many request!
+
+reqpath :  /favicon.ico
+----------------------------------
+::ffff:127.0.0.1 Too many request!
+
+reqpath :  /favicon.ico
 ----------------------------------
 
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
 
-reqpath :  /sql/upload
+reqpath :  /favicon.ico
+----------------------------------
+::ffff:127.0.0.1 Too many request!
+
+reqpath :  /favicon.ico
+----------------------------------
+::ffff:127.0.0.1 Too many request!
+
+reqpath :  /favicon.ico
 ----------------------------------
 
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
 
-reqpath :  /sql/upload
+reqpath :  /favicon.ico
 ----------------------------------
 
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
 
-reqpath :  /sql/upload
-----------------------------------
-
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
 
-reqpath :  /sql/upload
-----------------------------------
-
 reqpath :  /favicon.ico
 ----------------------------------
 ::ffff:127.0.0.1 Too many request!
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /404
-----------------------------------
-::ffff:127.0.0.1 Too many request!
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /404
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /favicon.ico
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
-
-reqpath :  /sql/upload
-----------------------------------
