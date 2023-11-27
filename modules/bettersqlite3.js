@@ -1,48 +1,51 @@
+const Database = require('better-sqlite3');
 const fs = require('fs');
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
-
-const Kilobytes = 1024;
-const Megabytes = 1024 * Kilobytes;
-const Gigabytes = 1024 * Megabytes;
+const MAX_TBL_ROWS = 100000 * 500; //100.000(movie) * 500(sub/movie)
+const SAFE_TBL_ROWS = 90000 * 500;
 
 const sql_file = process.cwd() + '/sqlite.db';
-const db = require('better-sqlite3')(sql_file);
+var db = require('better-sqlite3')(sql_file);
 db.pragma('journal_mode = WAL');
 
 //init table
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS meta (
-        id TEXT PRIMARY KEY,
-        title TEXT,
-        slug TEXT,
-        year TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-`).run();
+function init() {
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS meta (
+            id TEXT PRIMARY KEY,
+            title TEXT,
+            slug TEXT,
+            year TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS search_found (
-        id TEXT PRIMARY KEY,
-        path TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-`).run();
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS search_found (
+            id TEXT PRIMARY KEY,
+            path TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS subtitles_files (
-        id TEXT,
-        lang TEXT,
-        title TEXT,
-        path TEXT PRIMARY KEY,
-        dlpath TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-`).run();
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS subtitles_files (
+            id TEXT,
+            lang TEXT,
+            title TEXT,
+            path TEXT PRIMARY KEY,
+            dlpath TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `).run();
+}
+
+init();
 
 const Tables = {
     Meta: 'meta',
@@ -50,17 +53,11 @@ const Tables = {
     Subtitles: 'subtitles_files'
 }
 
+//Limit rows (~5-10GB)
 setInterval(function(){
-    //checkpoint (move data from wal to db)
-    // db.pragma('max_page_count = 1')
-    // db.pragma('wal_checkpoint(RESTART)');
-    // db.exec('VACUUM')
-    //check filesize
-    const size_bytes = fs.statSync(sql_file).size;
-    //const size_megabytes = size_bytes / Megabytes;
-    const size_gigabyte = size_bytes / Gigabytes;
-    if(size_gigabyte >= 5) {
-        const remove_ratio = (size_gigabyte - 4)/size_gigabyte;
+    const tbl_rows_count = db.prepare(`SELECT COUNT(*) as count FROM subtitles_files`).get().count;
+    if(tbl_rows_count >= MAX_TBL_ROWS) {
+        const remove_ratio = (tbl_rows_count - SAFE_TBL_ROWS)/tbl_rows_count;
         const sql = `
             DELETE FROM subtitles_files
             WHERE id IN (
@@ -74,7 +71,7 @@ setInterval(function(){
         const result = del.run(remove_ratio);
         console.log('DELETED:', result.changes, 'ROWS')
     } 
-}, ONE_HOUR_IN_MS);
+}, ONE_DAY_IN_MS);
 
 function set(table, keys = Array, values = Array, where, value) {
     if(!where) {
@@ -105,14 +102,27 @@ function get(table, wheres = Array, values = Array) {
 }
 
 function getAll(table, wheres = Array, values = Array) {
-    wheres = wheres.map(where => `${where} = ?`).join(',');
+    wheres = wheres.map(where => `${where} = ?`).join(' AND ');
     const select  = db.prepare(`SELECT * FROM ${table} WHERE ${wheres}`);
     return select.all(values);
 }
 
+function fileInfo() {
+    const info = fs.statSync(sql_file);
+    return info;
+}
+
+function loadSQL(path) {
+    db.close();
+    db = new Database(path);
+    db.pragma('journal_mode = WAL');
+    init();
+}
 
 module.exports = {
     get, set,
     getAll, InsertMany,
-    Tables
+    Tables,
+    fileInfo, sql_file,
+    loadSQL
 };

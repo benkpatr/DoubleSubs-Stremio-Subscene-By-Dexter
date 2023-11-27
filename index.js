@@ -12,6 +12,8 @@ const currentIP = require('./modules/current-ip');
 let { external_domains, filterDomains } = require('./configs/domain-list');
 const aes = require('./modules/aes');
 const NodeCache = require('node-cache');
+const RSS = require('./modules/subsceneRSS');
+
 const RedirectCache = new NodeCache({ stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60) }); //normaly the external server save the cache up to 30days
 const QueueCache = new NodeCache({ stdTTL: 5 });
 const QueueSub = new NodeCache({ stdTTL: 10 });
@@ -96,6 +98,16 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.send(manifest);
 });
 
+sharedRouter.get('/RSS/:type', (req, res) => {
+	res.setHeader('Content-Type', 'application/json');
+	res.setHeader('Cache-Control', config.CacheControl.off);
+	switch(req.params.type) {
+		case 'film': res.send(JSON.stringify(RSS().movie)); break;
+		case 'series': res.send(JSON.stringify(RSS().series)); break;
+		default: res.send(JSON.stringify([]));
+	}
+})
+
 //Limit 1 Request/IP
 sharedRouter.use((req, res, next) => {
 	const req_ip = req.ip;
@@ -165,7 +177,7 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async (req
 				res.status(200).send(JSON.stringify({ subtitles: subs.slice(0,10) }));
 			} else {
 				console.log("no subs");
-				res.setHeader('Cache-Control', CacheControl.oneHour);
+				res.setHeader('Cache-Control', CacheControl.fifteenMins);
 				res.status(200).send(JSON.stringify({ subtitles: [] }));
 			}
 

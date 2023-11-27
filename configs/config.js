@@ -11,6 +11,7 @@ var config = {
         halfDay: 'max-age=43200, s-maxage=43200, must-revalidate, stale-while-revalidate=900, stale-if-error=1800, public',
         fourHour: 'max-age=14400, s-maxage=14400, must-revalidate, stale-while-revalidate=900, stale-if-error=1800, public',
         oneHour: 'max-age=3600, s-maxage=3600, must-revalidate, stale-while-revalidate=900, stale-if-error=1800, public',
+        fifteenMins: 'max-age=900, s-maxage=900, must-revalidate, stale-while-revalidate=300, stale-if-error=900, public',
         off: 'no-cache, no-store, must-revalidate'
     },
     beamupURL: "https://43433fff4541-subscene-by-dexter.baby-beamup.club"

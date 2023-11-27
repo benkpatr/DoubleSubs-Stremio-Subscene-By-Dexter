@@ -8,17 +8,7 @@ const NodeCache = require("node-cache");
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
 const db = require('./modules/bettersqlite3');
 
-const HOUR_IN_S = 60 * 60;
-const FOUR_HOUR_IN_MS = 4 * 60 * 60 * 1000;
-const SEVEN_DAY_IN_MS = 7 * 24 * 60 * 60 * 1000;
-
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
-const MetaCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //meta from tmdb or cinemeta
-const KitsuCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) });
-const filesCache =  new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //download url
-
-const subsceneCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //subtitles page => update sub every 4 hours
-const searchFound = new NodeCache({ stdTTL: (30 * 24 * 60 * 60), checkperiod: (1 * 24 * 60 * 60)});
 
 async function subtitles(type, id, lang, extras) {
   console.log(type, id, lang);
@@ -39,20 +29,17 @@ async function Kitsu(type, id, lang, extras) {
     const kitsuID = 'kitsu:' + metaid;
 
     //######################
-    const cacheID = `${id}_${lang}`
+    const cacheID = `${id}_${lang}`;
     const subtitles = Cache.get(cacheID);
     if(subtitles) {
       console.log('kitsu cached main', cacheID);
       if(extras?.filename && subtitles.length > 1) {
-        return sortMovieByFilename(subtitles, extras.filename)
+        return sortMovieByFilename(subtitles, extras.filename);
       }
       return subtitles;
     }
-    //######################
-
-    //try to get data from sqlite
-    const sqlFoundPath = db.get(db.Tables.Search, ['id'], [kitsuID])?.path;
-    if(sqlFoundPath) {
+    else {
+      //try to get data from sqlite
       let subtitles  = getSubtitlesFromSQL(kitsuID, lang);
       console.log('From SQL:', subtitles?.length);
       if(subtitles) {
@@ -62,27 +49,25 @@ async function Kitsu(type, id, lang, extras) {
         return subtitles;
       }
     }
+    //######################
 
     //let meta = KitsuCache.get(metaid);
     let meta = db.get(db.Tables.Meta, ['id'], [kitsuID]);
     if (!meta) {
         meta = await kitsu(metaid);
-        // if (meta) {
-        //     KitsuCache.set(metaid, meta);
-        // }
+        if(meta) {
+          //remove (tv) in some anime
+          meta.title = meta.title['en_jp'] || meta.title['canonicalTitle'];
+          meta.title = meta.title.replace(/\(tv\)/i, '').trim();
+          meta.title = meta.title.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
+          meta.slug = meta.slug.replace(/-tv$/, '');
+          console.log('Slug:', meta.title, `(${meta.year})`);
+          db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [kitsuID, meta.title, meta.slug,  meta.year]);
+        }
     }
 
     if(meta){
       //console.log(meta)
-      //remove (tv) in some anime
-      let metaTitle = meta.title['en_jp'] || meta.title['canonicalTitle'];
-      metaTitle = metaTitle.replace(/\(tv\)/i, '').trim();
-      metaTitle = metaTitle.replace(new RegExp(`\(${meta.year}\)`, 'i'), '').trim();
-      let metaSlug = meta.slug.replace(/-tv$/, '');
-      console.log('Slug:', metaTitle, `(${meta.year})`);
-
-      db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [kitsuID, metaTitle, metaSlug,  meta.year]);
-
       //######################
       //try to get url has been searced from cache first (to skip search);
       //const pathFound = searchFound.get(kitsuID);
@@ -90,14 +75,14 @@ async function Kitsu(type, id, lang, extras) {
       if(pathFound) return getsubtitles(pathFound, kitsuID, lang, null, episode, meta.year, extras);
       //######################
 
-      let search = await subscene.search(`${encodeURIComponent(metaTitle)} (${meta.year})`);
+      let search = await subscene.search(`${encodeURIComponent(meta.title)}`);
       if(search?.length) {
         //filter by slug
-        let find = search.find(x => x.path.split('/subtitles/')[1] == metaSlug);
+        let find = search.find(x => x.path.split('/subtitles/')[1] == meta.slug);
 
         //filter by Name
         if(!find) {
-          let re_title = metaTitle.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+          let re_title = meta.title.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
           const reg = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
           console.log(reg);
           find = search.find(x => reg.test(x.title));
@@ -106,8 +91,8 @@ async function Kitsu(type, id, lang, extras) {
           //https://subscene.com/subtitles/jujutsu-kaisen-second-season
           if(!find) {
             const RegSeason = /(.*?)(?:Season\s?(\d{1,3})|(\d{1,3})(?:st|nd|rd|th)\s?Season)/i;
-            if(RegSeason.test(metaTitle)) {
-              const r = RegSeason.exec(metaTitle);
+            if(RegSeason.test(meta.title)) {
+              const r = RegSeason.exec(meta.title);
               let animeName = r[1];
               const season = r[2];
               animeName = animeName.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
@@ -149,7 +134,7 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
     const cacheID = `${id}_${lang}`;
     //######################
     //try to get results from cache first (to skip search);
-    const subtitles = Cache.get(cacheID);
+    let subtitles = Cache.get(cacheID);
     if(subtitles) {
       console.log('cached main', cacheID);
       if(extras?.filename && subtitles.length > 1) {
@@ -157,12 +142,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
       }
       return subtitles;
     }
-    //######################
-
-    //try to get data from sqlite
-    const sqlFoundPath = db.get(db.Tables.Search, ['id'], [foundID])?.path;
-    if(sqlFoundPath) {
-      let subtitles  = getSubtitlesFromSQL(foundID);
+    else {
+      //try to get data from sqlite
+      subtitles  = getSubtitlesFromSQL(foundID, lang);
       console.log('From SQL:', subtitles?.length);
       if(subtitles) {
         subtitles = subscene.sortByLang(subtitles);
@@ -171,19 +153,17 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
         return subtitles;
       }
     }
+    //######################
 
     //let meta = MetaCache.get(metaid);
     let meta = db.get(db.Tables.Meta, ['id'], [metaid]);
     if (!meta) {
         meta = await tmdb(type, metaid);
-        // if (meta) {
-        //     MetaCache.set(metaid, meta);
-        // }
+        if(meta) {
+          db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [metaid, meta.title, meta.slug, meta.year]);
+        }
     }
     if(meta){
-
-      db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [metaid, meta.title, meta.slug, meta.year]);
-
       if(!searchMovie) console.log("meta",meta)
 
       //######################
@@ -300,17 +280,9 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
   }
 }
 
-function getSubtitlesFromSQL(id) {
+function getSubtitlesFromSQL(id, lang) {
   let subtitles;
-  // let last_updated = db.get(db.Tables.Search, ['id'], [id])?.updated_at;
-  // last_updated = new Date(last_updated);
-  
-  // let now = new Date();
-  // currentTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-  //console.log(currentTime, last_updated)
-  // if(currentTime - last_updated < SEVEN_DAY_IN_MS) {
-    subtitles = db.getAll(db.Tables.Subtitles, ['id'], [id]);
-  // }
+  subtitles = db.getAll(db.Tables.Subtitles, ['id', 'lang'], [id, lang]);
   return subtitles;
 }
 
@@ -569,9 +541,8 @@ async function downloadUrl(path, episode) {
     return cached
   } else {
     return await subscene.downloadUrl(config.BaseURL + path).then(url => {
-      //let cached = filesCache.set(cachID, url);
       let cached = db.set(db.Tables.Subtitles, ['dlpath'], [url], 'path', path);
-      console.log("Caching File", cached)
+      console.log("Caching File", cached.changes ? true : false)
       return url;
     })
     .catch(error => { console.log(error) });
@@ -625,4 +596,4 @@ function ordinalInWord(cardinal) {
 }
 
 
-module.exports = { subtitles, downloadUrl };
+module.exports = { subtitles, downloadUrl, Cache };
