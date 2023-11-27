@@ -21,7 +21,6 @@ function init() {
     db.prepare(`
         CREATE TABLE IF NOT EXISTS redirect (
             id TEXT PRIMARY KEY,
-            path TEXT,
             dest TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -190,7 +190,7 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 			const redirect_url = redirect_server + req.originalUrl;
 			console.log("Redirect 301: " + redirect_url);
 			RedirectCache.set(redirectID, redirect_server);
-			db.set(db.Tables.Redirect, ['id', 'path', 'dest'], [redirectID, req.originalUrl, redirect_server]);
+			db.set(db.Tables.Redirect, ['id', 'dest'], [redirectID, redirect_server]);
 			return res.redirect(301, redirect_url);
 		}
 		start_server++;
