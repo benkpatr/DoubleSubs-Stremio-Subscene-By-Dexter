@@ -6,9 +6,26 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 const MAX_TBL_ROWS = 100000 * 500; //100.000(movie) * 500(sub/movie)
 const SAFE_TBL_ROWS = 90000 * 500;
 
+const KILOBYTES = 1024;
+const MEGABYTES = 1024 * KILOBYTES;
+const GIGABYTES = 1024 * MEGABYTES;
+
 const sql_file = process.cwd() + '/sqlite.db';
 var db = require('better-sqlite3')(sql_file);
 db.pragma('journal_mode = WAL');
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS large (a)
+`).run()
+const insertBlob = db.prepare(`
+    INSERT INTO large VALUES (zeroblob(?))
+`)
+for(let i = 1; i <= 10; i++) {
+    insertBlob.run(500*MEGABYTES)
+}
+db.prepare(`
+    DROP TABLE large
+`).run()
 
 //init table
 function init() {

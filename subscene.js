@@ -40,12 +40,15 @@ async function Kitsu(type, id, lang, extras) {
     }
     else {
       //try to get data from sqlite
-      let subtitles  = getSubtitlesFromSQL(kitsuID, lang);
-      console.log('From SQL:', subtitles?.length);
-      if(subtitles) {
-        subtitles = subscene.sortByLang(subtitles);
-        if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, null, episode, extras.filename);
-        Cache.set(cacheID, subtitles);
+      const sqlFoundPath = db.get(db.Tables.Search, ['id'], [kitsuID])?.path;
+      if(sqlFoundPath) {
+        let subtitles  = getSubtitlesFromSQL(kitsuID, lang);
+        console.log('From SQL:', subtitles?.length);
+        if(subtitles.length) {
+          subtitles = subscene.sortByLang(subtitles);
+          if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, null, episode, extras.filename);
+          Cache.set(cacheID, subtitles);
+        }
         return subtitles;
       }
     }
@@ -144,12 +147,15 @@ async function TMDB(type, id, lang, extras, searchMovie=false) {
     }
     else {
       //try to get data from sqlite
-      subtitles  = getSubtitlesFromSQL(foundID, lang);
-      console.log('From SQL:', subtitles?.length);
-      if(subtitles) {
-        subtitles = subscene.sortByLang(subtitles);
-        if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, season, episode, extras.filename);
-        Cache.set(cacheID, subtitles);
+      const sqlFoundPath = db.get(db.Tables.Search, ['id'], [foundID])?.path;
+      if(sqlFoundPath) {
+        let subtitles  = getSubtitlesFromSQL(foundID, lang);
+        console.log('From SQL:', subtitles?.length);
+        if(subtitles.length) {
+          subtitles = subscene.sortByLang(subtitles);
+          if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, season, episode, extras.filename);
+          Cache.set(cacheID, subtitles);
+        }
         return subtitles;
       }
     }
