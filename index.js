@@ -110,7 +110,7 @@ const checkSQLPASS = (req, res, next) => {
 		return res.sendStatus(400);
 }
 
-sharedRouter.post('/sql/upload', checkSQLPASS, upload.any(), (req, res) => {
+sharedRouter.post('/sql/upload', upload.any(), checkSQLPASS, (req, res) => {
 	if(!req.files || req.files.length === 0) return res.sendStatus(400);
 	const file = req.files[0];
 	switch(file.fieldname) {
