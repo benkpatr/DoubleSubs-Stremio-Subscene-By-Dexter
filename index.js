@@ -102,16 +102,18 @@ app.get('/:configuration?/manifest.json', (_, res) => {
 	res.send(manifest);
 });
 
-sharedRouter.post('/sql/upload', upload.single('file'), (req, res) => {
-	switch(req.file.fieldname) {
+sharedRouter.post('/sql/upload', upload.any(), (req, res) => {
+	if(!req.files || req.files.length === 0) return res.sendStatus(400);
+	const file = req.files[0];
+	switch(file.fieldname) {
 		case 'sql': {
-			console.log('Loading SQL file:', req.file.originalname);
-			db.loadSQL(req.file.path);
+			console.log('Loading SQL file:', file.originalname);
+			db.loadSQL(file.path);
 			res.send('Success!')
 		} break;
 		case 'rss': {
-			console.log('Loading RSS file:', req.file.originalname);
-			const rssDB = require('better-sqlite3')(req.file.path);
+			console.log('Loading RSS file:', file.originalname);
+			const rssDB = require('better-sqlite3')(file.path);
 			const rss = rssDB.prepare(`SELECT * FROM rss`).all();
 			console.log('Updating RSS...');
 			RSS.updateSQL(rss, []);
@@ -179,7 +181,6 @@ if(config.env != 'local' && config.env != 'external' && external_domains?.length
 		if(redirect_server) {
 			const redirect_url = redirect_server + req.originalUrl;
 			console.log("Redirect 301 cached: " + redirect_url);
-			db.set(db.Tables.Redirect, ['id', 'path', 'dest'], [redirectID, req.originalUrl, redirect_server]);
 			return res.redirect(301, redirect_url);
 		}
 		
