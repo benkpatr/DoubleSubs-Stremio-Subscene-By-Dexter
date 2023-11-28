@@ -168,6 +168,6 @@ module.exports = {
     get, set,
     getAll, InsertMany,
     Tables,
-    fileInfo, sql_file,
+    fileInfo, getSQLFile,
     loadSQL, forceCheckPoint
 };
