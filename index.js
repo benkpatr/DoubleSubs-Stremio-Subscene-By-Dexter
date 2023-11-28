@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const path = require('path');
-const { subtitles, downloadUrl } = require('./subscene');
+const { subtitlesV2, downloadUrl } = require('./subscene');
 const manifest = require("./manifest.json");
 const {CacheControl} = require('./configs/config');
 const languages = require('./configs/languages.json');
@@ -233,7 +233,7 @@ sharedRouter.get('/:configuration?/subtitles/:type/:id/:extra?.json', async (req
 					extras[extra.split('=')[0]] = extra.split('=')[1];
 				})
 			}
-			const subs = await subtitles(type, id, lang, extras);
+			const subs = await subtitlesV2(type, id, lang, extras);
 
 			res.setHeader('Content-Type', 'application/json');
 			if(subs?.length){

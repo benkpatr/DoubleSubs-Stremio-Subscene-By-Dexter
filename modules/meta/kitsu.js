@@ -23,10 +23,20 @@ async function getMeta(id) {
     res = JSON.parse(res.body);
     let attributes = res.data.attributes;
     if(!attributes) return;
+    //remove (tv) (movie) in some anime
+    let year = attributes.startDate.split("-")[0];
+    let title = attributes.titles['en_jp'] || attributes.titles['canonicalTitle'];
+    title = title.replace(/\(tv\)|\(movie\)/i, '').trim();
+    title = title.replace(new RegExp(`\\(${year}\\)`, 'i'), '').trim();
+    let alterName = attributes.titles['en'] || attributes.titles['en_us'];
+
+    let slug = attributes.slug;
+    slug = slug.replace(/-tv$|-movie$/, '');
     return {
-        title: attributes.titles,
-        year: attributes.startDate.split("-")[0],
-        slug: attributes.slug
+        title: title,
+        year: year,
+        slug: slug,
+        alterName: alterName
     }
 }
 

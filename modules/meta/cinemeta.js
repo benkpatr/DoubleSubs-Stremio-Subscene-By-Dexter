@@ -31,7 +31,15 @@ async function getMeta(type, id) {
         if(!title) throw `not found any meta from cinemeta`
         let year = res.meta.year?.split("-")[0];
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
-        return { title: title, slug: slug, year: year }
+        let videos = res.meta.videos;
+        let seasons = [];
+        videos?.forEach(video => {
+            if(!seasons.find(video.season)) seasons.push({
+                season: video.season,
+                year: video.firstAired?.split('-')[0]
+            })
+        })
+        return { title: title, slug: slug, year: year, seasons: seasons}
     }
 }
 

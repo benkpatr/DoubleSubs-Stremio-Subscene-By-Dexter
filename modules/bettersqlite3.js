@@ -50,6 +50,7 @@ function init() {
         CREATE TABLE IF NOT EXISTS meta (
             id TEXT PRIMARY KEY,
             title TEXT,
+            altername TEXT,
             slug TEXT,
             year TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

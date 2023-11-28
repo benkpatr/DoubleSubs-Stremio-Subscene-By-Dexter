@@ -9,15 +9,16 @@ const { parse } = require("node-html-parser");
 const languages = require('./configs/convertLanguages.json');
 
 let gotConfig = {
-  headerGeneratorOptions: {
-    browsers: [
-      {
-        name: 'firefox',
-        minVersion: 102
-      }
-    ],
-    devices: [ 'desktop' ],
-    operatingSystems: [ 'linux' ],
+  headers: {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
+  },
+  retry: {
+    limit: 2,
+    calculateDelay: ({attemptCount, retryOptions, error}) => {
+      if(attemptCount >= retryOptions.limit) return 0;
+      if(error.statusCode == 429) return 1000;
+      else return 500;
+    }
   }
 }
 
@@ -53,6 +54,32 @@ async function untilGetting(){
   }
 }
 
+async function searchV2(query) {
+  try {
+    if(!query?.length) throw "Query Is Null";
+    const url = 'https://u.subscene.com/upload?Title=' + encodeURIComponent(query);
+    console.log('searching:', url);
+    const res = await got.get(url, gotConfig).catch(err => console.error(`Request fail: ${url}`));
+    if (!res?.body) throw "No Response Found";
+    if (res?.body?.includes("To many request")) throw ("Search: Too Many Request");
+    let $ = cheerio.load(res.body);
+    let results = [];
+    $(".search-result ul a").map((i, el)=> {
+      if (el.attribs?.href && el.children?.length && el.children[0].data) {
+        var data = {
+          path: el.attribs.href.replace('upload', 'subtitles'),
+          title: el.children[0].data
+        }
+        results.push(data)
+      }
+    })
+    results = filterItOut(results)
+    return results || null
+  }
+  catch(err) {
+    console.error(err);
+  }
+}
 
 async function search(query) {
   try {
@@ -67,16 +94,10 @@ async function search(query) {
       await delay(global.isSearching.spaceTime - (currenTime - global.isSearching.lastUpdate));
     }
 
-    let loopReq = 3;
-    var res;
-    while(loopReq) {
-      let url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
-      console.log('searching:', url)
-      res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
-      if(res?.body) break;
-      await delay(500);
-      loopReq--
-    }
+    const url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
+    console.log('searching:', url)
+    const res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+
 
     //##############################
     global.isSearching.value = false;
@@ -126,14 +147,7 @@ async function subtitle(url = String) {
       await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
     }
 
-    let loopReq = 3;
-    var res;
-    while(loopReq) {
-      res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
-      if(res?.body) break;
-      await delay(500);
-      loopReq--
-    }
+    const res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
 
     //##############################
     global.isGetting.value = false;
@@ -211,6 +225,7 @@ async function downloadUrl(url = String) {
 }
 
 module.exports.search = search
+module.exports.searchV2 = searchV2
 module.exports.getSubtitles = subtitle
 module.exports.downloadUrl = downloadUrl
 module.exports.sortByLang = sortByLang;
