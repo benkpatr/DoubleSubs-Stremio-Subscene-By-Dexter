@@ -160,6 +160,10 @@ function forceCheckPoint(type) {
     db.pragma(`wal_checkpoint(${type})`);
 }
 
+function getSQLFile() {
+    return sql_file;
+}
+
 module.exports = {
     get, set,
     getAll, InsertMany,

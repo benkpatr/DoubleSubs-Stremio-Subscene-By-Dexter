@@ -59,9 +59,9 @@ async function Kitsu(type, id, lang, extras) {
     if (!meta) {
         meta = await kitsu(metaid);
         if(meta) {
-          //remove (tv) in some anime
+          //remove (tv) (movie) in some anime
           meta.title = meta.title['en_jp'] || meta.title['canonicalTitle'];
-          meta.title = meta.title.replace(/\(tv\)/i, '').trim();
+          meta.title = meta.title.replace(/\(tv\)|\(movie\)/i, '').trim();
           meta.title = meta.title.replace(new RegExp(`\\(${meta.year}\\)`, 'i'), '').trim();
           meta.slug = meta.slug.replace(/-tv$/, '');
           db.set(db.Tables.Meta, ['id', 'title', 'slug', 'year'], [kitsuID, meta.title, meta.slug,  meta.year]);

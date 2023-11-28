@@ -153,7 +153,7 @@ sharedRouter.get('/sql/:action', (req, res) => {
         case 'download': {
 			checkSQLPASS(req, res, () => true);
 			db.forceCheckPoint('RESTART');
-            res.download(db.sql_file);
+            res.download(db.getSQLFile());
         }; break;
         case 'upload': res.sendFile(process.cwd() + '/htmls/upload.html'); break;
         default: {
