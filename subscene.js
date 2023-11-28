@@ -22,7 +22,7 @@ async function subtitlesV2(type, id, lang, extras) {
 
   //######################
   const cacheID = `${primid}_${lang}`;
-  const subtitles = Cache.get(cacheID);
+  const subtitles = Cache.get(primid) || Cache.get(cacheID);
   if(subtitles) {
     console.log('cached main', cacheID);
     if(extras?.filename && subtitles.length > 1) {
@@ -285,13 +285,7 @@ function filterSub(subtitles = Array, lang, season, episode, filename) {
 
   for (let i = 0; i < (subtitles.length); i++) {
     let value = subtitles[i];
-    let simpleTitle = value.path.split('/').reverse()[0];
-    // let simpleTitle = subtitles[i].title;
-    // breakTitle.forEach(el => {
-    // var regEx = new RegExp(el, "ig");
-    //   simpleTitle = simpleTitle.replace(regEx,"")
-    // })
-    // simpleTitle = simpleTitle.replace(/\W/gi,"") // kasih gambaran di stremio
+    let simpleTitle = value.path.split('/').pop();
     if (value) {
         //let path = config.BaseURL + value.path;
         let url;
@@ -303,7 +297,6 @@ function filterSub(subtitles = Array, lang, season, episode, filename) {
         
         subs.push({
             lang: languages[lang].iso || languages[lang].id,
-            //id: "subscn_"+episode?`${cachID}_ep${episode}_${i}`:`${cachID}_${i}`,
             title: subtitles[i].title,
             id: "subscene."+`${i}`+"."+ simpleTitle,
             url: url

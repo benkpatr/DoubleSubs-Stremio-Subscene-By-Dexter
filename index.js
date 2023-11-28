@@ -124,6 +124,11 @@ sharedRouter.post('/sql/upload', upload.any(), checkSQLPASS, (req, res) => {
 			const rssDB = require('better-sqlite3')(file.path);
 			const rss = rssDB.prepare(`SELECT * FROM rss`).all();
 			console.log('Updating RSS...');
+			if(!process.env.RSS_URL) {
+				const insert = [];
+				rss.forEach(x => insert.push([x.lang, x.path, x.dlpath]));
+				db.InsertMany(db.Tables.RSS, ['lang', 'path', 'dlpath'], insert);
+			}
 			RSS.updateSQL(rss, []);
 			if(req.body.redirect == 'true') {
 				const redirects = rssDB.prepare(`SELECT * FROM redirect`).all();
