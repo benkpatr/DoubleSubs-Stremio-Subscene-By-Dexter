@@ -126,8 +126,8 @@ sharedRouter.post('/sql/upload', upload.any(), checkSQLPASS, (req, res) => {
 			console.log('Updating RSS...');
 			if(!process.env.RSS_URL) {
 				const insert = [];
-				rss.forEach(x => insert.push([x.lang, x.path, x.dlpath]));
-				db.InsertMany(db.Tables.RSS, ['lang', 'path', 'dlpath'], insert);
+				rss.forEach(x => insert.push([x.lang, x.path, x.dlpath, x.created_at, x.updated_at]));
+				db.InsertMany(db.Tables.RSS, ['lang', 'path', 'dlpath', 'created_at', 'updated_at'], insert);
 			}
 			RSS.updateSQL(rss, []);
 			if(req.body.redirect == 'true') {
