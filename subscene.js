@@ -7,8 +7,13 @@ const NodeCache = require("node-cache");
 //const sub2vtt = require('./modules/sub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./modules/episodeRegex');
 const db = require('./modules/bettersqlite3');
+const { DateTime } = require('luxon');
+
+const HOUR_IN_MS = 60 * 60 * 1000;
+const DAY_IN_MS = 24 * HOUR_IN_MS;
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
+const filesCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) })
 
 async function subtitlesV2(type, id, lang, extras) {
   console.log(type, id, lang);
@@ -359,11 +364,27 @@ function sortMovieByFilename(subtitles, filename) {
 async function downloadUrl(path, episode) {
   //let cachID = episode ? path + '_' + episode : path;
   //let cached = filesCache.get(cachID);
-  let cached = db.get(db.Tables.Subtitles, ['path'], [path])?.dlpath;
+  let cached = db.get(db.Tables.Subtitles, ['path'], [path]);
   if (cached) {
-    console.log('File already cached', path.split('/').pop());
-    return cached
+    let dlpath = cached.dlpath;
+    let updated_at = cached.updated_at;
+    console.log('File already cached', dlpath.split('/').pop());
+    
+    let update_time = DateTime.fromSQL(updated_at, { zone: 'utc' });
+    let current_time = DateTime.now();
+
+    //console.log(update_time - current_time);
+
+    if((current_time - update_time) >= DAY_IN_MS)
+    return await getDownloadUrl(path)
+    else
+    return dlpath;
+  
   } else {
+    
+  }
+
+  async function getDownloadUrl(path) {
     return await subscene.downloadUrl(config.BaseURL + path).then(url => {
       let cached = db.set(db.Tables.Subtitles, ['dlpath'], [url], 'path', path);
       console.log("Caching File", cached.changes ? true : false)

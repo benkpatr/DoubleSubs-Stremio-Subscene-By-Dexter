@@ -17,7 +17,7 @@ async function getMeta(type, id) {
         let res = await request(url);
         if(!res) return;
         res = JSON.parse(res.body);
-        let title = res.meta.name //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
+        let title = res.meta?.name //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
         if(!title) throw `not found any meta from cinemeta`;
         let year = res.meta.year?.split("-")[0] || res.meta.releaseInfo?.split('\u2013')[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
@@ -27,7 +27,7 @@ async function getMeta(type, id) {
         let res = await request(url);
         if(!res) return;
         res = JSON.parse(res.body);
-        let title = res.meta.name;//res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
+        let title = res.meta?.name;//res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
         if(!title) throw `not found any meta from cinemeta`
         let year = res.meta.year?.split("-")[0];
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
