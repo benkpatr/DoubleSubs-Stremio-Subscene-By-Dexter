@@ -1,4 +1,3 @@
-# ignore ALL .log files
 *.log
 /res
 /data
@@ -8,13 +7,14 @@
 /package-lock.json
 /landingTemplate.js
 /cache/files/*
-.env
-bun.lockb
 build.bat
 deploy.sh
+.dockerignore
+Dockerfile
+vercel.json
 .vercel
 .vercelignore
 sqlite.db*
 /uploads/*
-vercel.json
-/api
+.env
+bun.lockb
