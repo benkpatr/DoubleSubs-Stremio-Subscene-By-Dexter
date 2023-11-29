@@ -21,7 +21,7 @@ async function subtitlesV2(type, id, lang, extras) {
   }
 
   //######################
-  const cacheID = `${primid}_${lang}`;
+  const cacheID = `${id}_${lang}`;
   const subtitles = Cache.get(primid) || Cache.get(cacheID);
   if(subtitles) {
     console.log('cached main', cacheID);
