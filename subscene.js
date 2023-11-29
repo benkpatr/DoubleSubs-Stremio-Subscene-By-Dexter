@@ -365,7 +365,7 @@ async function downloadUrl(path, episode) {
   //let cachID = episode ? path + '_' + episode : path;
   //let cached = filesCache.get(cachID);
   let cached = db.get(db.Tables.Subtitles, ['path'], [path]);
-  if (cached) {
+  if(cached?.dlpath) {
     let dlpath = cached.dlpath;
     let updated_at = cached.updated_at;
     console.log('File already cached', dlpath.split('/').pop());
@@ -379,9 +379,9 @@ async function downloadUrl(path, episode) {
     return await getDownloadUrl(path)
     else
     return dlpath;
-  
+
   } else {
-    
+    return await getDownloadUrl(path);
   }
 
   async function getDownloadUrl(path) {
