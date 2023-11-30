@@ -34,7 +34,8 @@ async function getMeta(type, id) {
         let videos = res.meta.videos;
         let seasons = [];
         videos?.forEach(video => {
-            if(!seasons.find(video.season)) seasons.push({
+            if(!seasons.find(season => season.season == video.season))
+            seasons.push({
                 season: video.season,
                 year: video.firstAired?.split('-')[0]
             })

@@ -1,4 +1,5 @@
 const Database = require('better-sqlite3');
+const { table } = require('console');
 const fs = require('fs');
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -144,6 +145,13 @@ function getAll(table, wheres = Array, values = Array) {
     return select.all(values);
 }
 
+function del(table, wheres = Array, values = Array) {
+    wheres = wheres.map(where => `${where} = ?`).join(' AND ');
+    const sql = `DELETE FROM ${table} WHERE ${wheres}`;
+    const select  = db.prepare(sql);
+    return select.run(values);
+}
+
 function fileInfo() {
     const info = fs.statSync(sql_file);
     return info;
@@ -166,7 +174,7 @@ function getSQLFile() {
 }
 
 module.exports = {
-    get, set,
+    get, set, del,
     getAll, InsertMany,
     Tables,
     fileInfo, getSQLFile,

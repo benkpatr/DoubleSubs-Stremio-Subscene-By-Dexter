@@ -17,6 +17,7 @@ let gotConfig = {
     calculateDelay: ({attemptCount, retryOptions, error}) => {
       if(attemptCount >= retryOptions.limit) return 0;
       if(error.statusCode == 429) return 1000;
+      else if(error.statusCode == 404) return 0;
       else return 500;
     }
   }
@@ -211,16 +212,14 @@ function sortByLang(subs = Array) {
 }
   
 async function downloadUrl(url = String) {
-  let config = gotConfig;
-  config.retry = { limit: 3 };
-  let res = await got.get(url, config);
-  if (!res||!res.body)throw "No Data Found"
-  let $ = cheerio.load(res.body),
-  downUrl
+  let res = await got.get(url, gotConfig).catch(err => console.log(`Fail to get: ${url}`));
+  if (!res||!res.body)throw "No Data Found";
+  if (res.statusCode == 404) throw "Page Not Found";
+  let $ = cheerio.load(res.body), downUrl;
   $("#downloadButton").map((i, e)=> {
-    downUrl = e.attribs.href
+    downUrl = e.attribs.href;
   })
-  if (!downUrl)throw "Unexpected Error"
+  if (!downUrl)throw "Unexpected Error";
   return baseUrl + downUrl;
 }
 

@@ -369,7 +369,8 @@ async function downloadUrl(path, episode) {
     let dlpath = cached.dlpath;
     let updated_at = cached.updated_at;
     console.log('File already cached', dlpath.split('/').pop());
-    
+
+    //Subscene allow cache link upto 24hour
     let update_time = DateTime.fromSQL(updated_at, { zone: 'utc' });
     let current_time = DateTime.now();
 
@@ -390,7 +391,19 @@ async function downloadUrl(path, episode) {
       console.log("Caching File", cached.changes ? true : false)
       return url;
     })
-    .catch(error => { console.log(error) });
+    .catch(error => {
+      if(error == "Page Not Found") {
+        console.log('Page Not Found');
+        //some time its happend, reload all ~~
+        let id = db.get(db.Tables.Subtitles, ['path'], [path])?.id;
+        if(id) {
+          console.log(`deleting:`, id);
+          db.del(db.Tables.Search, ['id'], [id]);
+          db.del(db.Tables.Subtitles, ['id'], [id]);
+        }
+      }
+      throw new Error (`Failed to get:` + config.BaseURL + path) 
+    });
   }
 }
 
