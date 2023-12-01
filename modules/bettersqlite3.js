@@ -62,6 +62,7 @@ function init() {
         CREATE TABLE IF NOT EXISTS search_found (
             id TEXT PRIMARY KEY,
             path TEXT,
+            status INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )

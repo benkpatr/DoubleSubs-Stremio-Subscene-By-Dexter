@@ -135,8 +135,8 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras) 
     const cacheID = id + (episode ? ':' + episode : '') + '_' + lang;
     //console.log(cacheID)
     //[]: PageNotFound or No subs or Not match ID,Year
-    var subtitles = await getSubtitlesWithYear(moviePath, id, episode, year);
-
+    var subtitles = await getSubtitlesWithYear(moviePath, id, episode, year).catch(err => { throw err }); //exit to skip save cache
+ 
     console.log('Scrapted:', subtitles?.length);
 
     if(!subtitles) return;
@@ -167,7 +167,7 @@ async function getsubtitles(moviePath, id, lang, season, episode, year, extras) 
 
 async function getSubtitlesWithYear(moviePath, id, episode, year, withYear = false) {
   if(withYear) moviePath += '-' + year;
-  let subtitles = await subscene.getSubtitles(moviePath).catch(error => { throw error })
+  let subtitles = await subscene.getSubtitles(moviePath).catch(err => { throw err })
   let filter = [];
   if(subtitles?.length) {
     if(validID(subtitles[0], id, episode, year)) {

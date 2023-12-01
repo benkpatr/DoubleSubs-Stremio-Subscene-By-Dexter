@@ -60,7 +60,7 @@ async function searchV2(query) {
     if(!query?.length) throw "Query Is Null";
     const url = 'https://u.subscene.com/upload?Title=' + encodeURIComponent(query);
     console.log('searching:', url);
-    const res = await got.get(url, gotConfig).catch(err => console.error(`Request fail: ${url}`));
+    const res = await got.get(url, gotConfig).catch(err => console.error(`Request fail:`, err.statusCode, url));
     if (!res?.body) throw "No Response Found";
     if (res?.body?.includes("To many request")) throw ("Search: Too Many Request");
     let $ = cheerio.load(res.body);
@@ -97,7 +97,7 @@ async function search(query) {
 
     const url = baseUrl + "/subtitles/searchbytitle?query=" + encodeURIComponent(query);
     console.log('searching:', url)
-    const res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+    const res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail:`, err.statusCode, url)});
 
 
     //##############################
@@ -148,7 +148,9 @@ async function subtitle(url = String) {
       await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
     }
 
-    const res = await got.get(baseUrl+url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
+    const res = await got.get(baseUrl+url, gotConfig).catch(err => {
+      console.log(`Request fail:`, err.statusCode, url)
+    });
 
     //##############################
     global.isGetting.value = false;
