@@ -299,9 +299,9 @@ function filterSub(subtitles = Array, lang, season, episode, filename) {
         //let path = config.BaseURL + value.path;
         let url;
         if (episode) {
-          url = config.local+"/sub.vtt?"+`lang=${lang}&title=${encodeURIComponent(subtitles[i].title)}&episode=${episode}&from=${value.path}` // + sub2vtt.gerenateUrl(path, {});
+          url = config.local+"/sub.vtt?"+`lang=${lang}&episode=${episode}&from=${value.path}` // + sub2vtt.gerenateUrl(path, {});
         } else {
-          url = config.local+"/sub.vtt?"+`lang=${lang}&title=${encodeURIComponent(subtitles[i].title)}&from=${value.path}` // + sub2vtt.gerenateUrl(path, {});
+          url = config.local+"/sub.vtt?"+`lang=${lang}&from=${value.path}` // + sub2vtt.gerenateUrl(path, {});
         }
         
         subs.push({

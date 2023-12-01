@@ -304,16 +304,15 @@ const limitVTTDownload = (req, res, next) => {
 //get subtitle
 sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, res, next) => {
 	try {
-		let url,proxy,episode,title, lang;
+		let url, proxy, episode, lang;
 		
 		//if (req?.query?.proxy) proxy = JSON.parse(Buffer.from(req.query.proxy, 'base64').toString());
 		if (req.query.from) url = req.query.from
 		else throw 'error: no url';
 		if (req.query.episode) episode = req.query.episode
-		if(req.query.title) title = req.query.title
 		if(req.query.lang) lang = req.query.lang
 
-		if(!lang || !title || !url) return res.redirect('/404');
+		if(!lang || !url) return res.redirect('/404');
 
 		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
 
@@ -351,7 +350,6 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 				'0',
 				`00:00:03.000 --> 00:00:${3+sub_head_long}.000`,
 				`&gt;&gt;[REUP]Subscene by Dexter21767 v${manifest.version}&lt;&lt;`,
-				`${title?.trim()}`,
 				`<u>=&gt;${filename}</u>\n\n`
 			];
 			const lines = file.subtitle.split('\n');
