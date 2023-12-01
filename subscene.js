@@ -313,9 +313,9 @@ function filterSub(subtitles = Array, lang, season, episode, filename) {
 }
 
 function sortMovieByFilename(subtitles, filename) {
-    const qualitys = [ "480p", "720p", "1080p", "1440p", "2160p" ];
-    const sources = [ /(web)(.?dl|rip)?/, /blu.?ray/, /a?hdtv/, /dvd(rip)?/, /brrip/ ];
-    const vcodexs = [ /(h.?|x)264/, /(h.?|x)265/];
+    const qualitys = [ "360p", "480p", "720p", "1080p", "1440p", "2160p" ];
+    const sources = [ /(web)(.?dl|rip)?/, /blu.?ray/, /a?hdtv/, /dvd(rip)?/, /brrip/, /(hd)?cam(rip)?/, /hdrip/, /telesync/ ];
+    const vcodexs = [ /(h.?|x)264|avc/, /(h.?|x)265|hevc/, /av1/, /vp9/, /mpeg\d/, /xvid/, /wmv/ ];
 
     let quality = qualitys.findIndex(quality => filename.toLowerCase().match(quality));
     let source = sources.findIndex(source => filename.toLowerCase().match(source));

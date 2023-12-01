@@ -1,5 +1,4 @@
 const Database = require('better-sqlite3');
-const { table } = require('console');
 const fs = require('fs');
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
