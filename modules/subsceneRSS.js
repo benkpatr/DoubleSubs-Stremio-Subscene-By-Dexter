@@ -5,7 +5,7 @@ const cheerio = require("cheerio");
 const languages = require('../configs/convertLanguages.json');
 const db = require('./bettersqlite3');
 const config = require('../configs/config')
-const {Cache} = require('../subscene');
+const {getCache} = require('../subscene');
 
 const MINUTES = 60 * 1000;
 const baseURL = process.env.RSS_URL || 'https://subscene.com/browse/latest/';
@@ -24,7 +24,13 @@ async function fetchRSS(url) {
 
         const res = await got.get(url, {
             retry: {
-                limit: 2
+                limit: 2,
+                calculateDelay: ({attemptCount, retryOptions, error}) => {
+                    if(attemptCount >= retryOptions.limit) return 0;
+                    if(error.statusCode == 429) return 1000;
+                    else if(error.statusCode == 404) return 0;
+                    else return 500;
+                }
             }
         }).catch(err => console.error('RSS Fail to get:', url));
 
@@ -81,7 +87,7 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
         for(const item of fetch) {
             const { lang, path, dlpath } = item;
     
-            const duplicate = lastFetch.find(x => x.path == dlpath);
+            const duplicate = lastFetch.find(x => x.dlpath == dlpath);
     
             if(!duplicate) {
                 const tbl_search_id = db.get(db.Tables.Search, ['path'], [path])?.id;
@@ -106,8 +112,12 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
                             db.set(db.Tables.Subtitles, ['id', 'lang', 'title', 'path', 'dlpath'], [tbl_search_id, lang, titles.join('\n'), dlpath, dlpath1]);
     
                             //Force remove cache
-                            const cacheKey = Cache.keys().find(key => key.startsWith(tbl_search_id));
-                            if(cacheKey) Cache.del(cacheKey);
+                            const reg = new RegExp(tbl_search_id + '(.*?)' + lang);
+                            const cacheKey = getCache().keys().find(key => reg.test(key));
+                            if(cacheKey) {
+                                console.log(`Deleting Cache:`, cacheKey);
+                                getCache().del(cacheKey);
+                            }
                         }
                     }
                 }
@@ -115,7 +125,7 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
         }
     }
     catch(err) {
-        console.err(err);
+        console.error(err);
     }
 }
 
@@ -127,7 +137,7 @@ setInterval(async function(){
    catch(err){
     console.error(err);
    }
-}, 10*MINUTES)
+}, 5*MINUTES)
 
 const getLastFetch = () => lastFetch;
 

@@ -95,7 +95,7 @@ async function search(query) {
       await delay(global.isSearching.spaceTime - (currenTime - global.isSearching.lastUpdate));
     }
 
-    const url = baseUrl + "/subtitles/searchbytitle?query=" + query.replace(/ /g, '+');
+    const url = baseUrl + "/subtitles/searchbytitle?query=" + encodeURIComponent(query);
     console.log('searching:', url)
     const res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: ${url}`)});
 
@@ -114,7 +114,7 @@ async function search(query) {
           path: el.attribs.href,
           title: el.children[0].data
         }
-        results.push(data)
+        results.unshift(data)
       }
     })
     results = filterItOut(results)
@@ -154,8 +154,8 @@ async function subtitle(url = String) {
     global.isGetting.value = false;
     global.isGetting.lastUpdate = new Date().getTime(); 
 
-    if(res.statusCode == 404) return [];
     if (!res?.body) throw "No Response Found"
+    if(res.statusCode == 404) return [];
     if (res.body.includes("To many request")) throw "Get: Too Many Request"
     let results = []
     let body = parse(res.body)

@@ -13,7 +13,8 @@ const HOUR_IN_MS = 60 * 60 * 1000;
 const DAY_IN_MS = 24 * HOUR_IN_MS;
 
 const Cache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) }); //sub list
-const filesCache = new NodeCache({ stdTTL: (4 * 60 * 60), checkperiod: (1 * 60 * 60) })
+
+const getCache = () => Cache;
 
 async function subtitlesV2(type, id, lang, extras) {
   console.log(type, id, lang);
@@ -80,7 +81,10 @@ async function subtitlesV2(type, id, lang, extras) {
   if(meta)  {
     console.log(meta);
 
-    const search = await subscene.searchV2(meta.title);
+    //serachv2 does work with anime(kitsu)
+    let search;
+    if(ids[0] == 'kitsu') search = await subscene.search(meta.title);
+    else search = await subscene.searchV2(meta.title);
 
     if(search?.length) {
       //find by name
@@ -116,8 +120,8 @@ async function subtitlesV2(type, id, lang, extras) {
         Cache.set(primid, []);
         return [];
       }
-    } else throw `SearchV2 return empty page!`
-  } else throw `SubtitlesV2 empty meta!`
+    } else throw `Search return empty page!`
+  } else throw `Empty meta!`
 }
 
 function getSubtitlesFromSQL(id, lang) {
@@ -454,4 +458,4 @@ function ordinalInWord(cardinal) {
 }
 
 
-module.exports = { subtitlesV2, downloadUrl, Cache };
+module.exports = { subtitlesV2, downloadUrl, getCache };
