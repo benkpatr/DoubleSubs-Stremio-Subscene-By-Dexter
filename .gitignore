@@ -18,3 +18,4 @@ sqlite.db*
 /uploads/*
 vercel.json
 /api
+Dockerfile
