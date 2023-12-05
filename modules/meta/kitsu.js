@@ -28,15 +28,15 @@ async function getMeta(id) {
     let title = attributes.titles['en_jp'] || attributes.titles['canonicalTitle'];
     title = title.replace(/\(tv\)|\(movie\)/i, '').trim();
     title = title.replace(new RegExp(`\\(${year}\\)`, 'i'), '').trim();
-    let alterName = attributes.titles['en'] || attributes.titles['en_us'];
-
+    //remove Season x
+    title = title.replace(new RegExp('season \\d', 'i'), '').trim();
+    
     let slug = attributes.slug;
     slug = slug.replace(/-tv$|-movie$/, '');
     return {
         title: title,
         year: year,
-        slug: slug,
-        alterName: alterName
+        slug: slug
     }
 }
 

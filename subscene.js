@@ -1,4 +1,4 @@
-const tmdb = require('./modules/meta/tmdb');
+const cinemeta = require('./modules/meta/cinemeta');
 const kitsu = require('./modules/meta/kitsu');
 const subscene = require('./subsceneAPI');
 const config = require('./configs/config');
@@ -55,13 +55,13 @@ async function subtitlesV2(type, id, lang, extras) {
   meta = db.get(db.Tables.Meta, ['id'], [primid]);
   if(!meta) {
     if(ids[0] != 'kitsu') {
-      meta = await tmdb(type, ids[0]);
+      meta = await cinemeta(type, ids[0]);
       if(meta) {
         if(season) {
           meta.year = meta.seasons.find(x => x.season == season)?.year;
           const insert = [];
           meta.seasons.forEach(x => {
-            if(x.year) insert.push([ids[0] + ':' + x.season, meta.title, meta.alterName, meta.slug, x.year]);
+            if(x.year) insert.push([ids[0] + ':' + x.season, meta.title, meta.alterName || null, meta.slug, x.year]);
           });
           db.InsertMany(db.Tables.Meta, ['id', 'title', 'altername', 'slug', 'year'], insert);
         }
@@ -81,25 +81,40 @@ async function subtitlesV2(type, id, lang, extras) {
   if(meta)  {
     console.log(meta);
 
-    //serachv2 does work with anime(kitsu)
+    //kitsu, japan, korea ... sometimes theyre writes different names :((
     let search;
     if(ids[0] == 'kitsu') search = await subscene.search(meta.title);
-    else search = await subscene.searchV2(meta.title);
+    else {
+      if(type == 'series' && meta.alterName?.includes('Korea') || meta.alterName?.includes('Japan'))
+        search = await subscene.search(meta.title);
+      else
+        search = await subscene.searchV2(meta.title);
+    }
 
     if(search?.length) {
       //find by name
       const re_title = meta.title.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
-      const reg = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
+      const reg = new RegExp(re_title, 'i');
       console.log(reg);
       let finds = search.filter(x => reg.test(x.title));
+      if(finds.length > 1) {
+        const reg1 = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
+        console.log(reg1);
+        let finds1 = finds.filter(x => reg1.test(x.title));
+        if(finds1.length) finds = finds1;
+        else {
+          //some time the year are not accurate
+          const reg2 = new RegExp(`${re_title}(.*?)${parseInt(meta.year) + 1}`, 'i');
+          const reg3 = new RegExp(`${re_title}(.*?)${parseInt(meta.year) - 1}`, 'i');
+          let finds2_3 = finds.filter(x => reg2.test(x.title) || reg3.test(x.title));
+          finds = finds2_3;
+        }
+      }
       //console.log(finds)
       if(finds.length) {
         if(finds.length > 1) {
           let filters = [];
-          if(meta.alterName && meta.alterName != meta.title) {
-            filters = finds.filter(x => x.title.includes(meta.alterName));
-          }
-          if(!filters.length && season) {
+          if(season) {
             const season_text = ordinalInWord(season);
             filters = finds.filter(x => x.title.includes(season_text) || x.title.includes(`Season ${season}`));
           }
@@ -172,7 +187,7 @@ async function getSubtitlesWithYear(moviePath, id, episode, year, withYear = fal
   if(subtitles?.length) {
     if(validID(subtitles[0], id, episode, year)) {
       //remove duplicate title by lang
-      subtitles = subtitles.filter((sub, idx, self) => idx === self.findIndex(x => x.lang == sub.lang && x.title == sub.title));
+      //subtitles = subtitles.filter((sub, idx, self) => idx === self.findIndex(x => x.lang == sub.lang && x.title == sub.title));
       subtitles.forEach((sub, index) => {
         sub.title = sub.title.trim();
         const findIndex = filter.findIndex(x => x.path == sub.path);
@@ -226,6 +241,9 @@ function validID(resSub, id, episode, year) {
 }
 
 function filterSub(subtitles = Array, lang, season, episode, filename) {
+  //remove duplicate title
+  subtitles = subtitles.filter((sub, idx, self) => idx === self.findIndex(x => x.title == sub.title));
+  
   let subs = [];
   let sub = [];
   if (episode) {

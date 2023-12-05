@@ -81,7 +81,6 @@ async function fetchRSS(url) {
     }
 }
 
-fetchRSS('https://subscene.com/browse/latest/film')
 async function updateSQL(fetch = Array, lastFetch = Array) {
     try {
         for(const item of fetch) {

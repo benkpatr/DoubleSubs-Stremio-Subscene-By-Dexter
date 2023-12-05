@@ -1,6 +1,7 @@
 function exactlyEpisodeRegex(episode) {
     let episodeText = 'S(eason)?[^\\w\\d]?\\d?\\d(.*?)E(P|pisode)?[^\\w\\d]?0?' + episode + '([^\\w\\d]|$)';
-    episodeText += '|[-x]\\s?(E(P|pisode)?[^\\w\\d]?)?0?' + episode + '([^-a-z\\d]|$)';
+    episodeText += '|-\\s?(E(P|pisode)?[^\\w\\d]?)?0?' + episode + '([^-a-z\\d]|$)';
+    episodeText += '|x\\s?(?!264|265)' + episode;
     return {
       include: function() {
         return new RegExp(episodeText, 'i');
@@ -27,7 +28,7 @@ function exactlyEpisodeRegex(episode) {
     ];
     //let episodeText = `(?<!${excludeBeforeEP.join('|')})[^\\w\\d]?|\\d)0?` + episode + `(?!(?=${excludeAfterEP.join('|')}))` + `([^p\\d]|$)`;
     let episodeText = `(?<!${excludeBeforeEP.join('|')})` +
-    `(^|[\\s\\.\\[\\]]|e(p|pisode)?)0?` + episode + `[\\s\\.\\[\\]]?` +
+    `(^|[\\s\\.\\[\\]\\-\\_]|e(p|pisode)?)0?` + episode + `[\\s\\.\\[\\]\\-\\_]?` +
     `(?!(?=${excludeAfterEP.join('|')}))`
     return {
       include: function(){

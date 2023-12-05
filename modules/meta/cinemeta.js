@@ -18,7 +18,7 @@ async function getMeta(type, id) {
         if(!res) return;
         res = JSON.parse(res.body);
         let title = res.meta?.name //res.data.original_title.match(/[\u3400-\u9FBF]/) ? res.data.title : res.data.original_title;  //match japanese char as slug ?
-        if(!title) throw `not found any meta from cinemeta`;
+        if(!title) return;
         let year = res.meta.year?.split("-")[0] || res.meta.releaseInfo?.split('\u2013')[0]
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
         return { title: title, slug: slug, year: year }
@@ -28,19 +28,20 @@ async function getMeta(type, id) {
         if(!res) return;
         res = JSON.parse(res.body);
         let title = res.meta?.name;//res.data.tv_results[0].original_name.match(/[\u3400-\u9FBF]/) ? res.data.tv_results[0].name : res.data.tv_results[0].original_name;
-        if(!title) throw `not found any meta from cinemeta`
+        if(!title) return;
         let year = res.meta.year?.split("-")[0];
         var slug = slugify(title, { replacement: '-', remove: undefined, lower: true, strict: true, trim: true });
+        let alterName = res.meta.country; //temp save for country info
         let videos = res.meta.videos;
         let seasons = [];
         videos?.forEach(video => {
             if(!seasons.find(season => season.season == video.season))
             seasons.push({
                 season: video.season,
-                year: video.firstAired?.split('-')[0]
+                year: video.released?.split('-')[0] //video.firstAired?.split('-')[0] || 
             })
         })
-        return { title: title, slug: slug, year: year, seasons: seasons}
+        return { title: title, slug: slug, year: year, seasons: seasons, alterName: alterName }
     }
 }
 

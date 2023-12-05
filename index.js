@@ -286,13 +286,13 @@ const blockMultiReqFromIP = (req, res, next) => {
 //Limit downloads
 const limitVTTDownload = (req, res, next) => {
 	const download = LimitDownload.get(req.ip) || 0;
-	if(download >= 30)  {
+	if(download >= 20)  {
 		const subtitle = [
 			'WEBVTT\n',
 			'1',
 			'00:00:00.000 --> 02:00:00.000',
 			'[REUP]Subscene by Dexter21767',
-			'Limit download: 30/day'
+			'Limit download: 20/day'
 		]
 
 		res.setHeader('Cache-Control', CacheControl.off);
@@ -326,7 +326,7 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 		let file = {};
 		file.subtitle = await DiskCache.getItem(fileID);
 		if(file.subtitle) {
-			console.log(`file ${title} is loaded from storage cache!`);
+			console.log(`file ${fileID} is loaded from storage cache!`);
 		} else {
 			QueueSub.set(fileID, true); //file is loading
 
@@ -342,13 +342,13 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 
 			const filename = file.name;
 			file = file.data;
-
-			let sub_head_long = 10;
+			
+			let sub_head_start_time = 1, sub_head_long = 10;
 			if(episode) sub_head_long = 5;
 			const subtitle_header_info = [
 				'WEBVTT\n',
 				'0',
-				`00:00:01.000 --> 00:00:${1+sub_head_long}.000`,
+				`00:00:${sub_head_start_time.toString().padStart(2, '0')}.000 --> 00:00:${(sub_head_start_time + sub_head_long).toString().padStart(2, '0')}.000`,
 				`&gt;&gt;[REUP]Subscene by Dexter21767 v${manifest.version}&lt;&lt;`,
 				`<u>=&gt;${filename}</u>\n\n`
 			];
@@ -356,7 +356,7 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 			for(i = 0; i < lines.length; i++) {
 				if(!lines[i]) continue;
 				let startTimeSecond = lines[i].match(/\d\d:\d\d:\d\d/);
-				if(startTimeSecond && startTimeSecond[0].split(':')[1]*60 + startTimeSecond[0].split(':')[2] >= (5+sub_head_long)) {
+				if(startTimeSecond && startTimeSecond[0].split(':')[1]*60 + startTimeSecond[0].split(':')[2] >= (sub_head_start_time+sub_head_long)) {
 					file.subtitle = subtitle_header_info.join('\n') + lines.slice(i-1).join('\n');
 					break;
 				}
