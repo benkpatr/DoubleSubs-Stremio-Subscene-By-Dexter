@@ -22,18 +22,21 @@ const QueueCache = new NodeCache({ stdTTL: 5 });
 const QueueSub = new NodeCache({ stdTTL: 10 });
 const QueueIP = new NodeCache({ stdTTL: 5 });
 let LimitDownload = new NodeCache({ stdTTL: 24*60*60, checkperiod: 24*60*60 });
+
 setInterval(() => {
 	LimitDownload.flushAll();
-}, 24*60*60*1000);
+}, 24*60*60*1000); //24 hours
 
 const aesPass = process.env.AES_PWD;
 
-// if(config.env != 'external' && config.env != 'local') {
-// 	filterDomains().then(res => {
-// 		external_domains = res;
-// 		console.log('valid domains', external_domains);
-// 	})
-// }
+if(config.env != 'external' && config.env != 'local') {
+	setInterval(() => {
+		filterDomains().then(res => {
+			//external_domains = res;
+			console.log('valid domains', external_domains);
+		});
+	}, 10*60*1000); //keep the external servers online every 10 mins (for free server)
+}
 
 const DiskCache = require('node-persist');
 
