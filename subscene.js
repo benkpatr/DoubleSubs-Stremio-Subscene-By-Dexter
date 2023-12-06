@@ -85,42 +85,67 @@ async function subtitlesV2(type, id, lang, extras) {
     let search;
     if(ids[0] == 'kitsu') search = await subscene.search(meta.title);
     else {
-      if(type == 'series' && meta.alterName?.includes('Korea') || meta.alterName?.includes('Japan'))
+      if(meta.title.includes(':'))
         search = await subscene.search(meta.title);
-      else
-        search = await subscene.searchV2(meta.title);
+      else {
+        if(type == 'series' && meta.alterName?.includes('Korea') || meta.alterName?.includes('Japan'))
+          search = await subscene.search(meta.title);
+        else
+          search = await subscene.searchV2(meta.title);
+      }
     }
 
     if(search?.length) {
+      let switchPart;
+      if((/part[\s\.\-]/i).test(meta.title)) {
+        const reg_part = /part[\s\.\-]+(\d|[IVX]+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|.*?\sone|.*?\stwo|.*?\sthree|.*?\sfour|.*?\s|five|.*?\ssix|.*?\sseven|.*?\seight|.*?\snine)/i;
+        let part = reg_part.exec(meta.title);
+        console.log(numberTypeSwitch(part[1]))
+        if(part) {
+          meta.title = meta.title.replace(reg_part, 'regexparthere');
+          switchPart = '(' + Object.values(numberTypeSwitch(part[1])).join('|') + ')(?=$|[^a-z0-9])';
+        }
+      }
+      let titles = meta.title.split(':');
       //find by name
-      const re_title = meta.title.replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+      let re_title = titles[0].replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+      if(re_title.includes('regexparthere')) re_title = re_title.replace('regexparthere', switchPart);
       const reg = new RegExp(re_title, 'i');
-      console.log(reg);
+      console.log(reg)
       let finds = search.filter(x => reg.test(x.title));
-      if(finds.length > 1) {
-        const reg1 = new RegExp(`${re_title}(.*?)${meta.year}`, 'i');
-        console.log(reg1);
-        let finds1 = finds.filter(x => reg1.test(x.title));
+
+      //filter by addition name
+      if(titles[1] && finds.length > 1) {
+        let more_info = titles[1].trim().replace(/[^a-zA-Z0-9]+/g, '(.*?)');
+        if(more_info.includes('regexparthere')) more_info = more_info.replace('regexparthere', switchPart);
+        const reg_more_info = new RegExp(more_info, 'i');
+        console.log(reg_more_info)
+        const filter = finds.filter(x => reg_more_info.test(x.title));
+        if(filter.length) finds = filter;
+      }
+
+      //filter by season
+      if(season && finds.length > 1) {
+        const season_text = ordinalInWord(season);
+        let filters = finds.filter(x => x.title.includes(season_text) || x.title.includes(`Season ${season}`));
+        if(filters.length) finds = filters;
+      }
+
+      //filter by year
+      if(meta.year && finds.length > 1) {
+        let finds1 = finds.filter(x => x.title.includes(meta.year));
         if(finds1.length) finds = finds1;
         else {
           //some time the year are not accurate
-          const reg2 = new RegExp(`${re_title}(.*?)${parseInt(meta.year) + 1}`, 'i');
-          const reg3 = new RegExp(`${re_title}(.*?)${parseInt(meta.year) - 1}`, 'i');
-          let finds2_3 = finds.filter(x => reg2.test(x.title) || reg3.test(x.title));
-          finds = finds2_3;
+          let finds2 = finds.filter(x => 
+            x.title.include((parseInt(meta.year) + 1)) ||
+            x.title.include((parseInt(meta.year) - 1))
+          )
+          finds = finds2;
         }
       }
-      //console.log(finds)
-      if(finds.length) {
-        if(finds.length > 1) {
-          let filters = [];
-          if(season) {
-            const season_text = ordinalInWord(season);
-            filters = finds.filter(x => x.title.includes(season_text) || x.title.includes(`Season ${season}`));
-          }
-          if(filters.length) finds = filters;
-        }
 
+      if(finds.length) {
         let subtitles = [];
         for(const found of finds) {
           subtitles = await getsubtitles(found.path, primid, lang, season, episode, meta.year, extras);
@@ -440,6 +465,78 @@ function filtered(list, key, value) {
   }
   return filtered;
 };
+
+function numberTypeSwitch(input) {
+  let number, roman, text;
+  let roman_numbers = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+  let text_numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+  let text_tens = ["", "", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  if(!isNaN(input)) {
+    number = input;
+  }
+  else if(input.match(/^[IVX]+$/)) {
+    number = romanToNumber(input);
+    roman = input;
+    function romanToNumber(roman) {
+      let number = 0;
+      let roman_regs = [/^I/i, /^II/i, /^III/i, /^IV/i, /^V/i, /^VI/i, /^VII/i, /^VIII/i, /^IX/i, /^X/i];
+      for(let idx = 9; idx >= 0; idx--) {{
+        if(roman_regs[idx].test(roman)) {
+          number += (idx+1);
+          if(idx+1 == 10 && roman.length > 1) {
+            number += romanToNumber(roman.replace(roman_regs[idx], ''));
+          }
+          else break;
+        }
+      }}
+      return number;
+    }
+  }
+  else {
+    let input1 = input.toLowerCase();
+    const text_parts = input1.split(' ');
+    const last_part = text_parts[text_parts.length - 1];
+    if(text_numbers.includes(last_part)) {
+      let find_number = text_numbers.findIndex(x  => x == last_part);
+      if(find_number != -1) number = find_number;
+      if(text_parts.length == 2) {
+        const first_part = text_parts[0];
+        let find_ten = text_tens.findIndex(first_part);
+        if(find_ten != -1) number += find_ten * 10;
+      }
+      if(text_parts.length > 2 || !number) {
+        console.log(`input type is not support!`);
+        return input;
+      }
+    }
+    else {
+      console.log(`input type is not support!`);
+      return input;
+    }
+  }
+
+  if(number < 0 || number > 99) {
+    console.log(`just support from 0 to 99`);
+    return input;
+  }
+
+  let ten_number = Math.floor(number/10);
+  let surplus = number % 10;
+  if(!roman) roman = roman_numbers[10].repeat(ten_number) + roman_numbers[surplus];
+  if(!text) {
+    if(number <= 20)
+      text = text_numbers[number];
+    else {
+      text = text_tens[ten_number] + text_numbers[surplus]
+    }
+  }
+
+  return {
+    number: number,
+    roman: roman,
+    text: text
+  }
+}
 
 function ordinalInWord(cardinal) {
   const ordinals = ["zeroth", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth", "Twentieth"]
