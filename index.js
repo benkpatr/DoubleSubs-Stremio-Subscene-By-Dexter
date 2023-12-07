@@ -390,7 +390,7 @@ sharedRouter.use(['/:configuration?/subtitles/:type/:id/:extra?.json', '/sub.vtt
 });
 
 sharedRouter.get('/current-ip', async (req, res) => {
-	const ip_adr = await currentIP();
+	const ip_adr = await currentIP().catch(err => console.error(err));
 	if(ip_adr) res.end(ip_adr);
 	else res.sendStatus(500);
 })

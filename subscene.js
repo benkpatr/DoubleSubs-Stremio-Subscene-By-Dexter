@@ -138,8 +138,8 @@ async function subtitlesV2(type, id, lang, extras) {
         else {
           //some time the year are not accurate
           let finds2 = finds.filter(x => 
-            x.title.include((parseInt(meta.year) + 1)) ||
-            x.title.include((parseInt(meta.year) - 1))
+            x.title.includes((parseInt(meta.year) + 1)) ||
+            x.title.includes((parseInt(meta.year) - 1))
           )
           finds = finds2;
         }
@@ -449,7 +449,7 @@ async function downloadUrl(path, episode) {
           db.del(db.Tables.Subtitles, ['id'], [id]);
         }
       }
-      throw new Error (`Failed to get:` + config.BaseURL + path) 
+      throw new Error (`Failed to get: getDownloadUrl,` + config.BaseURL + path) 
     });
   }
 }

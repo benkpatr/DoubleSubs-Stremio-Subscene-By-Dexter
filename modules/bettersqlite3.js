@@ -95,18 +95,32 @@ setInterval(function(){
     const tbl_rows_count = db.prepare(`SELECT COUNT(*) as count FROM subtitles_files`).get().count;
     if(tbl_rows_count >= MAX_TBL_ROWS) {
         const remove_ratio = (tbl_rows_count - SAFE_TBL_ROWS)/tbl_rows_count;
-        const sql = `
-            DELETE FROM subtitles_files
-            WHERE id IN (
-                SELECT DISTINCT id FROM (
-                    SELECT id FROM subtitles_files 
-                    ORDER BY updated_at ASC 
-                    LIMIT (SELECT CEIL(COUNT(*) * ?) FROM subtitles_files)
+        const del = db.transaction((rm_rate) => {
+            db.prepare(`
+                CREATE TEMP TABLE ids as (
+                    SELECT DISTINCT id FROM (
+                        SELECT id FROM subtitles_files 
+                        ORDER BY updated_at ASC 
+                        LIMIT (SELECT CEIL(COUNT(*) * ?) FROM subtitles_files)
+                    )
                 )
-            )`;
-        const del = db.prepare(sql);
-        const result = del.run(remove_ratio);
-        console.log('DELETED:', result.changes, 'ROWS')
+            `).run(rm_rate);
+
+            db.prepare(`
+                DELETE FROM subtitles_files
+                WHERE id IN ids
+            `).run();
+
+            db.prepare(`
+                DELETE FROM search_found
+                WHERE id IN ids
+            `).run();
+
+            db.prepare(`DROP TABLE ids`).run();
+        });
+
+        console.log('DELETED:', result.changes, 'ROWS');
+        del(remove_ratio);
     } 
 }, ONE_DAY_IN_MS);
 
