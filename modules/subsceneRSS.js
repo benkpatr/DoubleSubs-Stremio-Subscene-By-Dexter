@@ -20,17 +20,7 @@ async function fetchRSS(url) {
 
         let currentFetch = [];
 
-        const res = await got().get(url, {
-            retry: {
-                limit: 2,
-                calculateDelay: ({attemptCount, retryOptions, error}) => {
-                    if(attemptCount >= retryOptions.limit) return 0;
-                    if(error.statusCode == 429) return 1000;
-                    else if(error.statusCode == 404) return 0;
-                    else return 500;
-                }
-            }
-        }).catch(err => console.error('RSS Fail to get:', url));
+        const res = await got().get(url).catch(err => console.error('RSS Fail to get:', url));
 
         if(res?.body) {
             if(url.includes('subscene.com')) {
@@ -92,11 +82,7 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
                     const test = db.get(db.Tables.Subtitles, ['id', 'path'], [tbl_search_id, dlpath]);
                     console.log(test ? 'skip' : 'insert', tbl_search_id, dlpath);
                     if(!test) {
-                        const res1 = await got().get(config.BaseURL + dlpath, {
-                            retry: {
-                                limit: 2
-                            }
-                        }).catch(err => console.error('RSS1 Fail to get:', url));
+                        const res1 = await got().get(config.BaseURL + dlpath).catch(err => console.error('RSS1 Fail to get:', url));
     
                         if(res1?.body) {
                             let titles = [];

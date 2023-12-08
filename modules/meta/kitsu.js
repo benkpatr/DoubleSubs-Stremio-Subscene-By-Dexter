@@ -3,10 +3,8 @@ const BaseURL = require('../../configs/config').kitsuURL;
 
 async function request(url) {
     return await got().get(url, {
-        retry: { limit: 3},
         headers: {
-            'Accept': 'application/vnd.api+json',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'
+            'Accept': 'application/vnd.api+json'
         }
     }).catch(err => { console.error(`Kitsu: failed to get meta from ${url}`)});
 }

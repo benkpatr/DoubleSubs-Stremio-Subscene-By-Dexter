@@ -44,7 +44,7 @@ async function subtitlesV2(type, id, lang, extras) {
       console.log('From SQL:', subtitles?.length);
       if(subtitles.length) {
         subtitles = subscene.sortByLang(subtitles);
-        if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, null, episode, extras.filename);
+        if(subtitles[lang]) subtitles = filterSub(subtitles[lang], lang, season, episode, extras.filename);
         Cache.set(cacheID, subtitles);
       }
       return subtitles;

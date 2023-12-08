@@ -214,7 +214,7 @@ class sub2vtt {
             return iconv.decode(data, encoding).toString('UTF-8');
         }
         else 
-            return data.toString();
+            return Buffer.from(data).toString();
     }
 
     GetDotSub(data) {
