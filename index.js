@@ -317,8 +317,9 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 
 		if(!lang || !url) return res.redirect('/404');
 
-		proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
-
+		//proxy =  {responseType: "buffer", "User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0'}
+		proxy = null;
+		
 		let fileID = lang + '_' + url.split('/').pop() + (episode ? '_' + episode : '');
 
 		//Queue request to one file
@@ -335,7 +336,7 @@ sharedRouter.get('/sub.vtt', blockMultiReqFromIP, limitVTTDownload, async (req, 
 
 			url = await downloadUrl(url);
 
-			console.log({url, proxy, episode})
+			console.log({url, episode})
 			
 			let sub = new sub2vtt(url , { proxy, episode });
 			

@@ -1,11 +1,8 @@
-//const got = require('got-scraping').gotScraping;
-const got = {
-    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
-}
+const got = require('../got-scraping');
 const BaseURL = require('../../configs/config').kitsuURL;
 
 async function request(url) {
-    return await got.get(url, {
+    return await got().get(url, {
         retry: { limit: 3},
         headers: {
             'Accept': 'application/vnd.api+json',

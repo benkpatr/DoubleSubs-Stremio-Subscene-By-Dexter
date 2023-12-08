@@ -119,8 +119,8 @@ setInterval(function(){
             db.prepare(`DROP TABLE ids`).run();
         });
 
+        let result = del(remove_ratio);
         console.log('DELETED:', result.changes, 'ROWS');
-        del(remove_ratio);
     } 
 }, ONE_DAY_IN_MS);
 

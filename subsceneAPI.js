@@ -1,27 +1,10 @@
 //const got = require('got-scraping').gotScraping;
-const got = {
-  get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
-}
+const got = require('./modules/got-scraping');
 const cheerio = require("cheerio")
 const config = require('./configs/config')
 const baseUrl = config.BaseURL
 const { parse } = require("node-html-parser");
 const languages = require('./configs/convertLanguages.json');
-
-let gotConfig = {
-  headers: {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0"
-  },
-  retry: {
-    limit: 2,
-    calculateDelay: ({attemptCount, retryOptions, error}) => {
-      if(attemptCount >= retryOptions.limit) return 0;
-      if(error.statusCode == 429) return 1000;
-      else if(error.statusCode == 404) return 0;
-      else return 500;
-    }
-  }
-}
 
 global.isSearching = {
   value: false,
@@ -60,7 +43,7 @@ async function searchV2(query) {
     if(!query?.length) throw "Query Is Null";
     const url = 'https://u.subscene.com/upload?Title=' + encodeURIComponent(query);
     console.log('searching:', url);
-    const res = await got.get(url, gotConfig).catch(err => console.error(`Request fail: searchv2`, err.response?.statusCode, err.message, url));
+    const res = await got().get(url).catch(err => console.error(`Request fail: searchv2`, err.response?.statusCode, err.message, url));
     if (!res?.body) throw "No Response Found";
     if (res?.body?.includes("To many request")) throw ("Search: Too Many Request");
     let $ = cheerio.load(res.body);
@@ -97,7 +80,7 @@ async function search(query) {
 
     const url = baseUrl + "/subtitles/searchbytitle?query=" + encodeURIComponent(query);
     console.log('searching:', url)
-    const res = await got.get(url, gotConfig).catch(err => {console.log(`Request fail: search`, err.response?.statusCode, err.message, url)});
+    const res = await got().get(url).catch(err => {console.log(`Request fail: search`, err.response?.statusCode, err.message, url)});
 
 
     //##############################
@@ -148,7 +131,7 @@ async function subtitle(url = String) {
       await delay(global.isGetting.spaceTime - (currenTime - global.isGetting.lastUpdate));
     }
 
-    const res = await got.get(baseUrl+url, gotConfig).catch(err => {
+    const res = await got().get(baseUrl+url).catch(err => {
       console.log(`Request fail: subtitle`, err.response?.statusCode, err.message, url)
     });
 
@@ -214,7 +197,7 @@ function sortByLang(subs = Array) {
 }
   
 async function downloadUrl(url = String) {
-  let res = await got.get(url, gotConfig).catch(err => console.log(`Fail to get: ${url}`));
+  let res = await got().get(url).catch(err => console.log(`Fail to get: ${url}`));
   if (!res||!res.body)throw "No Data Found";
   if (res.statusCode == 404) throw "Page Not Found";
   let $ = cheerio.load(res.body), downUrl;

@@ -1,6 +1,4 @@
-const got = {
-    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
-}
+const got = require('./got-scraping');
 const cheerio = require("cheerio");
 const languages = require('../configs/convertLanguages.json');
 const db = require('./bettersqlite3');
@@ -22,7 +20,7 @@ async function fetchRSS(url) {
 
         let currentFetch = [];
 
-        const res = await got.get(url, {
+        const res = await got().get(url, {
             retry: {
                 limit: 2,
                 calculateDelay: ({attemptCount, retryOptions, error}) => {
@@ -94,7 +92,7 @@ async function updateSQL(fetch = Array, lastFetch = Array) {
                     const test = db.get(db.Tables.Subtitles, ['id', 'path'], [tbl_search_id, dlpath]);
                     console.log(test ? 'skip' : 'insert', tbl_search_id, dlpath);
                     if(!test) {
-                        const res1 = await got.get(config.BaseURL + dlpath, {
+                        const res1 = await got().get(config.BaseURL + dlpath, {
                             retry: {
                                 limit: 2
                             }

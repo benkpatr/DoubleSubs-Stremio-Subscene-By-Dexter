@@ -7,10 +7,7 @@ const iconv = require('iconv-jschardet');
 const ass2vtt = require('./converts/ass2vtt');
 const dotsub2vtt = require('./converts/dotsub2vtt');
 const { exactlyEpisodeRegex, estimateEpisodeRegex } = require('./episodeRegex');
-const got = {
-    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args),
-    extends: async (...args) => (await import('got-scraping')).gotScraping.extend(...args)
-}
+const got = require('./got-scraping');
 
 const iso639 = require('./ISO639');
 
@@ -419,15 +416,11 @@ class sub2vtt {
             timeout: {
                 request: 15000
             },
-            retry: {
-                limit: 3
-            },
             headers: {}
         }
-        if (this.proxy) config.headers = this.proxy;
+        if (Object.keys(this.proxy).length) config.headers = this.proxy;
         config.headers["Accept-Encoding"] = "gzip,deflate,compress";
-        // this.client = axios.create(config);
-        this.client = await got.extends(config);
+        this.client = await got().extend(config);
     }
     static gerenateUrl(url = String, opts) {
         let { proxy, type } = opts;

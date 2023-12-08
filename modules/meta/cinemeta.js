@@ -1,14 +1,10 @@
 //const got = require('got-scraping').gotScraping;
-const got = {
-    get: async (...args) => (await import('got-scraping')).gotScraping.get(...args)
-}
+const got = require('../got-scraping');
 var slugify = require('slugify');
 const { CineV3 } = require('../../configs/config');
 
 async function request(url, header) {
-    return await got.get(url, {
-        retry: { limit: 3}
-    }).catch(err => { console.error(`CineMeta: failed to get meta from ${url}`) });
+    return await got().get(url).catch(err => { console.error(`CineMeta: failed to get meta from ${url}`) });
 }
 
 async function getMeta(type, id) {
