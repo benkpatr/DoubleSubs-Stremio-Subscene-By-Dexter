@@ -1,31 +1,23 @@
 {
-    "id": "community.subscene",
-    "version": "0.1.6-3",
-    "name": "[REUP]Subscene by dexter21767",
-    "description": "Addon for getting subtitles from Subscene. \n🍭Buy me a Lollipop \n🔗https://www.buymeacoffee.com/vance \n☕Buy Dexter a Coffee \n🔗https://www.buymeacoffee.com/dexter21767",
-    "logo": "https://i.imgur.com/vJ2wajD.png",
-    "background": "https://github.com/Stremio/stremio-art/raw/main/originals/shino.png",
-    "contactEmail": "vancengvn@gmail.com",
-    "catalogs": [],
-    "resources": [{
-            "name": "subtitles",
-            "types": [
-                "movie",
-                "series"
-            ],
-            "idPrefixes": [
-                "tt","kitsu"
-            ]
-        }
-    ],
-    "types": [
-            "subtitles"
-    ],
-    "idPrefixes": [
-        "tt","kitsu"
-    ],
-    "behaviorHints": {
-        "configurable": true,
-        "configurationRequired": true
+  "id": "community.doublesubs.subscene",
+  "version": "0.1.6-3",
+  "name": "[DoubleSubs]Subscene by dexter21767",
+  "description": "Addon for getting double subtitles from Subscene. Doublesubs is built on the REUP version by vance \n🍭Buy vance a Lollipop \n🔗https://www.buymeacoffee.com/vance \n☕Buy Dexter a Coffee \n🔗https://www.buymeacoffee.com/dexter21767",
+  "logo": "https://i.imgur.com/vJ2wajD.png",
+  "background": "https://github.com/Stremio/stremio-art/raw/main/originals/shino.png",
+  "contactEmail": "spatler.beng@gmail.com",
+  "catalogs": [],
+  "resources": [
+    {
+      "name": "subtitles",
+      "types": ["movie", "series"],
+      "idPrefixes": ["tt", "kitsu"]
     }
+  ],
+  "types": ["subtitles"],
+  "idPrefixes": ["tt", "kitsu"],
+  "behaviorHints": {
+    "configurable": true,
+    "configurationRequired": true
+  }
 }
