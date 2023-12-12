@@ -116,7 +116,7 @@ function loadBlock(subs, subsCur) {
     subsCur++;
   }
 
-  if (isNaN(subs[subsCur])) throw new Error("Wrong subtitle format");
+  if (isNaN(subs[subsCur])) throw new Error(subs[subsCur]);
   subsCur++;
 
   if (subsCur === subs.length) throw new Error("Wrong subtitle format");
@@ -150,7 +150,7 @@ function relation(time1, time2) {
     Number(time2[1]) * 60 +
     Number(time2[2].slice(0, 2)) +
     Number(time2[2].slice(3)) / 1000;
-  if (Math.abs(seconds1 - seconds2) <= 0.2) return "=";
+  if (Math.abs(seconds1 - seconds2) <= 0.5) return "=";
   else if (seconds1 < seconds2) return "<";
   else return ">";
 }

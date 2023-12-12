@@ -287,52 +287,11 @@ sharedRouter.get(
 
         let versionCount = 0;
         firstLangSubs.some((firstLangSub) =>
-          secondLangSubs.some((secondLangSub) =>
+          secondLangSubs.some((secondLangSub) => {
             firstLangSub.title.split(/\r?\n/).some((firstTitle) =>
               secondLangSub.title.split(/\r?\n/).some((secondTitle) => {
                 if (firstTitle === secondTitle) {
-                  allSubs.push(
-                    {
-                      lang: firstLang + "-" + secondLang,
-                      title: firstLangSub.title,
-                      id: firstLangSub.id + "-" + secondLangSub.id,
-                      url:
-                        firstLangSub.url
-                          .split("/")
-                          .slice(0, -2)
-                          .join("/")
-                          .replace(
-                            "sub.vtt?lang=" + firstLang,
-                            "sub.vtt?lang=" + firstLang + "-" + secondLang
-                          ) +
-                        "/" +
-                        firstLang +
-                        "-" +
-                        secondLang +
-                        "/" +
-                        firstLangSub.id.split(".").pop() +
-                        "-" +
-                        secondLangSub.id.split(".").pop(),
-                    },
-                    firstLangSub,
-                    secondLangSub
-                  );
-                  versionCount++;
-                  return versionCount === maxVersions;
-                } else {
-                  return false;
-                }
-              })
-            )
-          )
-        );
-
-        if (!allSubs.length) {
-          if (firstLangSubs.length && secondLangSubs.length) {
-            firstLangSubs.some((firstLangSub) =>
-              secondLangSubs.some((secondLangSub) => {
-                allSubs.push(
-                  {
+                  allSubs.push({
                     lang: firstLang + "-" + secondLang,
                     title: firstLangSub.title,
                     id: firstLangSub.id + "-" + secondLangSub.id,
@@ -353,20 +312,60 @@ sharedRouter.get(
                       firstLangSub.id.split(".").pop() +
                       "-" +
                       secondLangSub.id.split(".").pop(),
-                  },
-                  firstLangSub,
-                  secondLangSub
-                );
-                versionCount++;
-                return versionCount === maxVersions;
+                  });
+                  versionCount++;
+                  return true;
+                } else {
+                  return false;
+                }
               })
             );
-          } else {
-            allSubs = firstLangSubs
-              .slice(0, maxVersions)
-              .concat(secondLangSubs.slice(0, maxVersions));
-          }
+            return versionCount === maxVersions;
+          })
+        );
+
+        if (versionCount < maxVersions) {
+          firstLangSubs.some((firstLangSub) =>
+            secondLangSubs.some((secondLangSub) => {
+              if (
+                !allSubs.some(
+                  (sub) => sub.id === firstLangSub.id + "-" + secondLangSub.id
+                )
+              ) {
+                allSubs.push({
+                  lang: firstLang + "-" + secondLang,
+                  title: firstLangSub.title,
+                  id: firstLangSub.id + "-" + secondLangSub.id,
+                  url:
+                    firstLangSub.url
+                      .split("/")
+                      .slice(0, -2)
+                      .join("/")
+                      .replace(
+                        "sub.vtt?lang=" + firstLang,
+                        "sub.vtt?lang=" + firstLang + "-" + secondLang
+                      ) +
+                    "/" +
+                    firstLang +
+                    "-" +
+                    secondLang +
+                    "/" +
+                    firstLangSub.id.split(".").pop() +
+                    "-" +
+                    secondLangSub.id.split(".").pop(),
+                });
+                versionCount++;
+                return versionCount === maxVersions;
+              }
+            })
+          );
         }
+
+        allSubs = allSubs.concat(
+          firstLangSubs.slice(0, maxVersions),
+          secondLangSubs.slice(0, maxVersions)
+        );
+
         allSubs.map((sub) => (sub.url += `&s=${aes.encrypt(req.ip, aesPass)}`));
         console.log(allSubs);
         res.status(200).send(
